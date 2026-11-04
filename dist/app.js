@@ -19,7 +19,7 @@ let countries,
   dataStatus = "loading";
 const dataControls = [
   ...document.querySelectorAll(
-    ".toolbar button, .toolbar select, .transport button, #year, #search, #more, #all-events",
+    ".toolbar button, .toolbar select, .transport button, #pair-form button, #pair-form select, #year, #search, #more, #all-events",
   ),
 ];
 dataControls.forEach((control) => (control.disabled = true));
@@ -32,6 +32,14 @@ mapTooltip.setAttribute("aria-label", "Migration connection details");
 mapTooltip.innerHTML =
   '<button class="tooltip-close" type="button" aria-label="Close migration tooltip">×</button><div class="eyebrow">MODELLED MIGRATION</div><h3 class="tooltip-route"></h3><div class="tooltip-period"></div><div class="tooltip-value"></div><p class="tooltip-note">Estimated migrations over five years. May include repeat migrants; individual-route estimates can differ from official records.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · data source ↗</a>';
 $(".map-wrap").append(mapTooltip);
+const tooltipDetails = document.createElement("button");
+tooltipDetails.type = "button";
+tooltipDetails.className = "tooltip-details";
+tooltipDetails.textContent = "View migration details ↗";
+tooltipDetails.onclick = () => {
+  if (state.route) openRouteDetails(...state.route);
+};
+mapTooltip.append(tooltipDetails);
 let tooltipRoute = null;
 function hideMapTooltip(restoreFocus = false) {
   const wasOpen = !mapTooltip.hidden;
@@ -277,7 +285,7 @@ function draw() {
     const value = document.createElement("span");
     value.textContent = fmt(r[2]);
     b.append(label, value);
-    b.onclick = () => selectRoute(r);
+    b.onclick = () => openRouteDetails(r[0], r[1]);
     $("#route-list").append(b);
   });
   if (!all.length)
@@ -297,6 +305,213 @@ function selectRoute(r) {
   state.route = [r[0], r[1]];
   state.event = null;
   draw();
+}
+let routeViewId = 0;
+let routeReturnFocus = null;
+const fullEstimate = (value) =>
+  value === undefined
+    ? "No comparable data"
+    : value === 0
+      ? "Estimated zero"
+      : "≈ " +
+        new Intl.NumberFormat("en", { maximumSignificantDigits: 3 }).format(
+          value,
+        );
+function pairError(origin, destination) {
+  if (!countries?.[origin] || !countries?.[destination])
+    return "Choose both an origin and a destination.";
+  if (origin === destination)
+    return "Choose two different countries for international migration.";
+  if (!countries[origin].europe && !countries[destination].europe)
+    return "Stage 1 covers routes to, from, or within Europe. Choose at least one European country.";
+  return "";
+}
+function closeRouteDetails() {
+  routeViewId++;
+  $("#route-dialog").close();
+}
+$("#route-close").onclick = closeRouteDetails;
+$("#route-dialog").addEventListener("cancel", () => routeViewId++);
+$("#route-dialog").addEventListener("close", () => {
+  // A queued close event must not invalidate a route opened again immediately.
+  if ($("#route-dialog").open) return;
+  routeViewId++;
+  const parentDialog = routeReturnFocus?.closest("dialog");
+  const target =
+    routeReturnFocus?.isConnected &&
+    !routeReturnFocus.closest("[hidden]") &&
+    (!parentDialog || parentDialog.open)
+      ? routeReturnFocus
+      : $("#pair-open");
+  target?.focus({ preventScroll: true });
+});
+$("#route-dialog").addEventListener("click", (event) => {
+  if (event.target !== $("#route-dialog")) return;
+  const box = event.target.getBoundingClientRect();
+  if (
+    event.clientX < box.left ||
+    event.clientX > box.right ||
+    event.clientY < box.top ||
+    event.clientY > box.bottom
+  )
+    closeRouteDetails();
+});
+$("#pair-form").onsubmit = (event) => {
+  event.preventDefault();
+  const origin = $("#pair-origin").value,
+    destination = $("#pair-destination").value;
+  const error = pairError(origin, destination);
+  $("#pair-error").hidden = !error;
+  $("#pair-error").textContent = error;
+  if (!error) openRouteDetails(origin, destination);
+};
+$("#pair-swap").onclick = () => {
+  const origin = $("#pair-origin").value;
+  $("#pair-origin").value = $("#pair-destination").value;
+  $("#pair-destination").value = origin;
+  $("#pair-error").hidden = true;
+};
+async function openRouteDetails(origin, destination) {
+  if (pairError(origin, destination)) return;
+  const id = ++routeViewId;
+  if (!$("#route-dialog").open) routeReturnFocus = document.activeElement;
+  if (timer) $("#play").click();
+  state.country = origin;
+  state.dir = "out";
+  state.query = "";
+  state.limit = 30;
+  $("#country").value = origin;
+  $("#search").value = "";
+  $("#pair-origin").value = origin;
+  $("#pair-destination").value = destination;
+  $("#pair-error").hidden = true;
+  syncDirection();
+  selectRoute([origin, destination]);
+  $("#route-content").innerHTML =
+    `<span class="eyebrow">COUNTRY-TO-COUNTRY MIGRATION</span><h2 id="route-view-title">${name(origin)} → ${name(destination)}</h2><div class="route-view-controls"><label for="route-period">Five-year period<select id="route-period"></select></label><button id="route-reverse" type="button">Explore ${name(destination)} → ${name(origin)} ⇄</button></div><div class="route-stats" aria-live="polite"><section><span>${name(origin)} → ${name(destination)}</span><strong id="route-forward-count">Loading…</strong><small class="route-stat-period"></small></section><section><span>${name(destination)} → ${name(origin)}</span><strong id="route-reverse-count">Loading…</strong><small class="route-stat-period"></small></section></div><p class="route-explanation">Estimated migration counts over five years, including possible repeat migrants. These are modelled movements between countries, not the number of people of a particular nationality living abroad.</p><h3>Migration over time</h3><p class="small">Choose a period to update the figures and the map. Figures before 1960 are unavailable.</p><div id="route-history" role="status">Loading the historical estimates…</div><div id="route-context"></div><div class="route-method"><h3>How to read these figures</h3><p>FLOW v1.0 combines annual female and male estimates for each five-year period. It is designed for broad patterns; individual-route estimates can differ from official records. Estimated zero does not establish that nobody moved. These data do not identify individual people or prove why they migrated.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW dataset ↗</a> · <a class="source" href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Methodology ↗</a></div>`;
+  const periods = Array.from({ length: 15 }, (_, i) => 1950 + i * 5);
+  periods.forEach((year) => {
+    const option = document.createElement("option");
+    option.value = year;
+    option.textContent = period(year);
+    $("#route-period").append(option);
+  });
+  $("#route-period").value = state.year;
+  $("#route-reverse").onclick = () => openRouteDetails(destination, origin);
+  const estimates = new Map();
+  function updateFigures() {
+    if (id !== routeViewId || !$("#route-dialog").open) return;
+    const year = +$("#route-period").value,
+      item = estimates.get(year);
+    const display = (value) =>
+      !item ? "Loading…" : item.error ? "Could not load" : fullEstimate(value);
+    $("#route-forward-count").textContent = display(item?.forward);
+    $("#route-reverse-count").textContent = display(item?.reverse);
+    document
+      .querySelectorAll(".route-stat-period")
+      .forEach((el) => (el.textContent = period(year)));
+    document.querySelectorAll(".history-period").forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(+button.dataset.year === year),
+      );
+      button
+        .closest("tr")
+        .classList.toggle("current-period", +button.dataset.year === year);
+    });
+  }
+  const choosePeriod = (year) => {
+    $("#route-period").value = year;
+    updateFigures();
+    setYear(year);
+  };
+  $("#route-period").onchange = (event) => choosePeriod(+event.target.value);
+  const related = events.filter(
+    (event) => event.origin === origin && event.destination === destination,
+  );
+  const context = $("#route-context");
+  const contextHeading = document.createElement("h3");
+  contextHeading.textContent = "Historical context · all periods";
+  context.append(contextHeading);
+  if (!related.length) {
+    const note = document.createElement("p");
+    note.className = "route-explanation";
+    note.textContent = `No route-specific historical account has been added for ${name(origin)} → ${name(destination)}. The estimates alone cannot explain the reasons for this migration.`;
+    context.append(note);
+  }
+  related.forEach((event) => {
+    const article = document.createElement("article");
+    article.className = "route-context-card";
+    article.innerHTML = `<span class="eyebrow">${event.start}${event.start === event.end ? "" : "–" + event.end}</span><h4>${event.title}</h4><p>${event.text}</p><a class="source" href="${event.source}" target="_blank" rel="noopener">Historical source ↗</a>${event.additionalSource ? `<br><a class="source" href="${event.additionalSource}" target="_blank" rel="noopener">Further historical context ↗</a>` : ""}`;
+    context.append(article);
+  });
+  if (!$("#route-dialog").open) $("#route-dialog").showModal();
+  $("#route-close").focus({ preventScroll: true });
+  updateFigures();
+  const history = await Promise.all(
+    periods.map(async (year) => {
+      try {
+        const data = await load(year);
+        return {
+          year,
+          forward: data.find(
+            (row) => row[0] === origin && row[1] === destination,
+          )?.[2],
+          reverse: data.find(
+            (row) => row[0] === destination && row[1] === origin,
+          )?.[2],
+        };
+      } catch {
+        return { year, error: true };
+      }
+    }),
+  );
+  if (id !== routeViewId || !$("#route-dialog").open) return;
+  history.forEach((item) => estimates.set(item.year, item));
+  const max = Math.max(
+    1,
+    ...history.flatMap((item) => [item.forward || 0, item.reverse || 0]),
+  );
+  const table = document.createElement("table");
+  table.className = "route-history-table";
+  table.innerHTML = `<caption>Five-year modelled migration counts · both directions</caption><thead><tr><th scope="col">Period</th><th scope="col">${name(origin)} → ${name(destination)}</th><th scope="col">${name(destination)} → ${name(origin)}</th></tr></thead><tbody></tbody>`;
+  history.forEach((item) => {
+    const tr = document.createElement("tr");
+    const heading = document.createElement("th");
+    heading.scope = "row";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "history-period";
+    button.dataset.year = item.year;
+    button.textContent = period(item.year);
+    button.onclick = () => choosePeriod(item.year);
+    heading.append(button);
+    tr.append(heading);
+    for (const field of ["forward", "reverse"]) {
+      const td = document.createElement("td");
+      td.textContent = item.error
+        ? "Could not load"
+        : fullEstimate(item[field]);
+      if (item[field] !== undefined && item[field] > 0) {
+        const bar = document.createElement("span");
+        bar.className = "history-bar " + field;
+        bar.style.width = Math.max(1, (item[field] / max) * 100) + "%";
+        bar.setAttribute("aria-hidden", "true");
+        td.append(bar);
+      }
+      tr.append(td);
+    }
+    table.querySelector("tbody").append(tr);
+  });
+  $("#route-history").removeAttribute("role");
+  $("#route-history").replaceChildren(table);
+  if (history.some((item) => item.error)) {
+    const retry = document.createElement("button");
+    retry.textContent = "Retry unavailable periods";
+    retry.onclick = () => openRouteDetails(origin, destination);
+    $("#route-history").append(retry);
+  }
+  updateFigures();
 }
 function selectEvent(e) {
   state.event = e.id;
@@ -347,6 +562,11 @@ function detail() {
       r = rows.find((r) => r[0] === a && r[1] === b);
     $("#detail").innerHTML =
       `<span class="story-tag">MODELLED MIGRATION</span><h2 class="story-title">${name(a)}<br>→ ${name(b)}</h2><div class="big-value">${dataStatus === "loading" ? "Loading…" : dataStatus === "error" ? "Data unavailable" : fmt(r?.[2])}</div><div class="small">${period(state.year)} · estimated migrations<br>Approximate counts, not unique people across years.</div><div class="spark" aria-label="Migration trend across five-year periods"></div><div class="small trend-key">1960–64 → 2020–24 · hatched bars = unavailable</div><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · source ↗</a><p class="small">This model is least suitable for precise individual-route analysis. Official records should be preferred when available. Estimated zero does not prove no migration occurred. Modern boundaries provide geographic reference; arrows do not trace actual journeys.</p>`;
+    const more = document.createElement("button");
+    more.className = "sidebar-route-details";
+    more.textContent = "View migration details ↗";
+    more.onclick = () => openRouteDetails(a, b);
+    $("#detail").append(more);
     const key = a + b;
     Promise.all(
       Array.from({ length: 13 }, (_, i) => 1960 + i * 5).map(async (y) => {
@@ -557,7 +777,11 @@ Promise.all(
         o.value = c.code;
         o.textContent = c.name;
         $("#country").append(o);
+        $("#pair-origin").append(o.cloneNode(true));
+        $("#pair-destination").append(o.cloneNode(true));
       });
+    $("#pair-origin").value = "ITA";
+    $("#pair-destination").value = "POL";
     Object.values(countries).forEach(
       (c) => (centers[c.code] = projection(c.coordinates)),
     );

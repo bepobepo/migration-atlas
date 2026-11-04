@@ -405,20 +405,275 @@ test("tooltip stays within narrow map bounds and clicking another arrow updates 
       parseFloat(tip.style.top) >= 12 && parseFloat(tip.style.top) + 260 <= 388,
     );
     const previous = a.$(".tooltip-route").textContent;
-    a.w.document
-      .querySelectorAll(".arc-hit")[1]
-      .dispatchEvent(
-        new a.w.MouseEvent("click", {
-          bubbles: true,
-          detail: 1,
-          clientX: 12,
-          clientY: 22,
-        }),
-      );
+    a.w.document.querySelectorAll(".arc-hit")[1].dispatchEvent(
+      new a.w.MouseEvent("click", {
+        bubbles: true,
+        detail: 1,
+        clientX: 12,
+        clientY: 22,
+      }),
+    );
     assert.notEqual(a.$(".tooltip-route").textContent, previous);
     assert.equal(tip.style.left, "12px");
     assert.equal(tip.style.top, "16px");
   } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+
+test("Italy to Poland opens full migration details with both directions and every period", async () => {
+  const a = await boot();
+  try {
+    assert.equal(a.$("#pair-origin").value, "ITA");
+    assert.equal(a.$("#pair-destination").value, "POL");
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { bubbles: true, cancelable: true }),
+    );
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-dialog").open, true);
+    assert.equal(a.$("#route-view-title").textContent, "Italy → Poland");
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 28,800");
+    assert.equal(a.$("#route-reverse-count").textContent, "≈ 14,000");
+    assert.equal(a.w.document.querySelectorAll(".history-period").length, 15);
+    assert.match(
+      a.$("#route-context").textContent,
+      /No route-specific historical account/,
+    );
+    assert.ok(
+      [...a.w.document.querySelectorAll(".arc")].some(
+        (el) => el.__data__[0] === "ITA" && el.__data__[1] === "POL",
+      ),
+    );
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("migration details can open from a route card and an arrow tooltip", async () => {
+  const a = await boot();
+  try {
+    const label = a.$(".route-card strong").textContent;
+    a.$(".route-card").click();
+    await flush();
+    assert.equal(a.$("#route-view-title").textContent, label);
+    a.$("#route-close").click();
+    a.$(".arc-hit").dispatchEvent(
+      new a.w.MouseEvent("click", { bubbles: true, detail: 1 }),
+    );
+    const tooltipRoute = a.$(".tooltip-route").textContent;
+    a.$(".tooltip-details").click();
+    await flush();
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    assert.equal(a.$("#route-dialog").open, true);
+    assert.equal(a.$("#route-view-title").textContent, tooltipRoute);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("route detail period selection updates map and handles the historical gap", async () => {
+  const a = await boot();
+  try {
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    a.change("#route-period", "1950");
+    await flush();
+    assert.equal(a.api.state.year, 1950);
+    assert.equal(a.$("#route-forward-count").textContent, "No comparable data");
+    assert.equal(a.w.document.querySelectorAll(".arc").length, 0);
+    a.$('.history-period[data-year="2000"]').click();
+    await flush();
+    const data = JSON.parse(fs.readFileSync(path.join(root, "data/2000.json"))),
+      v = data.find((r) => r[0] === "ITA" && r[1] === "POL")[2];
+    assert.equal(
+      a.$("#route-forward-count").textContent,
+      "≈ " +
+        new Intl.NumberFormat("en", { maximumSignificantDigits: 3 }).format(v),
+    );
+    assert.equal(a.api.state.year, 2000);
+    assert.equal(
+      a.$('.history-period[data-year="2000"]').getAttribute("aria-pressed"),
+      "true",
+    );
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("reversing a pair updates its direction, data, map selection and country selectors", async () => {
+  const a = await boot();
+  try {
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    a.$("#route-reverse").click();
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-view-title").textContent, "Poland → Italy");
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 14,000");
+    assert.equal(a.$("#pair-origin").value, "POL");
+    assert.equal(a.$("#pair-destination").value, "ITA");
+    assert.deepEqual(Array.from(a.api.state.route), ["POL", "ITA"]);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("country-pair validation prevents same-country and out-of-scope routes", async () => {
+  const a = await boot();
+  const submit = () =>
+    a
+      .$("#pair-form")
+      .dispatchEvent(new a.w.Event("submit", { cancelable: true }));
+  try {
+    a.change("#pair-origin", "ITA");
+    a.change("#pair-destination", "ITA");
+    submit();
+    assert.match(a.$("#pair-error").textContent, /different countries/);
+    assert.equal(a.$("#route-dialog").open, false);
+    a.change("#pair-origin", "USA");
+    a.change("#pair-destination", "CAN");
+    submit();
+    assert.match(a.$("#pair-error").textContent, /European country/);
+    assert.equal(a.$("#route-dialog").open, false);
+    a.change("#pair-destination", "POL");
+    a.$("#pair-swap").click();
+    assert.equal(a.$("#pair-origin").value, "POL");
+    assert.equal(a.$("#pair-destination").value, "USA");
+    submit();
+    await flush();
+    assert.equal(a.$("#route-dialog").open, true);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("route-specific historical context excludes stories about other corridors", async () => {
+  const a = await boot();
+  try {
+    a.change("#pair-origin", "BLR");
+    a.change("#pair-destination", "POL");
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    assert.equal(
+      a.w.document.querySelectorAll(".route-context-card").length,
+      1,
+    );
+    assert.match(a.$("#route-context").textContent, /August 2020/);
+    assert.doesNotMatch(a.$("#route-context").textContent, /Syrian|Venezuela/);
+    assert.match(a.$("#route-context a").href, /gov.pl/);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("opening migration details pauses playback so the figures remain readable", async () => {
+  const a = await boot();
+  try {
+    a.$("#play").click();
+    await flush();
+    assert.equal(a.timers.size, 1);
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    assert.equal(a.timers.size, 0);
+    assert.equal(a.$("#route-dialog").open, true);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+
+test("late history responses and queued close events cannot replace the newest route", async () => {
+  let resolve;
+  const data = JSON.parse(fs.readFileSync(path.join(root, "data/2015.json")));
+  const a = await boot({
+    "data/2015.json": () => new Promise((r) => (resolve = r)),
+  });
+  try {
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    a.$("#route-close").click();
+    a.change("#pair-origin", "POL");
+    a.change("#pair-destination", "ITA");
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    a.$("#route-dialog").dispatchEvent(new a.w.Event("close"));
+    resolve({ ok: true, json: async () => data });
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-view-title").textContent, "Poland → Italy");
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 14,000");
+    assert.equal(a.w.document.querySelectorAll(".history-period").length, 15);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("route history separates fetch failures from data gaps and supports retry", async () => {
+  let fail = true;
+  const data = JSON.parse(fs.readFileSync(path.join(root, "data/2015.json")));
+  const a = await boot({
+    "data/2015.json": async () => {
+      if (fail) throw Error("offline");
+      return { ok: true, json: async () => data };
+    },
+  });
+  try {
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    assert.match(
+      a.$('.history-period[data-year="2015"]').closest("tr").textContent,
+      /Could not load/,
+    );
+    assert.match(
+      a.$('.history-period[data-year="1950"]').closest("tr").textContent,
+      /No comparable data/,
+    );
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 28,800");
+    fail = false;
+    a.$("#route-history > button").click();
+    await flush();
+    await flush();
+    assert.doesNotMatch(
+      a.$('.history-period[data-year="2015"]').closest("tr").textContent,
+      /Could not load/,
+    );
+    assert.equal(a.$("#route-history > button"), null);
+  } finally {
+    a.$("#route-close").click();
     a.api.state.route = null;
     await flush();
     a.dom.window.close();
