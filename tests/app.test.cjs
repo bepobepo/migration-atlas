@@ -41,7 +41,7 @@ async function boot(overrides = {}) {
       process.env.APP_UNDER_TEST || path.join(root, "app.js"),
       "utf8",
     ) +
-      "\nwindow.testAPI={state,cache,selectRoute,selectEvent,setYear,draw,get rows(){return rows},get centers(){return centers}};",
+      "\nwindow.testAPI={state,cache,selectRoute,selectEvent,setYear,setRange,loadRange,validateRange,draw,mapScale,updateMapSizing,get rows(){return rows},get centers(){return centers}};",
   );
   await flush();
   await flush();
@@ -929,7 +929,7 @@ test("Everywhere arrows show tooltips and ranked destinations open details with 
     a.dom.window.close();
   }
 });
-test("Everywhere ends on country, direction or story changes and validates the origin", async () => {
+test("Everywhere resets on filters and retains its range when reading an event", async () => {
   const a = await boot();
   try {
     chooseEverywhere(a, "");
@@ -953,9 +953,11 @@ test("Everywhere ends on country, direction or story changes and validates the o
     assert.ok(a.$(".event-btn"));
     a.$(".event-btn").click();
     await flush();
-    assert.equal(a.api.state.everywhere, false);
-    assert.equal(a.$("#everywhere-controls").hidden, true);
+    assert.equal(a.api.state.everywhere, true);
+    assert.equal(a.$("#everywhere-controls").hidden, false);
     assert.equal(a.$("#outgoing-total"), null);
+    a.$("#detail .all-destinations-link").click();
+    assert.ok(a.$("#outgoing-total"));
   } finally {
     a.api.state.route = null;
     await flush();
@@ -979,6 +981,293 @@ test("Everywhere loading and fetch failures never become an estimated zero", asy
     assert.match(a.$("#top-destinations").textContent, /could not be loaded/);
     await a.api.setYear(2020);
     assert.match(a.$("#outgoing-total").textContent, /≈/);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+
+test("arrows, heads and map points stay small at desktop and mobile zoom sizes", async () => {
+  const a = await boot();
+  try {
+    a.api.selectRoute(a.$(".arc-hit").__data__);
+    for (const box of [
+      { width: 1000, height: 540 },
+      { width: 360, height: 260 },
+    ]) {
+      a.$("#map").getBoundingClientRect = () => box;
+      a.$("#reset").click();
+      for (let i = 0; i < 6; i++) {
+        a.$("#zin").click();
+        const scale = a.api.mapScale();
+        for (const path of a.w.document.querySelectorAll(".arc")) {
+          assert.equal(
+            path.getAttribute("vector-effect"),
+            "non-scaling-stroke",
+          );
+          assert.ok(+path.getAttribute("stroke-width") <= 2.4);
+        }
+        for (const marker of a.w.document.querySelectorAll("marker")) {
+          assert.equal(marker.getAttribute("markerUnits"), "userSpaceOnUse");
+          assert.ok(
+            Math.abs(+marker.getAttribute("markerWidth") * scale - 7) < 0.00001,
+          );
+        }
+        assert.ok(
+          [...a.w.document.querySelectorAll(".country-point")].every(
+            (p) => Math.abs(+p.getAttribute("r") * scale - 2.5) < 0.00001,
+          ),
+        );
+        assert.ok(
+          a.$(".endpoint-label").getAttribute("transform").includes("scale("),
+        );
+      }
+    }
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("arbitrary inclusive ranges sum annual data exactly and retain the selected pair", async () => {
+  const a = await boot();
+  try {
+    await a.api.setRange(1999, 2003);
+    assert.equal(a.$("#period").textContent, "1999–2003");
+    assert.equal(
+      a.api.rows.find((r) => r[0] === "ITA" && r[1] === "FRA")[2],
+      146384.1,
+    );
+    a.change("#pair-origin", "ITA");
+    a.change("#pair-destination", "FRA");
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 146,000");
+    assert.equal(a.$("#route-period").value, "custom");
+    assert.equal(a.$(".route-stat-period").textContent, "1999–2003");
+    a.change("#route-range-start", "2021");
+    a.change("#route-range-end", "2021");
+    a.$("#route-range-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 15,200");
+    assert.equal(
+      a.api.rows.find((r) => r[0] === "ITA" && r[1] === "FRA")[2],
+      15237.9,
+    );
+    assert.equal(a.$("#period").textContent, "2021");
+    assert.equal(a.$("#range-start").value, "2021");
+    a.$("#route-close").click();
+    a.$('.arc-hit[data-route="ITA-FRA"]').dispatchEvent(
+      new a.w.MouseEvent("click", { bubbles: true, detail: 1 }),
+    );
+    assert.equal(a.$(".tooltip-period").textContent, "2021");
+    assert.match(a.$(".tooltip-note").textContent, /1 calendar year/);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("custom ranges agree with existing five-year data and combine chunks without overlap", async () => {
+  const a = await boot();
+  try {
+    const existing = Array.from(a.api.rows, (r) => Array.from(r));
+    await a.api.setRange(2020, 2024);
+    assert.deepEqual(
+      Array.from(a.api.rows, (r) => Array.from(r)),
+      existing,
+    );
+    const ranges = await Promise.all([
+      a.api.loadRange(1999, 2010),
+      a.api.loadRange(1999, 2003),
+      a.api.loadRange(2004, 2010),
+    ]);
+    const map = (r) =>
+      new Map(r.map(([a, b, v]) => [a + ":" + b, Math.round(v * 10)]));
+    const [whole, left, right] = ranges.map(map);
+    assert.equal(whole.size, 14792);
+    for (const [key, value] of whole)
+      assert.equal(value, left.get(key) + right.get(key));
+    await a.api.setRange(1960, 2024);
+    assert.equal(a.api.rows.length, 14792);
+    assert.equal(a.$("#period").textContent, "1960–2024");
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("incoming totals include only immigration and historical drivers overlap the range", async () => {
+  const a = await boot();
+  try {
+    a.change("#country", "POL");
+    a.$('[data-dir="in"]').click();
+    await a.api.setRange(2020, 2022);
+    assert.equal(a.$("#incoming-total").textContent, "≈ 1,380,000");
+    assert.equal(
+      Math.round(
+        a.api.rows
+          .filter((r) => r[1] === "POL")
+          .reduce((sum, r) => sum + r[2], 0) * 10,
+      ),
+      13759265,
+    );
+    assert.match(a.$("#events").textContent, /Beyond the border/);
+    assert.match(a.$("#events").textContent, /Forced to leave/);
+    a.change("#pair-origin", "BLR");
+    a.change("#pair-destination", "POL");
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 13,700");
+    assert.match(a.$("#route-context").textContent, /Beyond the border/);
+    assert.doesNotMatch(a.$("#route-context").textContent, /Forced to leave/);
+    assert.match(
+      a.$("#route-context").textContent,
+      /does not attribute a number/,
+    );
+    await a.api.setRange(2018, 2019);
+    assert.equal(
+      a.w.document.querySelectorAll(".route-context-card").length,
+      0,
+    );
+    assert.match(
+      a.$("#route-context").textContent,
+      /No route-specific historical account/,
+    );
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("invalid year ranges do not replace the current selection; valid form ranges pause playback", async () => {
+  const a = await boot();
+  try {
+    for (const [start, end] of [
+      [2024, 2020],
+      [1959, 2024],
+      [1960, 2025],
+      [2020.5, 2024],
+      ["", 2024],
+    ]) {
+      a.change("#range-start", String(start));
+      a.change("#range-end", String(end));
+      a.$("#range-form").dispatchEvent(
+        new a.w.Event("submit", { cancelable: true }),
+      );
+      assert.equal(a.$("#range-error").hidden, false);
+      assert.equal(a.$("#period").textContent, "2020–2024");
+    }
+    a.$("#play").click();
+    a.change("#range-start", "2020");
+    a.change("#range-end", "2022");
+    a.$("#range-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    assert.equal(a.timers.size, 0);
+    assert.equal(a.$("#range-error").hidden, true);
+    assert.equal(a.$("#period").textContent, "2020–2022");
+    a.$("#next").click();
+    await flush();
+    assert.equal(a.api.state.customRange, false);
+    assert.equal(a.$("#period").textContent, "2020–2024");
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("annual range failures and incomplete corridors show no partial totals and can be retried", async () => {
+  let fail = true;
+  const data = JSON.parse(
+    fs.readFileSync(path.join(root, "data/annual/2021.json")),
+  );
+  const a = await boot({
+    "data/annual/2021.json": async () => {
+      if (fail) throw Error("offline");
+      return { ok: true, json: async () => data };
+    },
+  });
+  try {
+    chooseEverywhere(a, "ITA");
+    await a.api.setRange(2020, 2022);
+    assert.equal(a.$("#outgoing-total").textContent, "Could not load");
+    assert.equal(a.api.rows.length, 0);
+    fail = false;
+    await a.api.setRange(2020, 2022);
+    assert.match(a.$("#outgoing-total").textContent, /≈/);
+    assert.equal(a.api.rows.length, 14792);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+  const b = await boot({
+    "data/annual/2021.json": async () => ({
+      ok: true,
+      json: async () => data.slice(1),
+    }),
+  });
+  try {
+    await b.api.setRange(2020, 2022);
+    assert.equal(b.api.rows.length, 0);
+    assert.match(b.$("#map-status").textContent, /no partial total/);
+  } finally {
+    b.api.state.route = null;
+    await flush();
+    b.dom.window.close();
+  }
+});
+test("a late custom range cannot overwrite a more recent selection", async () => {
+  let resolve;
+  const a = await boot({
+    "data/annual/2021.json": () => new Promise((r) => (resolve = r)),
+  });
+  try {
+    const pending = a.api.setRange(2021, 2021);
+    await a.api.setYear(2015);
+    resolve({
+      ok: true,
+      json: async () =>
+        JSON.parse(fs.readFileSync(path.join(root, "data/annual/2021.json"))),
+    });
+    await pending;
+    assert.equal(a.$("#period").textContent, "2015–2019");
+    assert.equal(a.api.state.endYear, 2019);
+    assert.equal(a.api.state.customRange, false);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("countries without source coverage are explicitly labelled and never become zero", async () => {
+  const a = await boot();
+  try {
+    assert.match(
+      a.$('#country option[value="GRL"]').textContent,
+      /no estimates/,
+    );
+    a.change("#country", "GRL");
+    a.$('[data-dir="in"]').click();
+    await a.api.setRange(2020, 2022);
+    assert.equal(a.$("#incoming-total").textContent, "No comparable data");
+    assert.match(a.$("#top-destinations").textContent, /no estimates in FLOW/);
+    assert.equal(a.w.document.querySelectorAll(".arc").length, 0);
   } finally {
     a.api.state.route = null;
     await flush();

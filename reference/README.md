@@ -10,3 +10,7 @@ Country keys prefer ISO_A3_EH, then ISO_A3; retain Natural Earth's identifier fo
 Migration records keep their original source ISO3 keys. Europe membership is the explicit UN M49 country/area set in prepare.py. No migration values are allocated to disputed map subdivisions.
 
 The rendered polygons use Natural Earth's 110m countries. Label points provide consistent schematic endpoints, including small countries omitted at 110m. They do not represent actual border crossings or travel paths.
+
+`un-m49.json` is the English country-code and region table from https://unstats.un.org/unsd/methodology/m49/overview/, retrieved 2026-11-04 (248 country/area entries). It provides an independent check on all 194 FLOW country codes and their Europe membership. `name-aliases.json` pins the 27 reviewed display-name differences, such as South Korea / Republic of Korea and United Kingdom / United Kingdom of Great Britain and Northern Ireland. Any other name mismatch fails the tests instead of silently becoming an alias.
+
+`tests/geography_audit.py` independently indexes the pinned Natural Earth source by ADM0_A3 and explicitly handles ESH/SAH, PSE/PSX, SSD/SDS and XKX/KOS. It verifies all 205 published map names and endpoints and all 177 polygon labels. It does not reuse the reference extractor's ISO grouping logic. The migration selectors mark the 11 map features absent from FLOW as having no estimates; they must never be read as estimated zeros.

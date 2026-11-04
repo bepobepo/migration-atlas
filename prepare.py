@@ -36,7 +36,9 @@ def build(source, geometry, output):
         add_country(code)
         feature['properties'] = {key: countries[code][key] for key in ('code', 'name', 'europe')}
     aggregates = collections.defaultdict(int)
+    annual = collections.defaultdict(int)
     coverage = collections.defaultdict(int)
+    data_countries = set()
     with source.open(newline='') as file:
         for row in csv.DictReader(file):
             a, b = row['Origin'], row['Destination']
@@ -53,21 +55,28 @@ def build(source, geometry, output):
             assert not coverage[key] & bit, f'Duplicate year/sex record: {key}'
             coverage[key] |= bit
             aggregates[key] += int(value * 10)
+            annual[year, a, b] += int(value * 10)
+            data_countries.update((a, b))
             if a not in countries: add_country(a)
             if b not in countries: add_country(b)
     assert all(mask == 1023 for mask in coverage.values()), 'Incomplete year/sex coverage'
     assert {k[0] for k in aggregates} == set(range(1960, 2025, 5))
     # Write only after the entire source and metadata pass validation.
     output.mkdir(parents=True, exist_ok=True)
+    (output / 'annual').mkdir(exist_ok=True)
+    for code, metadata in countries.items():
+        metadata['hasData'] = code in data_countries
     def save(filename, data):
         temporary = output / (filename + '.tmp')
         temporary.write_text(json.dumps(data, separators=(',', ':')))
         temporary.replace(output / filename)
     for period in range(1960, 2025, 5):
         save(f'{period}.json', [[a, b, value / 10] for (p, a, b), value in aggregates.items() if p == period])
+    for year in range(1960, 2025):
+        save(f'annual/{year}.json', [[a, b, value / 10] for (y, a, b), value in annual.items() if y == year])
     save('countries.json', countries)
     save('world.json', world)
-    print(f'Validated and exported {len(aggregates):,} corridor-period aggregates; all have 10 distinct year/sex observations.')
+    print(f'Validated and exported {len(aggregates):,} five-year and {len(annual):,} annual aggregates; complete year/sex coverage.')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
