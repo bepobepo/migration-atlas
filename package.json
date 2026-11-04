@@ -1,0 +1,10 @@
+{
+  "name": "migration-atlas",
+  "private": true,
+  "scripts": {
+    "test": "node tests/app.test.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}
