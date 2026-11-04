@@ -273,6 +273,158 @@ test("controls wait for required assets instead of throwing during startup", asy
     a.dom.window.close();
   }
 });
+test("arrow clicks open a tooltip with the selected route, period, estimate and source", async () => {
+  const a = await boot();
+  try {
+    const hit = a.$(".arc-hit");
+    const [origin, destination, value] = hit.__data__;
+    const metadata = JSON.parse(
+      fs.readFileSync(path.join(root, "data/countries.json")),
+    );
+    hit.dispatchEvent(
+      new a.w.MouseEvent("click", {
+        bubbles: true,
+        detail: 1,
+        clientX: 250,
+        clientY: 180,
+      }),
+    );
+    assert.equal(a.$("#migration-tooltip").hidden, false);
+    assert.equal(
+      a.$(".tooltip-route").textContent,
+      `${metadata[origin].name} → ${metadata[destination].name}`,
+    );
+    assert.equal(a.$(".tooltip-period").textContent, "2020–2024");
+    assert.equal(
+      a.$(".tooltip-value").textContent,
+      "≈ " +
+        new Intl.NumberFormat("en", { maximumSignificantDigits: 3 }).format(
+          value,
+        ),
+    );
+    assert.match(a.$("#migration-tooltip .source").href, /data.humdata.org/);
+    assert.equal(
+      a.$('.arc-hit[aria-expanded="true"]').dataset.route,
+      `${origin}-${destination}`,
+    );
+    assert.deepEqual(Array.from(a.api.state.route), [origin, destination]);
+    assert.match(a.$("#detail").textContent, /MODELLED MIGRATION/);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("arrow tooltip supports Enter, Space, Escape and close-button focus return", async () => {
+  const a = await boot();
+  try {
+    const key = a.$(".arc-hit").dataset.route;
+    a.$(".arc-hit").dispatchEvent(
+      new a.w.KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+    assert.equal(a.w.document.activeElement, a.$(".tooltip-close"));
+    a.w.document.dispatchEvent(
+      new a.w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    assert.equal(a.w.document.activeElement.dataset.route, key);
+    a.w.document.activeElement.dispatchEvent(
+      new a.w.KeyboardEvent("keydown", { key: " ", bubbles: true }),
+    );
+    assert.equal(a.$("#migration-tooltip").hidden, false);
+    a.$(".tooltip-close").click();
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    assert.equal(a.w.document.activeElement.dataset.route, key);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("tooltip closes on outside taps, period changes, filters and zoom", async () => {
+  const a = await boot();
+  const open = () =>
+    a
+      .$(".arc-hit")
+      .dispatchEvent(new a.w.MouseEvent("click", { bubbles: true, detail: 1 }));
+  try {
+    open();
+    a.$("#migration-tooltip").dispatchEvent(
+      new a.w.Event("pointerdown", { bubbles: true }),
+    );
+    assert.equal(
+      a.$("#migration-tooltip").hidden,
+      false,
+      "inside taps retain the popup",
+    );
+    a.$("#map").dispatchEvent(new a.w.Event("pointerdown", { bubbles: true }));
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    open();
+    await a.api.setYear(2015);
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    open();
+    a.$('[data-dir="in"]').click();
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    open();
+    a.$("#zin").click();
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("tooltip stays within narrow map bounds and clicking another arrow updates its data", async () => {
+  const a = await boot();
+  try {
+    a.$(".map-wrap").getBoundingClientRect = () => ({
+      left: 10,
+      top: 20,
+      width: 300,
+      height: 400,
+    });
+    a.$("#migration-tooltip").getBoundingClientRect = () => ({
+      width: 276,
+      height: 260,
+    });
+    const hits = [...a.w.document.querySelectorAll(".arc-hit")];
+    hits[0].dispatchEvent(
+      new a.w.MouseEvent("click", {
+        bubbles: true,
+        detail: 1,
+        clientX: 308,
+        clientY: 418,
+      }),
+    );
+    const tip = a.$("#migration-tooltip");
+    assert.ok(
+      parseFloat(tip.style.left) >= 12 &&
+        parseFloat(tip.style.left) + 276 <= 288,
+    );
+    assert.ok(
+      parseFloat(tip.style.top) >= 12 && parseFloat(tip.style.top) + 260 <= 388,
+    );
+    const previous = a.$(".tooltip-route").textContent;
+    a.w.document
+      .querySelectorAll(".arc-hit")[1]
+      .dispatchEvent(
+        new a.w.MouseEvent("click", {
+          bubbles: true,
+          detail: 1,
+          clientX: 12,
+          clientY: 22,
+        }),
+      );
+    assert.notEqual(a.$(".tooltip-route").textContent, previous);
+    assert.equal(tip.style.left, "12px");
+    assert.equal(tip.style.top, "16px");
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+
 (async () => {
   let failed = 0;
   for (const t of tests) {

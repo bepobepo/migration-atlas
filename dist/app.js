@@ -23,6 +23,88 @@ const dataControls = [
   ),
 ];
 dataControls.forEach((control) => (control.disabled = true));
+const mapTooltip = document.createElement("section");
+mapTooltip.id = "migration-tooltip";
+mapTooltip.className = "migration-tooltip";
+mapTooltip.hidden = true;
+mapTooltip.setAttribute("role", "dialog");
+mapTooltip.setAttribute("aria-label", "Migration connection details");
+mapTooltip.innerHTML =
+  '<button class="tooltip-close" type="button" aria-label="Close migration tooltip">×</button><div class="eyebrow">MODELLED MIGRATION</div><h3 class="tooltip-route"></h3><div class="tooltip-period"></div><div class="tooltip-value"></div><p class="tooltip-note">Estimated migrations over five years. May include repeat migrants; individual-route estimates can differ from official records.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · data source ↗</a>';
+$(".map-wrap").append(mapTooltip);
+let tooltipRoute = null;
+function hideMapTooltip(restoreFocus = false) {
+  const wasOpen = !mapTooltip.hidden;
+  mapTooltip.hidden = true;
+  document
+    .querySelectorAll(".arc-hit")
+    .forEach((el) => el.setAttribute("aria-expanded", "false"));
+  if (wasOpen && restoreFocus && tooltipRoute) {
+    const trigger = [...document.querySelectorAll(".arc-hit")].find(
+      (el) => el.dataset.route === tooltipRoute,
+    );
+    trigger?.focus({ preventScroll: true });
+  }
+  tooltipRoute = null;
+}
+function showMapTooltip(event, route) {
+  event.stopPropagation();
+  const keyboard = event.type === "keydown" || event.detail === 0;
+  const anchor = event.currentTarget?.getBoundingClientRect();
+  selectRoute(route);
+  tooltipRoute = route[0] + "-" + route[1];
+  mapTooltip.querySelector(".tooltip-route").textContent =
+    `${name(route[0])} → ${name(route[1])}`;
+  mapTooltip.querySelector(".tooltip-period").textContent = period(state.year);
+  mapTooltip.querySelector(".tooltip-value").textContent =
+    "≈ " +
+    new Intl.NumberFormat("en", { maximumSignificantDigits: 3 }).format(
+      route[2],
+    );
+  mapTooltip.hidden = false;
+  const box = $(".map-wrap").getBoundingClientRect();
+  const size = mapTooltip.getBoundingClientRect();
+  const x = keyboard
+    ? anchor
+      ? (anchor.left + anchor.right) / 2
+      : box.left + box.width / 2
+    : event.clientX;
+  const y = keyboard
+    ? anchor
+      ? (anchor.top + anchor.bottom) / 2
+      : box.top + box.height / 2
+    : event.clientY;
+  const left =
+    x - box.left + 14 + size.width <= box.width - 12
+      ? x - box.left + 14
+      : x - box.left - size.width - 14;
+  const top =
+    y - box.top + 14 + size.height <= box.height - 12
+      ? y - box.top + 14
+      : y - box.top - size.height - 14;
+  mapTooltip.style.left =
+    Math.max(12, Math.min(left, box.width - size.width - 12)) + "px";
+  mapTooltip.style.top =
+    Math.max(12, Math.min(top, box.height - size.height - 12)) + "px";
+  const trigger = [...document.querySelectorAll(".arc-hit")].find(
+    (el) => el.dataset.route === tooltipRoute,
+  );
+  trigger?.setAttribute("aria-expanded", "true");
+  if (keyboard)
+    mapTooltip.querySelector(".tooltip-close").focus({ preventScroll: true });
+}
+mapTooltip.querySelector(".tooltip-close").onclick = () => hideMapTooltip(true);
+document.addEventListener("pointerdown", (event) => {
+  if (!mapTooltip.hidden && !mapTooltip.contains(event.target))
+    hideMapTooltip();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !mapTooltip.hidden) {
+    event.preventDefault();
+    hideMapTooltip(true);
+  }
+});
+window.addEventListener("resize", () => hideMapTooltip());
 const fmt = (v) =>
     v === undefined
       ? "No comparable data"
@@ -53,7 +135,10 @@ let zoom = d3
     [1000, 540],
   ])
   .scaleExtent([1, 7])
-  .on("zoom", (e) => g.attr("transform", e.transform));
+  .on("zoom", (e) => {
+    hideMapTooltip();
+    g.attr("transform", e.transform);
+  });
 svg.call(zoom);
 const defs = svg.append("defs");
 ["#287e78", "#cf7956", "#8d7ba4"].forEach((c, i) =>
@@ -89,6 +174,7 @@ function curve(a, b) {
   return `M${a}Q${(a[0] + b[0]) / 2 - dy * 0.2},${(a[1] + b[1]) / 2 + dx * 0.2} ${b[0] - (dx / l) * 4},${b[1] - (dy / l) * 4}`;
 }
 function draw() {
+  hideMapTooltip();
   const all = rows.filter(matches).sort((a, b) => b[2] - a[2]),
     shown = all.filter((r) => r[2] > 0).slice(0, 30);
   if (state.route) {
@@ -104,8 +190,8 @@ function draw() {
     "selected",
     (d) => d.properties.code === state.country,
   );
-  g.append("g")
-    .attr("class", "flow-layer")
+  const flowLayer = g.append("g").attr("class", "flow-layer");
+  flowLayer
     .selectAll("path")
     .data(shown)
     .join("path")
@@ -116,9 +202,34 @@ function draw() {
       Math.min(10, Math.max(0.7, Math.sqrt(r[2] / 100000))),
     )
     .attr("marker-end", (r) => `url(#arrow${color(r)})`)
-    .on("click", (e, r) => selectRoute(r))
+    .attr("aria-hidden", "true")
+    .on("click", (e, r) => showMapTooltip(e, r))
     .append("title")
     .text((r) => `${name(r[0])} → ${name(r[1])}: ${fmt(r[2])}`);
+  flowLayer
+    .selectAll(".arc-hit")
+    .data(shown)
+    .join("path")
+    .attr("class", "arc-hit")
+    .attr("d", (r) => curve(centers[r[0]], centers[r[1]]))
+    .attr("data-route", (r) => r[0] + "-" + r[1])
+    .attr("tabindex", 0)
+    .attr("role", "button")
+    .attr(
+      "aria-label",
+      (r) =>
+        `${name(r[0])} to ${name(r[1])}, ${period(state.year)}, ${fmt(r[2])} estimated migrations. Open details.`,
+    )
+    .attr("aria-controls", "migration-tooltip")
+    .attr("aria-haspopup", "dialog")
+    .attr("aria-expanded", "false")
+    .on("click", (event, route) => showMapTooltip(event, route))
+    .on("keydown", (event, route) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showMapTooltip(event, route);
+      }
+    });
   const ev = events[state.event];
   if (ev) {
     const a = ev.id === 0 ? projection([-16, 28]) : centers[ev.origin],
