@@ -680,6 +680,221 @@ test("route history separates fetch failures from data gaps and supports retry",
   }
 });
 
+function chooseEverywhere(a, origin) {
+  a.change("#pair-origin", origin);
+  a.change("#pair-destination", "everywhere");
+  a.$("#pair-form").dispatchEvent(
+    new a.w.Event("submit", { cancelable: true }),
+  );
+}
+test("Everywhere clears old filters and displays every positive outgoing route", async () => {
+  const a = await boot();
+  try {
+    a.change("#search", "Belarus", "input");
+    chooseEverywhere(a, "ITA");
+    assert.equal(a.api.state.country, "ITA");
+    assert.equal(a.api.state.dir, "out");
+    assert.equal(a.api.state.everywhere, true);
+    assert.equal(a.api.state.route, null);
+    assert.equal(a.api.state.event, null);
+    assert.equal(a.$("#search").value, "");
+    assert.equal(a.$("#route-dialog").open, false);
+    assert.equal(a.$("#everywhere-controls").hidden, false);
+    assert.equal(a.$("#pair-swap").disabled, true);
+    assert.equal(a.$("#pair-open").textContent, "Show all destinations ↗");
+    const expected = a.api.rows
+      .filter((r) => r[0] === "ITA" && r[2] > 0)
+      .map((r) => r[0] + "-" + r[1])
+      .sort();
+    const actual = [...a.w.document.querySelectorAll(".arc-hit")]
+      .map((p) => p.dataset.route)
+      .sort();
+    assert.ok(expected.length > 30);
+    assert.deepEqual(actual, Array.from(expected));
+    assert.equal(a.w.document.querySelectorAll(".arc").length, expected.length);
+    assert.ok(
+      [...a.w.document.querySelectorAll(".arc")].every(
+        (p) => p.getAttribute("d") && !p.getAttribute("d").includes("NaN"),
+      ),
+    );
+    assert.match(a.$("#outgoing-scope").textContent, /Worldwide destinations/);
+    assert.equal(a.$("#outgoing-total").textContent, "≈ 1,720,000");
+    assert.equal(a.$("#route-count").textContent, "193 available");
+    const total = a.$("#outgoing-total").textContent;
+    a.$("#show-all-routes").click();
+    assert.equal(a.w.document.querySelectorAll(".arc").length, 30);
+    assert.match(a.$("#coverage").textContent, /30 largest/);
+    assert.equal(a.$("#outgoing-total").textContent, total);
+    a.$("#show-all-routes").click();
+    assert.equal(a.w.document.querySelectorAll(".arc").length, expected.length);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("Everywhere keeps non-European origins within the declared Stage 1 coverage", async () => {
+  const a = await boot();
+  try {
+    chooseEverywhere(a, "COL");
+    assert.match(
+      a.$("#pair-coverage").textContent,
+      /European destinations only/,
+    );
+    assert.match(
+      a.$("#outgoing-scope").textContent,
+      /European destinations only/,
+    );
+    assert.match(a.$("#outgoing-scope").textContent, /not a worldwide total/);
+    assert.match(a.$("#coverage").textContent, /Europe only/);
+    assert.equal(a.$("#outgoing-total").textContent, "≈ 321,000");
+    assert.equal(a.$("#route-count").textContent, "43 available");
+    const countries = JSON.parse(
+      fs.readFileSync(path.join(root, "data/countries.json")),
+    );
+    assert.ok(
+      [...a.w.document.querySelectorAll(".arc-hit")].every(
+        (p) => countries[p.__data__[1]].europe && p.__data__[0] === "COL",
+      ),
+    );
+    assert.equal(a.$('.arc-hit[data-route="COL-ESP"]') !== null, true);
+    assert.equal(a.$('.arc-hit[data-route="COL-VEN"]'), null);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("Everywhere totals survive destination search and timeline gaps stay unavailable", async () => {
+  const a = await boot();
+  try {
+    chooseEverywhere(a, "ITA");
+    const total = a.$("#outgoing-total").textContent;
+    a.change("#search", "Poland", "input");
+    assert.equal(a.$("#outgoing-total").textContent, total);
+    assert.equal(a.w.document.querySelectorAll(".arc").length, 1);
+    assert.equal(a.$(".arc-hit").dataset.route, "ITA-POL");
+    assert.match(
+      a.$("#detail").textContent,
+      /total includes all covered destinations/,
+    );
+    await a.api.setYear(1950);
+    assert.equal(a.$("#outgoing-total").textContent, "No comparable data");
+    assert.equal(a.w.document.querySelectorAll(".arc").length, 0);
+    assert.equal(a.w.document.querySelectorAll(".destination-card").length, 0);
+    assert.match(a.$("#top-destinations").textContent, /begin in 1960/);
+    await a.api.setYear(2015);
+    assert.match(a.$("#detail").textContent, /2015–2019/);
+    assert.equal(a.$("#outgoing-total").textContent, "≈ 2,150,000");
+    assert.notEqual(a.$("#outgoing-total").textContent, total);
+    assert.equal(a.w.document.querySelectorAll(".destination-card").length, 5);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("Everywhere arrows show tooltips and ranked destinations open details with a way back", async () => {
+  const a = await boot();
+  try {
+    chooseEverywhere(a, "ITA");
+    a.$('.arc-hit[data-route="ITA-POL"]').dispatchEvent(
+      new a.w.KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+    assert.equal(a.$("#migration-tooltip").hidden, false);
+    assert.equal(a.$(".tooltip-route").textContent, "Italy → Poland");
+    assert.equal(a.$(".tooltip-value").textContent, "≈ 28,800");
+    a.$("#detail .all-destinations-link").click();
+    assert.equal(a.api.state.route, null);
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    const largest = [...a.api.rows]
+      .filter((r) => r[0] === "ITA")
+      .sort((a, b) => b[2] - a[2])[0];
+    assert.equal(a.$(".destination-card").dataset.destination, largest[1]);
+    a.$(".destination-card").click();
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-dialog").open, true);
+    assert.deepEqual(Array.from(a.api.state.route), ["ITA", largest[1]]);
+    assert.equal(a.api.state.everywhere, false);
+    assert.equal(a.$("#pair-swap").disabled, false);
+    a.$("#route-all-destinations").click();
+    assert.equal(a.$("#route-dialog").open, false);
+    assert.equal(a.api.state.everywhere, true);
+    assert.equal(a.api.state.route, null);
+    assert.equal(a.$("#pair-destination").value, "everywhere");
+    a.change("#pair-destination", "POL");
+    assert.equal(a.$("#pair-swap").disabled, false);
+    assert.equal(a.$("#pair-coverage").hidden, true);
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    assert.equal(a.$("#route-view-title").textContent, "Italy → Poland");
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("Everywhere ends on country, direction or story changes and validates the origin", async () => {
+  const a = await boot();
+  try {
+    chooseEverywhere(a, "");
+    assert.equal(a.$("#pair-error").hidden, false);
+    assert.match(a.$("#pair-error").textContent, /Choose an origin/);
+    assert.equal(a.api.state.everywhere, false);
+    chooseEverywhere(a, "ITA");
+    a.$('[data-dir="in"]').click();
+    assert.equal(a.api.state.everywhere, false);
+    assert.equal(a.$("#everywhere-controls").hidden, true);
+    assert.equal(a.$("#outgoing-total"), null);
+    assert.ok(
+      [...a.w.document.querySelectorAll(".arc-hit")].every(
+        (p) => p.__data__[1] === "ITA",
+      ),
+    );
+    chooseEverywhere(a, "ITA");
+    a.change("#country", "POL");
+    assert.equal(a.api.state.everywhere, false);
+    chooseEverywhere(a, "BLR");
+    assert.ok(a.$(".event-btn"));
+    a.$(".event-btn").click();
+    await flush();
+    assert.equal(a.api.state.everywhere, false);
+    assert.equal(a.$("#everywhere-controls").hidden, true);
+    assert.equal(a.$("#outgoing-total"), null);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+test("Everywhere loading and fetch failures never become an estimated zero", async () => {
+  let reject;
+  const a = await boot({
+    "data/2015.json": () => new Promise((_, r) => (reject = r)),
+  });
+  try {
+    chooseEverywhere(a, "ITA");
+    const pending = a.api.setYear(2015);
+    assert.equal(a.$("#outgoing-total").textContent, "Loading…");
+    assert.equal(a.w.document.querySelectorAll(".destination-card").length, 0);
+    reject(Error("offline"));
+    await pending;
+    assert.equal(a.$("#outgoing-total").textContent, "Could not load");
+    assert.equal(a.w.document.querySelectorAll(".arc").length, 0);
+    assert.match(a.$("#top-destinations").textContent, /could not be loaded/);
+    await a.api.setYear(2020);
+    assert.match(a.$("#outgoing-total").textContent, /≈/);
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+
 (async () => {
   let failed = 0;
   for (const t of tests) {

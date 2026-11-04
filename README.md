@@ -10,6 +10,8 @@ Obtain https://osf.io/download/p58ay/ as `/tmp/flow.csv`, and Natural Earth's `n
 
 Names and schematic map endpoints are pinned in `reference/countries.json`; provenance is in `reference/README.md`. Natural Earth is public domain. D3 v7 uses the ISC license.
 
+Choose an origin under **From** and **Everywhere** under **To** to explore all covered outgoing destinations. This view shows every positive estimate on the map by default, with an option to limit arrows to the largest 30, and a total for the five-year period. Search and the arrow limit do not change the total. Click an arrow for its tooltip or a destination for full migration details; the details include a link back to all destinations. Origins outside Europe cover European destinations only in stage 1, and their totals are explicitly labelled accordingly.
+
 ## Checks
 
 Run `npm ci && npm test` for DOM integration tests. Run `python tests/data_test.py /path/to/flow.csv` to independently reconcile all exported values and metadata. `node --check dist/app.js` validates JavaScript syntax. DOM checks do not replace full browser visual and accessibility testing.

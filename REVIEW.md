@@ -27,4 +27,6 @@ Historical event periods are editorial focus periods, not proof of exact wave st
 
 ## Validation limits
 
-Eleven DOM integration checks cover initialization, map routes, small-country selection, playback, direction filters, event navigation, chart rendering, loading races, failures/retry, estimated zero and zoom controls. The deployment's existing desktop screenshot was inspected. Live browser automation was unavailable under the Sites environment's prescribed preview workflow, so full browser/mobile layout, touch interactions and screen-reader behavior remain unverified.
+Thirty DOM integration checks cover initialization, map routes, small-country selection, playback, direction filters, event navigation, chart rendering, loading races, failures/retry, estimated zero, zoom controls, arrow tooltips, country-pair details and the Everywhere destination view. Everywhere checks include all outgoing arrows, the largest-30 toggle, independently calculated Italy/Colombia totals, European-only coverage for non-European origins, timeline gaps, destination search, drilldown/return, and changing filters. Existing data files are unchanged by these interaction additions.
+
+The deployment's existing desktop screenshot was inspected during the initial review. Live browser automation was unavailable under the Sites environment's prescribed preview workflow, so full browser/mobile layout, touch interactions and screen-reader behavior remain unverified.
