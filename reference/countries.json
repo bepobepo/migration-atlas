@@ -147,10 +147,10 @@
     ]
   },
   "FRA": {
-    "name": "Clipperton Island",
+    "name": "France",
     "coordinates": [
-      -109.22045,
-      10.297324
+      2.552275,
+      46.696113
     ]
   },
   "SUR": {
@@ -287,10 +287,10 @@
     ]
   },
   "KAZ": {
-    "name": "Baikonur",
+    "name": "Kazakhstan",
     "coordinates": [
-      63.383897,
-      45.978332
+      68.685548,
+      49.054149
     ]
   },
   "TJK": {
@@ -308,10 +308,10 @@
     ]
   },
   "BRA": {
-    "name": "Brazilian Island",
+    "name": "Brazil",
     "coordinates": [
-      -57.623042,
-      -30.187555
+      -49.55945,
+      -12.098687
     ]
   },
   "URY": {
@@ -1218,10 +1218,10 @@
     ]
   },
   "AUS": {
-    "name": "Ashmore and Cartier Islands",
+    "name": "Australia",
     "coordinates": [
-      123.586368,
-      -12.432571
+      134.04972,
+      -24.129522
     ]
   },
   "GRL": {

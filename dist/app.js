@@ -42,6 +42,7 @@ tooltipDetails.onclick = () => {
 };
 mapTooltip.append(tooltipDetails);
 let tooltipRoute = null;
+let tooltipOpenedWithKeyboard = false;
 function hideMapTooltip(restoreFocus = false) {
   const wasOpen = !mapTooltip.hidden;
   mapTooltip.hidden = true;
@@ -53,8 +54,13 @@ function hideMapTooltip(restoreFocus = false) {
       (el) => el.dataset.route === tooltipRoute,
     );
     trigger?.focus({ preventScroll: true });
+  } else if (wasOpen && mapTooltip.contains(document.activeElement)) {
+    // A touch dismissal should not focus an SVG path: mobile browsers may
+    // paint a large native focus rectangle around its transformed bounds.
+    document.activeElement.blur();
   }
   tooltipRoute = null;
+  tooltipOpenedWithKeyboard = false;
 }
 function showMapTooltip(event, route) {
   event.stopPropagation();
@@ -62,6 +68,7 @@ function showMapTooltip(event, route) {
   const anchor = event.currentTarget?.getBoundingClientRect();
   selectRoute(route);
   tooltipRoute = route[0] + "-" + route[1];
+  tooltipOpenedWithKeyboard = keyboard;
   mapTooltip.querySelector(".tooltip-route").textContent =
     `${name(route[0])} → ${name(route[1])}`;
   mapTooltip.querySelector(".tooltip-period").textContent = period(state.year);
@@ -102,7 +109,8 @@ function showMapTooltip(event, route) {
   if (keyboard)
     mapTooltip.querySelector(".tooltip-close").focus({ preventScroll: true });
 }
-mapTooltip.querySelector(".tooltip-close").onclick = () => hideMapTooltip(true);
+mapTooltip.querySelector(".tooltip-close").onclick = (event) =>
+  hideMapTooltip(tooltipOpenedWithKeyboard || event.detail === 0);
 document.addEventListener("pointerdown", (event) => {
   if (!mapTooltip.hidden && !mapTooltip.contains(event.target))
     hideMapTooltip();
@@ -451,6 +459,10 @@ async function openRouteDetails(origin, destination) {
   allDestinations.textContent = `← All destinations from ${name(origin)}`;
   allDestinations.onclick = () => showEverywhere(origin);
   $("#route-view-title").before(allDestinations);
+  const provenance = document.createElement("p");
+  provenance.className = "route-provenance";
+  provenance.innerHTML = `<strong>Modelled estimates · FLOW v1.0</strong><br>Statistical estimates, not observed migration counts. Source countries: <span id="route-source-codes">${origin} → ${destination}</span>.<br><a href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">View dataset ↗</a> · <a href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Beyer et al. (2026) · methodology ↗</a>`;
+  $(".route-stats").after(provenance);
   periods.forEach((year) => {
     const option = document.createElement("option");
     option.value = year;

@@ -341,6 +341,45 @@ test("arrow tooltip supports Enter, Space, Escape and close-button focus return"
     a.dom.window.close();
   }
 });
+test("touch dismissal does not focus the SVG route or leave a native focus outline", async () => {
+  const a = await boot();
+  try {
+    const style = a.w.document.createElement("style");
+    style.textContent = fs.readFileSync(path.join(root, "style.css"), "utf8");
+    a.w.document.head.append(style);
+    const key = a.$(".arc-hit").dataset.route;
+    a.$(".arc-hit").dispatchEvent(
+      new a.w.MouseEvent("click", { bubbles: true, detail: 1 }),
+    );
+    a.$(".tooltip-close").focus();
+    a.$(".tooltip-close").dispatchEvent(
+      new a.w.MouseEvent("click", { bubbles: true, detail: 1 }),
+    );
+    assert.equal(a.$("#migration-tooltip").hidden, true);
+    assert.notEqual(a.w.document.activeElement.dataset.route, key);
+    assert.equal(
+      a.$("#migration-tooltip").contains(a.w.document.activeElement),
+      false,
+    );
+    const hit = a.$(`.arc-hit[data-route="${key}"]`);
+    hit.focus();
+    assert.equal(a.w.getComputedStyle(hit).outline, "none");
+    assert.equal(a.w.getComputedStyle(hit).vectorEffect, "non-scaling-stroke");
+    hit.dispatchEvent(
+      new a.w.KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+    a.$(".tooltip-close").click();
+    assert.equal(a.w.document.activeElement.dataset.route, key);
+    assert.equal(
+      a.w.getComputedStyle(a.w.document.activeElement).outline,
+      "none",
+    );
+  } finally {
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
 test("tooltip closes on outside taps, period changes, filters and zoom", async () => {
   const a = await boot();
   const open = () =>
@@ -672,6 +711,58 @@ test("route history separates fetch failures from data gaps and supports retry",
       /Could not load/,
     );
     assert.equal(a.$("#route-history > button"), null);
+  } finally {
+    a.$("#route-close").click();
+    a.api.state.route = null;
+    await flush();
+    a.dom.window.close();
+  }
+});
+
+test("Italy-France data uses France in selectors, map labels and source attribution", async () => {
+  const a = await boot();
+  try {
+    const corrections = {
+      FRA: "France",
+      AUS: "Australia",
+      BRA: "Brazil",
+      KAZ: "Kazakhstan",
+    };
+    for (const selector of ["#country", "#pair-origin", "#pair-destination"]) {
+      for (const [code, name] of Object.entries(corrections)) {
+        assert.equal(
+          a.$(`${selector} option[value="${code}"]`).textContent,
+          name,
+        );
+      }
+      assert.doesNotMatch(
+        a.$(selector).textContent,
+        /Clipperton|Ashmore|Brazilian Island|Baikonur/,
+      );
+    }
+    await a.api.setYear(1960);
+    a.change("#pair-origin", "ITA");
+    a.change("#pair-destination", "FRA");
+    a.$("#pair-form").dispatchEvent(
+      new a.w.Event("submit", { cancelable: true }),
+    );
+    await flush();
+    await flush();
+    assert.equal(a.$("#route-view-title").textContent, "Italy → France");
+    assert.equal(a.$("#route-forward-count").textContent, "≈ 774,000");
+    assert.equal(a.$("#route-reverse-count").textContent, "≈ 512,000");
+    assert.equal(a.$("#route-source-codes").textContent, "ITA → FRA");
+    assert.match(
+      a.$(".route-provenance").textContent,
+      /not observed migration counts/,
+    );
+    assert.match(a.$(".route-provenance a").href, /data.humdata.org/);
+    assert.ok(
+      [...a.w.document.querySelectorAll(".endpoint-label")].some(
+        (el) => el.textContent === "France",
+      ),
+    );
+    assert.doesNotMatch(a.$("#route-content").textContent, /Clipperton/);
   } finally {
     a.$("#route-close").click();
     a.api.state.route = null;

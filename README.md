@@ -14,4 +14,4 @@ Choose an origin under **From** and **Everywhere** under **To** to explore all c
 
 ## Checks
 
-Run `npm ci && npm test` for DOM integration tests. Run `python tests/data_test.py /path/to/flow.csv` to independently reconcile all exported values and metadata. `node --check dist/app.js` validates JavaScript syntax. DOM checks do not replace full browser visual and accessibility testing.
+Run `npm ci && npm test` for DOM integration tests and `python tests/reference_test.py` for country identity and duplicate-code regression checks. Run `python tests/data_test.py /path/to/flow.csv` to independently reconcile all exported values and metadata. `node --check dist/app.js` validates JavaScript syntax. DOM checks do not replace full browser visual and accessibility testing.

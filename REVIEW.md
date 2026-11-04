@@ -2,6 +2,9 @@
 
 ## Corrected defects
 
+- A user screenshot exposed four incorrect country identities in the reference import. Natural Earth's ISO_A3_EH is shared by some dependent/disputed features: later entries overwrote FRA (France) with Clipperton Island, AUS (Australia) with Ashmore and Cartier Islands, BRA (Brazil) with Brazilian Island, and KAZ (Kazakhstan) with Baikonur. Corrected both names and map endpoints and rebuilt the browser metadata. The new pinned reference extractor groups duplicate codes and requires a unique matching ADM0_A3 country feature; ambiguity fails instead of silently overwriting. All 252 extracted reference entries were compared with the previous file: only those four identities changed.
+- Touch-closing an arrow tooltip previously restored focus to an SVG path, allowing a large native focus rectangle on mobile. Pointer dismissal now clears popup focus without focusing the path. SVG focus outlines and tap highlights are explicitly suppressed; keyboard focus still returns to the route and uses a non-scaling stroke highlight. DOM checks verify both input paths, but the reported mobile rendering could not be reproduced in a live browser here.
+- Country-pair figures now show the dataset, model-versus-observation distinction, source country codes and methodology links directly below the figures.
 - 29 source countries had missing map endpoints; their routes could be listed without visible arrows. Their names also appeared as ISO3 codes because Intl.DisplayNames expects ISO2 region identifiers. Added a checked Natural Earth name/coordinate reference, tiny-country markers, and canonical ISO mapping (including Palestine).
 - Play stopped immediately at the default 2020–2024 interval. It now starts again at 1950 and advances in five-year steps.
 - A failed earlier request could overwrite a newer timeline selection. Both success and failure now check request identity; old arrows disappear while a new period loads.
@@ -13,7 +16,9 @@
 
 ## Quantitative audit
 
-Independently reconciled all 192,296 corridor-period aggregates across thirteen five-year intervals against the archived FLOW v1.0 CSV, using integer tenths derived with Decimal. Zero value mismatches, zero duplicate input year/sex records and zero incomplete groups. All exported corridors have a European endpoint, readable country names and valid map coordinates. The data checksum matches the archived version. Numerical estimates were not changed by this review.
+Independently reconciled all 192,296 corridor-period aggregates across thirteen five-year intervals against the archived FLOW v1.0 CSV, using integer tenths derived with Decimal. Zero value mismatches, zero duplicate input year/sex records and zero incomplete groups. All exported corridors have a European endpoint. The data checksum matches the archived version. Numerical estimates were not changed by this review.
+
+The earlier review checked name presence and coordinate ranges, which did **not** establish correct country identity and missed the four collisions described above. The corrected audit adds independent expected names and geographic bounds for these countries and verifies their selectors, map labels and Italy–France detail display. Reconciliation was rerun after regeneration. Source ITA → FRA sums to 774,041.6 and FRA → ITA to 512,195.5 over 1960–1964 (female plus male estimates). These are the figures previously mislabelled as migration involving Clipperton Island, not evidence of migration to that island. All thirteen quantitative JSON files remain byte-for-byte unchanged.
 
 The preparation script now validates its input checksum before writing, rejects duplicate year/sex records, checks all ten observations per period, and exports only after validation. `tests/data_test.py` independently verifies the output without invoking the preparation implementation.
 
@@ -27,6 +32,6 @@ Historical event periods are editorial focus periods, not proof of exact wave st
 
 ## Validation limits
 
-Thirty DOM integration checks cover initialization, map routes, small-country selection, playback, direction filters, event navigation, chart rendering, loading races, failures/retry, estimated zero, zoom controls, arrow tooltips, country-pair details and the Everywhere destination view. Everywhere checks include all outgoing arrows, the largest-30 toggle, independently calculated Italy/Colombia totals, European-only coverage for non-European origins, timeline gaps, destination search, drilldown/return, and changing filters. Existing data files are unchanged by these interaction additions.
+Thirty-two DOM integration checks and four country-reference checks pass. Coverage includes initialization, map routes, small-country selection, playback, direction filters, event navigation, chart rendering, loading races, failures/retry, estimated zero, zoom controls, arrow tooltips, touch-versus-keyboard focus, country-pair details, country identity and the Everywhere destination view. Everywhere checks include all outgoing arrows, the largest-30 toggle, independently calculated Italy/Colombia totals, European-only coverage for non-European origins, timeline gaps, destination search, drilldown/return, and changing filters.
 
 The deployment's existing desktop screenshot was inspected during the initial review. Live browser automation was unavailable under the Sites environment's prescribed preview workflow, so full browser/mobile layout, touch interactions and screen-reader behavior remain unverified.
