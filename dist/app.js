@@ -179,8 +179,7 @@ const defs = svg.append("defs");
     .attr("d", "M0,-3L7,0L0,3")
     .attr("fill", c),
 );
-const color = (r) =>
-  countries[r[0]]?.europe ? (countries[r[1]]?.europe ? 2 : 1) : 0;
+const color = (r) => (state.country && r[0] === state.country ? 1 : 0);
 const palette = ["#287e78", "#cf7956", "#8d7ba4"];
 function mapScale() {
   const box = $("#map").getBoundingClientRect();
@@ -207,10 +206,12 @@ window.addEventListener("resize", updateMapSizing);
 if (typeof ResizeObserver !== "undefined")
   new ResizeObserver(updateMapSizing).observe(svg.node());
 function matches(r) {
-  const a = state.country ? r[0] === state.country : !!countries[r[0]]?.europe,
-    b = state.country ? r[1] === state.country : !!countries[r[1]]?.europe;
+  const a = state.country ? r[0] === state.country : true,
+    b = state.country ? r[1] === state.country : true;
   return (
     (state.dir === "in" ? b : state.dir === "out" ? a : a || b) &&
+    (!state.counterparts ||
+      state.counterparts.includes(r[state.dir === "in" ? 0 : 1])) &&
     (!state.query ||
       `${name(r[0])} ${name(r[1])}`.toLowerCase().includes(state.query))
   );
@@ -322,7 +323,7 @@ function draw() {
         : state.year < 1960
           ? "Historical stories · comparable figures unavailable"
           : mapLimit === Infinity
-            ? `Showing all ${shown.length} positive estimates · ${all.length} covered destinations${countries[state.country]?.europe ? "" : " · Europe only"}`
+            ? `Showing all ${shown.length} positive estimates · ${all.length} covered destinations${countries[state.country]?.europe ? "" : " · Worldwide"}`
             : `Showing ${Math.min(30, all.filter((r) => r[2] > 0).length)} largest of ${all.length.toLocaleString()} available corridors${shown.length > 30 ? " + selected route" : ""}`;
   $("#route-count").textContent = `${all.length.toLocaleString()} available`;
   $("#route-list").replaceChildren();
@@ -376,8 +377,7 @@ function pairError(origin, destination) {
     return "Choose both an origin and a destination.";
   if (origin === destination)
     return "Choose two different countries for international migration.";
-  if (!countries[origin].europe && !countries[destination].europe)
-    return "Stage 1 covers routes to, from, or within Europe. Choose at least one European country.";
+
   return "";
 }
 function syncPairPicker() {
@@ -390,7 +390,7 @@ function syncPairPicker() {
   $("#pair-coverage").hidden = !everywhere;
   $("#pair-coverage").textContent = countries?.[origin]?.europe
     ? "All destinations covered by the migration dataset."
-    : "Stage 1 coverage: origins outside Europe show European destinations only.";
+    : "Worldwide coverage across all countries in FLOW v1.0.";
 }
 $("#pair-origin").onchange = $("#pair-destination").onchange = () => {
   $("#pair-error").hidden = true;
@@ -794,7 +794,7 @@ function detail() {
           ? "Could not load"
           : fullEstimate(total);
     $("#detail").innerHTML =
-      `<span class="story-tag">${incoming ? "IMMIGRATION" : both ? "INCOMING + OUTGOING" : "EMIGRATION"}</span><h2 class="story-title">${state.everywhere ? `${name(state.country)}<br>→ Everywhere` : incoming ? `Into ${name(state.country)}` : both ? name(state.country) : `From ${name(state.country)}`}</h2><div id="${incoming ? "incoming-total" : both ? "country-total" : "outgoing-total"}" class="big-value" aria-live="polite">${value}</div><div class="small">${rangeLabel()} · estimated migrations<br>Total across all covered ${incoming ? "origins" : both ? "connections · both directions" : "destinations"}.</div><p id="outgoing-scope" class="story-text">${countries[state.country].europe ? `Worldwide ${incoming ? "origins" : both ? "connections" : "destinations"} covered by the dataset.` : (incoming ? "European origins only. " : both ? "European connections only. " : "European destinations only. ") + "Stage 1 covers migration to, from and within Europe; this is not a worldwide total."}</p><p class="small">${outgoing.length ? `${outgoing.length} ${incoming ? "origins" : both ? "connections" : "destinations"} with estimates · ${positive.length} positive estimates.` : ""}${state.query ? ` Search filters the map and route list; the total includes all covered ${incoming ? "origins" : both ? "connections" : "destinations"}.` : ""}</p><h3 class="destinations-title">Largest ${incoming ? "origins" : both ? "connections" : "destinations"}</h3><div id="top-destinations"></div><a class="source" href="#route-list">Explore the full connection list ↓</a><p class="small">Modelled movements across the selected calendar years, including possible repeat migrants. Individual-route estimates can differ from official records.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · source ↗</a>`;
+      `<span class="story-tag">${incoming ? "IMMIGRATION" : both ? "INCOMING + OUTGOING" : "EMIGRATION"}</span><h2 class="story-title">${state.everywhere ? `${name(state.country)}<br>→ Everywhere` : incoming ? `Into ${name(state.country)}` : both ? name(state.country) : `From ${name(state.country)}`}</h2><div id="${incoming ? "incoming-total" : both ? "country-total" : "outgoing-total"}" class="big-value" aria-live="polite">${value}</div><div class="small">${rangeLabel()} · estimated migrations<br>Total across all covered ${incoming ? "origins" : both ? "connections · both directions" : "destinations"}.</div><p id="outgoing-scope" class="story-text">${countries[state.country].europe ? `Worldwide ${incoming ? "origins" : both ? "connections" : "destinations"} covered by the dataset.` : (incoming ? "Worldwide origins. " : both ? "Worldwide connections. " : "Worldwide destinations. ") + "All countries covered by FLOW v1.0."}</p><p class="small">${outgoing.length ? `${outgoing.length} ${incoming ? "origins" : both ? "connections" : "destinations"} with estimates · ${positive.length} positive estimates.` : ""}${state.query ? ` Search filters the map and route list; the total includes all covered ${incoming ? "origins" : both ? "connections" : "destinations"}.` : ""}</p><h3 class="destinations-title">Largest ${incoming ? "origins" : both ? "connections" : "destinations"}</h3><div id="top-destinations"></div><a class="source" href="#route-list">Explore the full connection list ↓</a><p class="small">Modelled movements across the selected calendar years, including possible repeat migrants. Individual-route estimates can differ from official records.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · source ↗</a>`;
     positive.slice(0, 5).forEach(([origin, destination, count]) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -977,7 +977,7 @@ function modal(html) {
 }
 const methodology = () =>
   modal(
-    '<div class="eyebrow">METHODOLOGY & SOURCES</div><h2>Reading the atlas</h2><p>FLOW v1.0 supplies annual modelled bilateral migration estimates for 1960–2024. Female and male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. These are estimates of migration, not border crossings or unique individuals across years. No quantitative estimates are supplied for 1950–1959.</p><p>Beyer, Schewe, Abel, Warner and Campo (2026) provide this model for broad patterns. Their usage notes describe individual migration corridors as one of its least suitable uses; official or statistically harmonised records should be preferred when available. Estimated zero does not establish that no migration occurred. Missing observations are never converted to zero.</p><p>Europe follows UN M49, including Russia and the UK. A route appears when at least one endpoint is European. Türkiye and Cyprus are outside this regional definition; their connections with European countries are included. Modern boundaries provide geographic reference throughout. Historical state changes are not reconstructed or allocated by this app.</p><p>Overview arrows show the 30 largest positive estimates for your filters. Choosing Everywhere shows all positive outgoing estimates by default; you can switch back to the largest 30. The total includes every covered destination, including estimated zeros, regardless of search text or the arrow limit. For origins outside Europe, only European destinations are covered, so this is not a worldwide total. The list includes all available estimates, including estimated zeros. Line width uses one square-root scale across periods, capped at 2.4 screen pixels. Arrowheads remain 7 screen pixels across zoom levels; line width and arrowhead size never grow with zoom. Incoming/outgoing filters refer to the selected country, or to European endpoints when no country is selected; intra-European connections can appear in both. Country label points mark schematic connections, not physical travel routes. Small countries omitted from the simplified boundaries are shown as points. Dashed story connections are unweighted and excluded from estimates. Canary Islands stories are regional context within Spain.</p><p>Historical events have individual source links. Event ranges identify featured periods, not necessarily the beginning or end of a migration wave. Residence permits, asylum applications, refugee registrations and population stocks must retain their own meanings; they are not added to map totals. Historical associations do not establish causation from model changes.</p><p><a href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · HDX · CC BY</a><br><a href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Research paper and usage limitations</a><br><a href="https://osf.io/download/p58ay/" target="_blank" rel="noopener">Archived source CSV</a><br><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth · public-domain boundaries</a><br>D3 v7 · ISC license. Data snapshot: November 2026.</p>',
+    '<div class="eyebrow">METHODOLOGY & SOURCES</div><h2>Reading the atlas</h2><p>FLOW v1.0 supplies annual modelled bilateral migration estimates for 1960–2024. Female and male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. These are estimates of migration, not border crossings or unique individuals across years. No quantitative estimates are supplied for 1950–1959.</p><p>Beyer, Schewe, Abel, Warner and Campo (2026) provide this model for broad patterns. Their usage notes describe individual migration corridors as one of its least suitable uses; official or statistically harmonised records should be preferred when available. Estimated zero does not establish that no migration occurred. Missing observations are never converted to zero.</p><p>Worldwide coverage includes all 194 FLOW countries, including routes with no European endpoint. Modern boundaries provide geographic reference throughout. Historical state changes are not reconstructed or allocated by this app.</p><p>Overview arrows show the 30 largest positive estimates for your filters. Choosing Everywhere shows all positive outgoing estimates by default; you can switch back to the largest 30. The total includes every covered destination, including estimated zeros, regardless of search text or the arrow limit. All destinations covered by the source are included. The list includes all available estimates, including estimated zeros. Line width uses one square-root scale across periods, capped at 2.4 screen pixels. Arrowheads remain 7 screen pixels across zoom levels; line width and arrowhead size never grow with zoom. Incoming/outgoing filters refer to the selected country. Country label points mark schematic connections, not physical travel routes. Small countries omitted from the simplified boundaries are shown as points. Dashed story connections are unweighted and excluded from estimates. Canary Islands stories are regional context within Spain.</p><p>Historical events have individual source links. Event ranges identify featured periods, not necessarily the beginning or end of a migration wave. Residence permits, asylum applications, refugee registrations and population stocks must retain their own meanings; they are not added to map totals. Historical associations do not establish causation from model changes.</p><p><a href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · HDX · CC BY</a><br><a href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Research paper and usage limitations</a><br><a href="https://osf.io/download/p58ay/" target="_blank" rel="noopener">Archived source CSV</a><br><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth · public-domain boundaries</a><br>D3 v7 · ISC license. Data snapshot: November 2026.</p>',
   );
 $("#about").onclick = $("#method-open").onclick = methodology;
 $("#close-modal").onclick = () => $("#modal").close();

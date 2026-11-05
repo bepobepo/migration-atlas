@@ -42,7 +42,7 @@ def build(source, geometry, output):
     with source.open(newline='') as file:
         for row in csv.DictReader(file):
             a, b = row['Origin'], row['Destination']
-            if a == b or not (a in EUROPE or b in EUROPE):
+            if a == b:
                 continue
             year = int(row['Year'])
             assert 1960 <= year <= 2024
@@ -74,6 +74,14 @@ def build(source, geometry, output):
         save(f'{period}.json', [[a, b, value / 10] for (p, a, b), value in aggregates.items() if p == period])
     for year in range(1960, 2025):
         save(f'annual/{year}.json', [[a, b, value / 10] for (y, a, b), value in annual.items() if y == year])
+    for direction in ('out', 'in'):
+        (output / 'series' / direction).mkdir(parents=True, exist_ok=True)
+        for code in sorted(data_countries):
+            peers = {}
+            for peer in sorted(data_countries - {code}):
+                a, b = (code, peer) if direction == 'out' else (peer, code)
+                peers[peer] = [annual[y, a, b] for y in range(1960, 2025)]
+            save(f'series/{direction}/{code}.json', dict(country=code, startYear=1960, peers=peers))
     save('countries.json', countries)
     save('world.json', world)
     print(f'Validated and exported {len(aggregates):,} five-year and {len(annual):,} annual aggregates; complete year/sex coverage.')

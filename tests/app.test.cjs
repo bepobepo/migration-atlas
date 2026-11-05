@@ -183,7 +183,7 @@ test("an old failed timeline request cannot erase a newer successful period", as
     await a.api.setYear(2020);
     reject(Error("old request failed"));
     await old;
-    assert.equal(a.api.rows.length, 14792);
+    assert.equal(a.api.rows.length, 37442);
     assert.equal(a.$("#period").textContent, "2020–2024");
     assert.doesNotMatch(a.$("#map-status").textContent, /Could not/);
   } finally {
@@ -208,7 +208,7 @@ test("current request failure is distinguished from no data and can be retried",
     assert.match(a.$("#coverage").textContent, /could not be loaded/);
     fail = false;
     await a.api.setYear(2015);
-    assert.equal(a.api.rows.length, 14792);
+    assert.equal(a.api.rows.length, 37442);
     assert.doesNotMatch(a.$("#coverage").textContent, /could not/);
   } finally {
     a.api.state.route = null;
@@ -574,7 +574,7 @@ test("reversing a pair updates its direction, data, map selection and country se
     a.dom.window.close();
   }
 });
-test("country-pair validation prevents same-country and out-of-scope routes", async () => {
+test("country-pair validation prevents self routes and permits worldwide routes", async () => {
   const a = await boot();
   const submit = () =>
     a
@@ -589,8 +589,9 @@ test("country-pair validation prevents same-country and out-of-scope routes", as
     a.change("#pair-origin", "USA");
     a.change("#pair-destination", "CAN");
     submit();
-    assert.match(a.$("#pair-error").textContent, /European country/);
-    assert.equal(a.$("#route-dialog").open, false);
+    assert.equal(a.$("#pair-error").hidden, true);
+    assert.equal(a.$("#route-dialog").open, true);
+    a.$("#route-close").click();
     a.change("#pair-destination", "POL");
     a.$("#pair-swap").click();
     assert.equal(a.$("#pair-origin").value, "POL");
@@ -824,38 +825,19 @@ test("Everywhere clears old filters and displays every positive outgoing route",
     a.dom.window.close();
   }
 });
-test("Everywhere keeps non-European origins within the declared Stage 1 coverage", async () => {
+test("Everywhere includes worldwide destinations for non-European origins", async () => {
   const a = await boot();
   try {
     chooseEverywhere(a, "COL");
-    assert.match(
-      a.$("#pair-coverage").textContent,
-      /European destinations only/,
-    );
-    assert.match(
-      a.$("#outgoing-scope").textContent,
-      /European destinations only/,
-    );
-    assert.match(a.$("#outgoing-scope").textContent, /not a worldwide total/);
-    assert.match(a.$("#coverage").textContent, /Europe only/);
-    assert.equal(a.$("#outgoing-total").textContent, "≈ 321,000");
-    assert.equal(a.$("#route-count").textContent, "43 available");
-    const countries = JSON.parse(
-      fs.readFileSync(path.join(root, "data/countries.json")),
-    );
-    assert.ok(
-      [...a.w.document.querySelectorAll(".arc-hit")].every(
-        (p) => countries[p.__data__[1]].europe && p.__data__[0] === "COL",
-      ),
-    );
-    assert.equal(a.$('.arc-hit[data-route="COL-ESP"]') !== null, true);
-    assert.equal(a.$('.arc-hit[data-route="COL-VEN"]'), null);
+    assert.equal(a.$("#route-count").textContent, "193 available");
+    assert.ok(a.api.rows.some((r) => r[0] === "COL" && r[1] === "VEN"));
   } finally {
     a.api.state.route = null;
     await flush();
     a.dom.window.close();
   }
 });
+
 test("Everywhere totals survive destination search and timeline gaps stay unavailable", async () => {
   const a = await boot();
   try {
@@ -1093,11 +1075,11 @@ test("custom ranges agree with existing five-year data and combine chunks withou
     const map = (r) =>
       new Map(r.map(([a, b, v]) => [a + ":" + b, Math.round(v * 10)]));
     const [whole, left, right] = ranges.map(map);
-    assert.equal(whole.size, 14792);
+    assert.equal(whole.size, 37442);
     for (const [key, value] of whole)
       assert.equal(value, left.get(key) + right.get(key));
     await a.api.setRange(1960, 2024);
-    assert.equal(a.api.rows.length, 14792);
+    assert.equal(a.api.rows.length, 37442);
     assert.equal(a.$("#period").textContent, "1960–2024");
   } finally {
     a.api.state.route = null;
@@ -1210,7 +1192,7 @@ test("annual range failures and incomplete corridors show no partial totals and 
     fail = false;
     await a.api.setRange(2020, 2022);
     assert.match(a.$("#outgoing-total").textContent, /≈/);
-    assert.equal(a.api.rows.length, 14792);
+    assert.equal(a.api.rows.length, 37442);
   } finally {
     a.api.state.route = null;
     await flush();

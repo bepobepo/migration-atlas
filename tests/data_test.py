@@ -24,7 +24,7 @@ def exported(directory, years):
         for a, b, value in json.loads((directory / f'{year}.json').read_text()):
             key = year, a, b
             assert key not in values and a != b and value >= 0
-            assert a in un and b in un and (a in europe or b in europe)
+            assert a in un and b in un
             assert countries[a]['hasData'] and countries[b]['hasData']
             values[key] = int(Decimal(str(value)) * 10)
     return values
@@ -40,7 +40,7 @@ with source.open(newline='') as file:
         a, b = row['Origin'], row['Destination']
         source_codes.update((a, b))
         assert a in un and b in un
-        if a == b or not (a in europe or b in europe):
+        if a == b:
             continue
         year = int(row['Year'])
         assert 1960 <= year <= 2024
@@ -59,15 +59,22 @@ with source.open(newline='') as file:
 assert set(actual) == set(expected_annual), 'Missing or extra annual corridors'
 assert actual == expected_annual, 'Annual estimate mismatch'
 assert all(mask == 3 for mask in observations.values())
-assert len(actual) == 961480
+assert len(actual) == 2433730
 assert len(source_codes) == 194
 assert source_codes == {code for code, c in countries.items() if c['hasData']}
+for code in source_codes:
+    outgoing=json.loads((root/'series/out'/f'{code}.json').read_text())['peers']
+    incoming=json.loads((root/'series/in'/f'{code}.json').read_text())['peers']
+    for peer in source_codes-{code}:
+        for year in range(1960,2025):
+            assert outgoing[peer][year-1960] == actual[year,code,peer]
+            assert incoming[peer][year-1960] == actual[year,peer,code]
 actual_five = Counter()
 for (year, a, b), value in actual.items(): actual_five[year // 5 * 5, a, b] += value
 assert set(actual_five) == set(expected_five)
 assert actual_five == expected_five
-assert len(expected_five) == 192296
-assert all(len([1 for y, a, b in expected_annual if y == year]) == 14792 for year in (1960, 2024))
+assert len(expected_five) == 486746
+assert all(len([1 for y, a, b in expected_annual if y == year]) == 37442 for year in (1960, 2024))
 assert not (root / '1950.json').exists() and not (root / '1955.json').exists()
 events = json.loads((root / 'events.json').read_text())
 assert len(events) == 18 and len({e['id'] for e in events}) == 18

@@ -10,7 +10,7 @@ Obtain https://osf.io/download/p58ay/ as `/tmp/flow.csv`, and Natural Earth's `n
 
 Names and schematic map endpoints are pinned in `reference/countries.json`; provenance is in `reference/README.md`. Natural Earth is public domain. D3 v7 uses the ISC license.
 
-Choose an origin under **From** and **Everywhere** under **To** to explore all covered outgoing destinations. This view shows every positive estimate on the map by default, with an option to limit arrows to the largest 30, and a total for the selected years. Search and the arrow limit do not change the total. Click an arrow for its tooltip or a destination for full migration details; the details include a link back to all destinations. Origins outside Europe cover European destinations only in stage 1, and their totals are explicitly labelled accordingly.
+Choose an origin under **From** and **Everywhere** under **To** to explore all covered outgoing destinations. This view shows every positive estimate on the map by default, with an option to limit arrows to the largest 30, and a total for the selected years. Search and the arrow limit do not change the total. Click an arrow for its tooltip or a destination for full migration details; the details include a link back to all destinations. Worldwide counterparts are included for every source country.
 
 Use **From year**, **To year**, and **Apply range** on the timeline or in route details for any inclusive range within 1960–2024, including a single year. For total immigration, choose a country and **Incoming**; **Outgoing** shows emigration, while **All movement** combines the two. Totals use integer tenths internally and round only for display. Complete five-year files are reused where possible, with annual files for remaining years; failed or incomplete coverage never produces a partial total. Country/area selectors explicitly mark the 11 map features without FLOW estimates.
 
@@ -19,3 +19,11 @@ Historical drivers are sourced stories overlapping the chosen years and directio
 ## Checks
 
 Run `npm ci && npm test` for DOM integration tests and `python tests/reference_test.py` for country identity, UN M49 and duplicate-code regression checks. Run `python tests/geography_audit.py /path/to/ne_10m_admin_0_countries.geojson` to verify all map identities and endpoints against canonical administrative country features. Run `python tests/data_test.py /path/to/flow.csv` to independently reconcile all 961,480 annual and 192,296 five-year estimates. `node --check dist/app.js` validates JavaScript syntax. DOM checks do not replace full browser visual and accessibility testing.
+
+## Color movement playback
+
+Choose a focus country, Incoming or Outgoing, and Everywhere or selected counterparts. Apply a year range and press Play; playback accumulates complete annual observations and stops at the selected end. Pause, restart, scrub, and 1×/2×/4× speed are available. Color movement is the default country view; Arrows remains available.
+
+Volume uses square-root intensity relative to the selected scenario total. Population mode uses cumulative movements divided by each country's fixed start-year midyear population, with a square-root color scale saturating at 10%. Displayed ratios are uncapped. Gross movements can include repeat migration; they do not measure net population growth. World Bank WDI SP.POP.TOTL is archived in `reference/wdi-population.json.gz`; `python build_population.py <response.json>` reproduces the compact baseline. Missing PSE values before 1990 remain unavailable.
+
+Coverage now includes all 194 FLOW countries and 37,442 directed country pairs worldwide. `prepare.py` generates worldwide annual/five-year exports and compact incoming/outgoing series. `tests/data_test.py` independently checks every one of 2,433,730 annual sums and both series orientations against the original CSV. `tests/population_test.py` checks all 12,610 country-years against the archived WDI response. `tests/color.test.cjs` covers the color scales, example scenarios, inspection and playback controls.
