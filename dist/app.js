@@ -285,7 +285,7 @@ function draw() {
       }
     });
   const ev = events[state.event];
-  if (ev) {
+  if (ev && eventScope(ev) === "route") {
     const a = ev.id === 0 ? projection([-16, 28]) : centers[ev.origin],
       b = centers[ev.destination];
     g.append("path")
@@ -626,35 +626,33 @@ async function openRouteDetails(origin, destination) {
   updateFigures();
 }
 function renderRouteContext(container, origin, destination) {
+  const related = historyMatches(events, {corridors: [[origin, destination]], start: state.year, end: state.endYear});
   container.replaceChildren();
   const heading = document.createElement("h3");
   heading.textContent = `Historical drivers · ${rangeLabel()}`;
+  const cards = document.createElement("div");
+  renderHistoryCards(cards, related, {
+    start: state.year, end: state.endYear, nameForCode: name, showRouteGap: true,
+    emptyMessage: `No route-specific historical account or country context has been added for ${name(origin)} → ${name(destination)} in ${rangeLabel()}.`
+  });
   const note = document.createElement("p");
-  note.className = "route-explanation";
-  note.textContent =
-    "Sourced events that overlap your selected years. These explain historical circumstances; the model does not attribute a number of migrations to each cause.";
-  container.append(heading, note);
-  const related = events.filter(
-    (event) =>
-      event.origin === origin &&
-      event.destination === destination &&
-      event.start <= state.endYear &&
-      event.end >= state.year,
-  );
-  if (!related.length) {
-    const empty = document.createElement("p");
-    empty.className = "route-explanation";
-    empty.textContent = `No route-specific historical account has been added for ${name(origin)} → ${name(destination)} in ${rangeLabel()}. The estimates alone cannot explain the reasons for this migration.`;
-    container.append(empty);
-  }
-  for (const event of related) {
-    const article = document.createElement("article");
-    article.className = "route-context-card";
-    article.innerHTML = `<span class="eyebrow">${rangeLabel(event.start, event.end)}</span><h4>${event.title}</h4><p>${event.text}</p><a class="source" href="${event.source}" target="_blank" rel="noopener">Historical source ↗</a>${event.additionalSource ? `<br><a class="source" href="${event.additionalSource}" target="_blank" rel="noopener">Further historical context ↗</a>` : ""}`;
-    container.append(article);
-  }
+  note.className = "small";
+  note.textContent = "Context applies to the years shown; the model does not attribute a number of migrations to each cause.";
+  container.append(heading, cards, note);
 }
+function selectedHistoryCorridors() {
+  if (state.route) return [[state.route[0], state.route[1]]];
+  if (!state.country) return undefined;
+  const peers = Object.keys(countries).filter(code => code !== state.country && countries[code].hasData !== false && (!state.counterparts || state.counterparts.includes(code)));
+  return peers.flatMap(code => state.dir === "out" ? [[state.country, code]] : state.dir === "in" ? [[code, state.country]] : [[state.country, code], [code, state.country]]);
+}
+
 function selectEvent(e) {
+  if (eventScope(e) !== "route") {
+    modal('<div id="country-history-content"></div>');
+    renderHistoryCards($("#country-history-content"), [e], {start: e.start, end: e.end, nameForCode: name});
+    return;
+  }
   state.everywhere = false;
   state.event = e.id;
   state.route = [e.origin, e.destination];
@@ -668,27 +666,16 @@ function selectEvent(e) {
   setYear(Math.max(1950, Math.floor(e.start / 5) * 5));
 }
 function renderEvents() {
-  const selected = events.filter(
-    (e) =>
-      e.start <= state.endYear &&
-      e.end >= state.year &&
-      (!state.country ||
-        (state.dir === "out"
-          ? e.origin === state.country
-          : state.dir === "in"
-            ? e.destination === state.country
-            : [e.origin, e.destination].includes(state.country))) &&
-      (!state.route ||
-        (e.origin === state.route[0] && e.destination === state.route[1])),
-  );
+  const selected = historyMatches(events, {corridors: selectedHistoryCorridors(), start: state.year, end: state.endYear});
   $("#event-count").textContent = selected.length;
   $("#events").replaceChildren();
   $("#event-ticks").replaceChildren();
   selected.forEach((e) => {
     const b = document.createElement("button");
     b.className = "event-btn";
-    b.innerHTML = `<span>${e.start}${e.end !== e.start ? "–" + e.end : ""} · ${e.route}</span>${e.title} ↗`;
+    b.innerHTML = `<span>${e.start}${e.end !== e.start ? "–" + e.end : ""} · ${eventLabel(e, name)}</span>${e.title} ↗`;
     b.onclick = () => {
+      if (eventScope(e) !== "route") return selectEvent(e);
       state.event = e.id;
       draw();
     };
@@ -699,14 +686,14 @@ function renderEvents() {
     $("#event-ticks").append(t);
   });
   if (!selected.length)
-    $("#events").textContent = "No curated events for this selection.";
+    $("#events").textContent = "No sourced historical context for this selection.";
 }
 function detail() {
   const requestId = ++detailId;
   const e = events[state.event];
   if (e) {
     $("#detail").innerHTML =
-      `<span class="story-tag">HISTORICAL CONTEXT · ${e.start}</span><h2 class="story-title">${e.title}</h2><div class="story-route">${e.route}</div><p class="story-text">${e.text}</p><a class="source" href="${e.source}" target="_blank" rel="noopener">Read the historical source ↗</a>${e.additionalSource ? `<br><a class="source" href="${e.additionalSource}" target="_blank" rel="noopener">Further historical context ↗</a>` : ""}<p class="small">Dashed line shows this story’s connection; its width does not encode a count.</p>`;
+      `<span class="story-tag">HISTORICAL CONTEXT · ${e.start}</span><h2 class="story-title">${e.title}</h2><div class="story-route">${eventLabel(e, name)}</div><p class="story-text">${e.text}</p><a class="source" href="${e.source}" target="_blank" rel="noopener">Read the historical source ↗</a>${e.additionalSource ? `<br><a class="source" href="${e.additionalSource}" target="_blank" rel="noopener">Further historical context ↗</a>` : ""}<p class="small">${eventScope(e) === "route" ? "Dashed line shows this story’s connection; its width does not encode a count." : "Country-wide context for the featured years; individual routes and motives differ."}</p>`;
     if (state.country || state.route) {
       const back = document.createElement("button");
       back.className = "all-destinations-link";
@@ -1000,7 +987,7 @@ $("#all-events").onclick = () => {
   events.forEach((e) => {
     const b = document.createElement("button");
     b.className = "event-btn";
-    b.textContent = `${e.start} · ${e.route} — ${e.title}`;
+    b.textContent = `${e.start} · ${eventLabel(e, name)} — ${e.title}`;
     b.onclick = () => {
       $("#modal").close();
       selectEvent(e);
@@ -1088,6 +1075,7 @@ Promise.all(
     countries = c;
     world = w;
     events = e;
+    $("#all-events").textContent = `Explore all ${events.length} stories ↓`;
     Object.values(countries)
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach((c) => {

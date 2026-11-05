@@ -37,10 +37,12 @@ async function boot(overrides = {}) {
   };
   w.eval(fs.readFileSync(path.join(root, "vendor/d3.js"), "utf8"));
   w.eval(
-    fs.readFileSync(
-      process.env.APP_UNDER_TEST || path.join(root, "app.js"),
-      "utf8",
-    ) +
+    fs.readFileSync(path.join(root, "history.js"), "utf8") +
+      "\n" +
+      fs.readFileSync(
+        process.env.APP_UNDER_TEST || path.join(root, "app.js"),
+        "utf8",
+      ) +
       "\nwindow.testAPI={state,cache,selectRoute,selectEvent,setYear,setRange,loadRange,validateRange,draw,mapScale,updateMapSizing,get rows(){return rows},get centers(){return centers}};",
   );
   await flush();
@@ -58,7 +60,7 @@ async function boot(overrides = {}) {
     },
   };
 }
-test("initial map has 30 valid directional routes and 18 navigable stories", async () => {
+test("initial map has 30 valid directional routes and 20 navigable stories", async () => {
   const a = await boot();
   try {
     assert.equal(a.$("#period").textContent, "2020–2024");
@@ -69,7 +71,7 @@ test("initial map has 30 valid directional routes and 18 navigable stories", asy
       ),
     );
     a.$("#all-events").click();
-    assert.equal(a.w.document.querySelectorAll("#catalog button").length, 18);
+    assert.equal(a.w.document.querySelectorAll("#catalog button").length, 20);
   } finally {
     a.api.state.route = null;
     await flush();

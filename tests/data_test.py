@@ -77,8 +77,9 @@ assert len(expected_five) == 486746
 assert all(len([1 for y, a, b in expected_annual if y == year]) == 37442 for year in (1960, 2024))
 assert not (root / '1950.json').exists() and not (root / '1955.json').exists()
 events = json.loads((root / 'events.json').read_text())
-assert len(events) == 18 and len({e['id'] for e in events}) == 18
-assert all(e['origin'] in countries and e['destination'] in countries and e['start'] <= e['end'] and e['source'].startswith('https://') for e in events)
+assert len(events) == 20 and len({e['id'] for e in events}) == 20
+assert all(e.get('scope', 'route') in {'route', 'origin-country', 'destination-country'} for e in events)
+assert all((e['origin'] in countries and e['destination'] in countries if e.get('scope', 'route') == 'route' else e['country'] in countries) and e['start'] <= e['end'] and e['source'].startswith('https://') for e in events)
 assert events[0]['origin'] == 'ESP'
 print(f'PASS: all {len(actual):,} annual and {len(expected_five):,} five-year estimates exactly match the source; 194 country codes verified against UN M49; complete year/sex coverage.')
 print('Independent sample totals:', {key: value / 10 for key, value in examples.items()})

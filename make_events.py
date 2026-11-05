@@ -20,4 +20,17 @@ rows=[
 (2022,2024,'Ukraine → Poland','UKR','POL','Forced to leave','Russia’s full-scale invasion on 24 February 2022 triggered large-scale displacement. Poland welcomed people fleeing Ukraine. Border crossings and refugee registrations are distinct from the modelled migration estimates on this map.','https://www.unhcr.org/news/press/2022/3/6234811a4.html')]
 events=[dict(zip(['start','end','route','origin','destination','title','text','source'],r),id=i) for i,r in enumerate(rows)]
 events[15]['additionalSource'] = 'https://www.acnur.org/es-es/noticias/comunicados-de-prensa/las-solicitudes-de-asilo-de-personas-venezolanas-sobrepasan-las-400'
+for event in events:
+    event['scope'] = 'route'
+events.extend([
+    dict(id=18, scope='origin-country', country='VEN', start=2014, end=2024,
+         title='Political, economic and humanitarian crisis',
+         text='The recent Venezuelan exodus intensified from 2014 during a prolonged political, economic and humanitarian crisis. UNHCR documented people leaving amid insecurity and violence, loss of income, and shortages of food, medicines and essential services. These country-wide pressures provide context for emigration to different destinations; individual circumstances and routes vary. This featured period does not mark the beginning of all Venezuelan migration or assign the selected migration total to a single cause.',
+         source='https://data.unhcr.org/en/documents/download/63883',
+         additionalSource='https://rmrp.r4v.info/eyr2024/'),
+    dict(id=19, scope='origin-country', country='VEN', start=2024, end=2024,
+         title='Election uncertainty and mobility constraints',
+         text='R4V reported renewed uncertainty and heightened tension following the 2024 Venezuelan presidential election. Interruptions affecting diplomatic and consular access and travel created difficulties with documentation, family reunification and protection. This is context for Venezuelan outward movement during 2024, rather than a quantified explanation for a particular destination or for earlier migration.',
+         source='https://rmrp.r4v.info/eyr2024/')
+])
 p=pathlib.Path(__file__).parent/'dist/data/events.json';json.dump(events,open(p,'w'))
