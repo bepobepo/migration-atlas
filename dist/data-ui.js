@@ -579,7 +579,7 @@ async function showCountryCoverage() {
     document.body.append(dialog);
   }
   dialog.innerHTML =
-    '<button class="source-close" type="button">Close ×</button><h2>Country coverage & sources</h2><p>194 countries have FLOW model coverage. Official imports cover only some country pairs and years from 2008–2024. Appearing as a partner in another country’s report does not mean complete national coverage. Fourteen national agencies’ metadata has been reviewed; 180 have not been individually verified.</p><p>Official statistics uses destination immigration by previous residence, then origin emigration by next residence. Gaps stay unavailable; FLOW is opt-in through comparison modes. Permit holders, visas, nationality-based flows and resident stocks remain separate measures.</p><label>Find a country<input id="coverage-search" type="search"></label><div id="coverage-results" role="status">Loading coverage…</div>';
+    '<button class="source-close" type="button">Close ×</button><h2>Country coverage & sources</h2><p>194 countries have FLOW model coverage. Official imports cover only some country pairs and years from 2008–2024. Appearing as a partner in another country’s report does not mean complete national coverage.</p><p id="coverage-audit-summary" role="status">Loading national source review…</p><p>Official statistics uses destination immigration by previous residence, then origin emigration by next residence. Gaps stay unavailable; FLOW is opt-in through comparison modes. Permit holders, visas, nationality-based flows and resident stocks remain separate measures.</p><label>Find a country<input id="coverage-search" type="search"></label><div id="coverage-results" role="status">Loading coverage…</div>';
   dialog.querySelector("button").onclick = () => dialog.close();
   dialog.showModal();
   dialog.querySelector("button").focus();
@@ -587,6 +587,14 @@ async function showCountryCoverage() {
     const response = await fetch("data/official/coverage.json");
     if (!response.ok) throw Error();
     const payload = await response.json();
+    const summary = payload.summary;
+    dialog.querySelector("#coverage-audit-summary").textContent =
+      `National source search completed for ${summary.countriesWithNationalSourceSearchCompleted || 0} of ${summary.countries} countries. Primary-source metadata verified for ${summary.countriesWithNationalSourceMetadataReviewed}; ${summary.countriesWithUnresolvedNationalSource || 0} searches remain unresolved. Reviewed ${payload.reviewedAt}. Metadata review does not mean the figures have been imported or that comparable annual flows exist.`;
+    const auditLink = sourceNode({
+      name: "Read the complete country audit",
+      url: "https://github.com/bepobepo/migration-atlas/blob/main/NATIONAL_SOURCE_AUDIT.md",
+    });
+    dialog.querySelector("#coverage-audit-summary").append(document.createTextNode(" "), auditLink);
     const render = () => {
       const results = dialog.querySelector("#coverage-results");
       results.replaceChildren();
@@ -606,6 +614,15 @@ async function showCountryCoverage() {
           country.reportingStatus.replaceAll("_", " ") +
           ". Counts include published zeros and refer to route-year records, not people.";
         item.append(reporting);
+        if (country.nationalAudit) {
+          const finding = document.createElement("p");
+          finding.className = "country-audit-finding";
+          finding.textContent = country.nationalAudit.finding;
+          item.append(finding);
+          const next = document.createElement("p");
+          next.textContent = "Import assessment: " + country.nationalAudit.nextStep;
+          item.append(next);
+        }
         for (const id of new Set([
           ...Object.keys(country.selectedSourceCounts.incoming),
           ...Object.keys(country.selectedSourceCounts.outgoing),
@@ -619,9 +636,19 @@ async function showCountryCoverage() {
               : "National metadata reviewed, not imported: ";
             line.append(sourceNode(source));
             item.append(line);
+            if (!source.imported) {
+              const details = document.createElement("details");
+              const heading = document.createElement("summary");
+              heading.textContent = "What this source measures";
+              const definition = document.createElement("p");
+              definition.textContent = [source.metric, source.geographicBasis, ...(source.caveats || [])].filter(Boolean).join(" · ");
+              details.append(heading, definition);
+              item.append(details);
+            }
           }
         }
         for (const id of country.candidateSourceIds || []) {
+          if ((country.nationalSourceIds || []).includes(id)) continue;
           const source = payload.sources[id];
           if (source?.url || source?.primaryUrl) {
             const line = document.createElement("p");
@@ -636,6 +663,7 @@ async function showCountryCoverage() {
     dialog.querySelector("input").oninput = render;
     render();
   } catch {
+    dialog.querySelector("#coverage-audit-summary").textContent = "National review status unavailable.";
     dialog.querySelector("#coverage-results").textContent =
       "Coverage could not be loaded. Close and reopen to retry.";
   }

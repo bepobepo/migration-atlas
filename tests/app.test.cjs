@@ -64,7 +64,7 @@ async function boot(overrides = {}) {
     },
   };
 }
-test("initial map has 30 valid directional routes and 24 navigable stories", async () => {
+test("initial map has 30 valid directional routes and every catalog story is navigable", async () => {
   const a = await boot();
   try {
     assert.equal(a.$("#period").textContent, "2020–2024");
@@ -75,7 +75,7 @@ test("initial map has 30 valid directional routes and 24 navigable stories", asy
       ),
     );
     a.$("#all-events").click();
-    assert.equal(a.w.document.querySelectorAll("#catalog button").length, 24);
+    assert.equal(a.w.document.querySelectorAll("#catalog button").length, JSON.parse(fs.readFileSync(path.join(root, "data/events.json"))).length);
   } finally {
     a.api.state.route = null;
     await flush();

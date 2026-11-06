@@ -78,7 +78,7 @@ class CoverageTests(unittest.TestCase):
     def test_candidate_metadata_never_becomes_imported_coverage(self):
         for code, country in self.matrix['countries'].items():
             inventory = self.inventory['countries'][code]
-            for key in ('nationalReviewStatus', 'nationalPrimaryUrl', 'nationalSourceIds', 'candidateSourceIds'):
+            for key in ('nationalReviewStatus', 'nationalPrimaryUrl', 'nationalSourceIds', 'candidateSourceIds', 'nationalAudit'):
                 self.assertEqual(country[key], inventory[key])
             if not country['nationalSourceIds']:
                 self.assertIsNone(country['nationalPrimaryUrl'])
@@ -93,6 +93,39 @@ class CoverageTests(unittest.TestCase):
             if not source['imported']:
                 self.assertEqual(source['selectedRecordCount'], 0)
                 self.assertEqual(source['dataStatus'], 'metadata_only_not_imported')
+
+    def test_every_country_has_an_evidenced_search_outcome(self):
+        audit = json.loads((ROOT / 'reference/national-source-audit.json').read_text())
+        self.assertEqual(set(audit['countries']), set(self.matrix['countries']))
+        self.assertEqual(audit['summary']['countriesSearched'], 194)
+        self.assertEqual(audit['summary']['pendingSearches'], 0)
+        self.assertEqual(audit['summary']['numericNationalImportsFromThisAudit'], 0)
+        verified = unresolved = 0
+        for code, review in audit['countries'].items():
+            self.assertEqual(review['code'], code)
+            self.assertTrue(review['finding'])
+            self.assertTrue(review['nextStep'])
+            self.assertTrue(review['searchQueries'] or review.get('reviewMethod') == 'previously_completed_primary_source_review')
+            self.assertEqual(self.matrix['countries'][code]['nationalAudit']['status'], review['status'])
+            if review['status'] == 'primary_source_metadata_verified':
+                verified += 1
+                self.assertTrue(review['evidence'])
+                self.assertTrue(review['sources'])
+                self.assertTrue(self.matrix['countries'][code]['nationalSourceIds'])
+                for source in review['sources']:
+                    self.assertIn(source['id'], self.inventory['sources'])
+                    self.assertTrue(source['metric'])
+                    self.assertTrue(source['caveats'])
+            else:
+                unresolved += 1
+                self.assertEqual(review['status'], 'search_completed_no_verified_primary_source')
+                self.assertEqual(review['sources'], [])
+                self.assertIsNone(self.matrix['countries'][code]['nationalPrimaryUrl'])
+        self.assertEqual(verified + unresolved, 194)
+        self.assertEqual(audit['summary']['primaryMetadataVerified'], verified)
+        self.assertEqual(audit['summary']['searchCompletedUnresolved'], unresolved)
+        self.assertEqual(self.matrix['summary']['countriesWithNationalSourceSearchCompleted'], 194)
+        self.assertEqual(self.matrix['summary']['countriesWithUnresolvedNationalSource'], unresolved)
 
     def test_published_zero_counts_but_absence_does_not(self):
         zero = next(row for row in self.flows['records'] if row['value'] == 0)

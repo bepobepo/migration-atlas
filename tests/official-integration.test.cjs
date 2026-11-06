@@ -149,6 +149,10 @@ async function boot() {
       app.w.document.querySelectorAll("#coverage-results section").length,
       194,
     );
+    assert.match($("#coverage-audit-summary").textContent, /completed for 194 of 194/);
+    assert.equal(app.w.document.querySelectorAll(".country-audit-finding").length, 194);
+    assert.ok(app.w.document.querySelectorAll("#coverage-results details").length > 0,
+      "reviewed national sources expose metric definitions rather than only links");
     $("#coverage-search").value = "Belarus";
     $("#coverage-search").dispatchEvent(new app.w.Event("input"));
     assert.equal(

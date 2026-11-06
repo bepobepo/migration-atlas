@@ -39,6 +39,18 @@ assert.deepEqual(ids(match([["TCD", "SDN"]], 2023, 2024)), []);
 assert.deepEqual(ids(match([["AFG", "PAK"]], 2021, 2024)), [21]);
 assert.deepEqual(ids(match([["SYR", "TUR"]], 2011, 2016)), [22]);
 assert.deepEqual(ids(match([["UKR", "DEU"]], 2022, 2024)), [23]);
+assert.deepEqual(ids(match([["MMR", "BGD"]], 2017, 2017)), [24]);
+assert.deepEqual(ids(match([["BGD", "MMR"]], 2017, 2017)), []);
+assert.deepEqual(ids(match([["MMR", "BGD"]], 2016, 2016)), []);
+assert.deepEqual(ids(match([["SSD", "UGA"]], 2016, 2017)), [25]);
+assert.deepEqual(ids(match([["ETH", "SDN"]], 2020, 2020)), [26]);
+assert.deepEqual(ids(match([["NIC", "CRI"]], 2018, 2018)), [27]);
+assert.deepEqual(ids(match([["CRI", "NIC"]], 2018, 2018)), []);
+assert.deepEqual(ids(match([["HTI", "USA"]], 2024, 2024)), [28]);
+assert.deepEqual(ids(match([["HTI", "USA"]], 2023, 2023)), []);
+assert.deepEqual(ids(match([["RWA", "TZA"]], 1994, 1994)), [29]);
+assert.deepEqual(ids(match([["CUB", "USA"]], 1980, 1980)), [30]);
+assert.deepEqual(ids(match([["VNM", "USA"]], 1975, 1975)), [31]);
 assert.equal(eventScope({}), "route");
 assert.equal(
   data[18].text.includes("2024"),
@@ -140,7 +152,7 @@ assert.deepEqual(
   assert.equal(w.document.querySelectorAll(".story-line").length, 0);
   $("#modal").close();
   $("#all-events").click();
-  assert.equal(w.document.querySelectorAll("#catalog button").length, 24);
+  assert.equal(w.document.querySelectorAll("#catalog button").length, data.length);
   assert.doesNotMatch($("#catalog").textContent, /undefined/);
   dom.window.close();
   console.log(
