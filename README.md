@@ -16,7 +16,7 @@ Choose an origin under **From** and **Everywhere** under **To** to explore all c
 
 Use **From year**, **To year**, and **Apply range** on the timeline or in route details for any inclusive range within 1960–2024, including a single year. For total immigration, choose a country and **Incoming**; **Outgoing** shows emigration, while **All movement** combines the two. Counts use integer tenths internally; official figures retain their published precision. Five-year files and annual files are reconciled through one source resolver. Failed loads never produce a partial total. Published official gaps are shown as unavailable, and reported subtotals with incomplete coverage are labelled rather than presented as complete range totals. Country/area selectors explicitly mark the 11 map features without FLOW estimates.
 
-Historical drivers are sourced stories overlapping the chosen years and direction. Opening one retains the selected range; a link returns to the figures. The 20 curated stories do not explain every corridor or assign counts to causes. Missing historical coverage is explicitly stated. Arrow shafts are limited to 0.7–2.4 screen pixels, arrowheads to a 7-pixel marker, and country points to a 2.5-pixel radius across zoom and viewport changes.
+Historical drivers are sourced stories overlapping the chosen years and direction. Opening one retains the selected range; a link returns to the figures. The 24 curated stories do not explain every corridor or assign counts to causes. Missing historical coverage is explicitly stated. Arrow shafts are limited to 0.7–2.4 screen pixels, arrowheads to a 7-pixel marker, and country points to a 2.5-pixel radius across zoom and viewport changes.
 
 ## Checks
 

@@ -65,7 +65,8 @@
   "globalCandidateSourceIds": [
     "unsd_incoming_previous_residence",
     "oecd_international_migration",
-    "undesa_migrant_stock_2024"
+    "undesa_migrant_stock_2024",
+    "unhcr_forced_displacement_flows"
   ],
   "sources": {
     "eurostat_imm5prv": {
@@ -204,7 +205,11 @@
       "reportingCountryCoverage": null,
       "reportingMembershipStatus": "not_verified_from_observations",
       "advertisedReferenceYears": "2010 onward, as available",
-      "datasetUpdated": "2026-08-10"
+      "datasetUpdated": "2026-08-10",
+      "observedRecordCount": 65203,
+      "observedReportingAreas": 40,
+      "coverageObservationDate": "2026-11-06",
+      "coverageObservationNote": "The unfiltered UNdata web view listed 40 reporting countries or areas and 65,203 records, including aggregate, age/sex or other non-bilateral entries. Reporter-year and counterpart coverage have not been independently reconciled. The public CSV handler returned HTTP 404 in the session; no records have been imported."
     },
     "undesa_flows_2015": {
       "label": "International Migration Flows to and from Selected Countries: 2015 Revision",
@@ -566,6 +571,22 @@
       "reviewedAt": "2026-11-06",
       "imported": false,
       "defaultFlowEligibility": "candidate_only_pending_underlying_table_review"
+    },
+    "unhcr_forced_displacement_flows": {
+      "label": "Forcibly displaced flow data",
+      "provider": "United Nations High Commissioner for Refugees",
+      "primaryUrl": "https://www.unhcr.org/refugee-statistics/insights/explainers/forcibly-displaced-flow-data.html",
+      "metric": "Estimated annual flows of forcibly displaced people by country of origin and asylum",
+      "geographicBasis": "country_of_origin_and_country_of_asylum",
+      "caveats": [
+        "Includes specific protection and displacement populations and is not a complete measure of all migrants.",
+        "Origin and country of asylum are not necessarily the immediately previous and next countries of residence; individuals may move onward, return, or seek asylum after an earlier move.",
+        "Do not substitute these counts for bilateral all-person residence flows or add them to those flows. Country-year coverage and revisions require verification before any import."
+      ],
+      "metadataReviewStatus": "primary_source_metadata_verified",
+      "reviewedAt": "2026-11-06",
+      "imported": false,
+      "defaultFlowEligibility": "context_only_definition_and_geography_mismatch"
     }
   },
   "countries": {
