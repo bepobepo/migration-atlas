@@ -14,8 +14,8 @@ The archived Eurostat source responses are `reference/official/eurostat/migr_imm
 | Countries with imported observations reported by their own authority | 30 |
 | Countries represented only as partners in another country's imported report | 164 |
 | Countries appearing in at least one imported official corridor-year | 194 |
-| National primary-source metadata reviewed separately | 12 |
-| Countries without individually verified national source metadata | 182 |
+| National primary-source metadata reviewed separately | 14 |
+| Countries without individually verified national source metadata | 180 |
 | Documented historical UNDESA 2015 reporting countries | 45 |
 
 “Appears in an official corridor” does not imply complete national or world coverage. The observation counts below count source-specific pair-year rows, including published zeroes. An immigration report and an emigration report may describe the same movement and must not be added together.
@@ -63,6 +63,8 @@ Review here means the linked primary source's identity and metric were checked. 
 | Chile | [SERMIG open administrative data](https://serviciomigraciones.cl/estudios-migratorios/datos-abiertos/), [INE demography / resident estimates](https://www.ine.gob.cl/estadisticas-por-tema/demografia-y-poblacion/demografia) | SERMIG explicitly counts permits, not people. INE/SERMIG EPE is a resident stock at 31 December; neither is an annual gross-flow substitute. |
 | South Africa | [Statistics South Africa Migration Profile 2023](https://www.statssa.gov.za/publications/03-09-17/03-09-172023.pdf) | Official profile exists; a complete annual country-pair residence-flow extract has not been verified. Underlying table definitions vary. |
 | Japan | [Immigration Services Agency statistics gateway](https://www.moj.go.jp/isa/policies/statistics/index.html) | Administrative entry/exit and status processing gateway verified. A comparable bilateral residence-flow table remains unverified. |
+| Brazil | [IBGE 2022 census migration results](https://www.ibge.gov.br/Estatisticas/Sociais/Populacao/22827-censo-demografico-2022.html?edicao=43821) | Resident population, birth and previous residence; five-year reference. The census does not measure international emigration. Not imported as annual flows. |
+| Argentina | [INDEC 2022 census migration results](https://www.indec.gob.ar/indec/web/Nivel4-Tema-2-41-165?lang=es) | Census residents by birthplace and arrival period; excludes people no longer resident at census. Not imported as annual flows. |
 | Mexico | [INEGI census conceptual framework](https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825197520.pdf), [ENADID 2023](https://www.inegi.org.mx/programas/enadid/2023/) | Census and household survey include previous residence or international departures over reference periods. These are not automatically annual bilateral flows; survey uncertainty and definitions require review before import. |
 | Belarus | No current national primary residence-flow table verified | The attempted national-source search did not establish a current comparable Belstat table. Its country entry deliberately uses a null national URL. Historical UNDESA reporting membership and partner-reported official observations are separate evidence. |
 

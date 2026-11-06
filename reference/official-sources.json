@@ -17,8 +17,8 @@
     "countriesWithImportedReporterObservations": 30,
     "countriesWithOnlyImportedMirrorObservations": 164,
     "countriesWithAnyImportedOfficialRouteObservation": 194,
-    "countriesWithNationalSourceMetadataReviewed": 12,
-    "countriesWithoutAnIndividuallyVerifiedNationalSource": 182,
+    "countriesWithNationalSourceMetadataReviewed": 14,
+    "countriesWithoutAnIndividuallyVerifiedNationalSource": 180,
     "historicalUndesa2015Reporters": 45,
     "importedSources": {
       "eurostat_imm5prv": {
@@ -619,6 +619,38 @@
       "reviewedAt": "2026-11-06",
       "imported": false,
       "defaultFlowEligibility": "context_only_until_sampling_and_bilateral_period_review"
+    },
+    "bra_ibge_census_2022": {
+      "label": "Brazil 2022 census: fertility and migration sample",
+      "provider": "Brazilian Institute of Geography and Statistics (IBGE)",
+      "primaryUrl": "https://www.ibge.gov.br/Estatisticas/Sociais/Populacao/22827-censo-demografico-2022.html?edicao=43821",
+      "metric": "Census residents by place of birth, previous residence and residence five years before census",
+      "geographicBasis": "census_residents_birth_and_previous_residence",
+      "caveats": [
+        "The 2022 census does not cover international emigration.",
+        "Census population and five-year residence measures are not complete annual bilateral migration flows.",
+        "Sample estimates and country-specific categories need reconciliation before import."
+      ],
+      "metadataReviewStatus": "primary_source_metadata_verified",
+      "reviewedAt": "2026-11-06",
+      "imported": false,
+      "defaultFlowEligibility": "context_only_pending_definition_and_period_review"
+    },
+    "arg_indec_census_2022": {
+      "label": "Argentina 2022 census: international and internal migration",
+      "provider": "National Institute of Statistics and Censuses (INDEC)",
+      "primaryUrl": "https://www.indec.gob.ar/indec/web/Nivel4-Tema-2-41-165?lang=es",
+      "metric": "Census population born abroad by country of birth and period of arrival",
+      "geographicBasis": "census_residents_birth_and_previous_residence",
+      "caveats": [
+        "The census describes residents at the census date, not every arrival or departure.",
+        "Country of birth is not necessarily previous country of residence.",
+        "Arrival periods and census coverage require review before using as any flow measure."
+      ],
+      "metadataReviewStatus": "primary_source_metadata_verified",
+      "reviewedAt": "2026-11-06",
+      "imported": false,
+      "defaultFlowEligibility": "context_only_pending_definition_and_period_review"
     }
   },
   "countries": {
@@ -1205,11 +1237,14 @@
           ]
         }
       },
-      "nationalReviewStatus": "not_individually_reviewed",
-      "nationalPrimaryUrl": null,
-      "nationalSourceIds": [],
+      "nationalReviewStatus": "primary_source_metadata_reviewed_not_imported",
+      "nationalPrimaryUrl": "https://www.indec.gob.ar/indec/web/Nivel4-Tema-2-41-165?lang=es",
+      "nationalSourceIds": [
+        "arg_indec_census_2022"
+      ],
       "candidateSourceIds": [
-        "unsd_incoming_previous_residence"
+        "unsd_incoming_previous_residence",
+        "arg_indec_census_2022"
       ],
       "historicalUndesa2015Reporter": false,
       "selectionPriority": [
@@ -1221,7 +1256,7 @@
       "notes": [
         "Every unfilled comparable route-year uses the explicitly labelled FLOW model fallback; official coverage is not complete worldwide.",
         "Imported official observations for this country are partner/mirror records reported by other countries, not a verified complete national series.",
-        "No national primary table was individually verified in this source review; the national URL is deliberately null."
+        "National census metadata reviewed; no complete annual bilateral flow series imported."
       ]
     },
     "ARM": {
@@ -2746,11 +2781,14 @@
           ]
         }
       },
-      "nationalReviewStatus": "not_individually_reviewed",
-      "nationalPrimaryUrl": null,
-      "nationalSourceIds": [],
+      "nationalReviewStatus": "primary_source_metadata_reviewed_not_imported",
+      "nationalPrimaryUrl": "https://www.ibge.gov.br/Estatisticas/Sociais/Populacao/22827-censo-demografico-2022.html?edicao=43821",
+      "nationalSourceIds": [
+        "bra_ibge_census_2022"
+      ],
       "candidateSourceIds": [
-        "unsd_incoming_previous_residence"
+        "unsd_incoming_previous_residence",
+        "bra_ibge_census_2022"
       ],
       "historicalUndesa2015Reporter": false,
       "selectionPriority": [
@@ -2762,7 +2800,7 @@
       "notes": [
         "Every unfilled comparable route-year uses the explicitly labelled FLOW model fallback; official coverage is not complete worldwide.",
         "Imported official observations for this country are partner/mirror records reported by other countries, not a verified complete national series.",
-        "No national primary table was individually verified in this source review; the national URL is deliberately null."
+        "National census metadata reviewed; no complete annual bilateral flow series imported."
       ]
     },
     "BRN": {
