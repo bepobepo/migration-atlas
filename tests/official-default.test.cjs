@@ -257,9 +257,11 @@ async function boot() {
     );
     assert.doesNotMatch($(".movement-tip").textContent, /\b0%/);
     assert.ok(
-      Array.from($(".movement-tip").querySelectorAll("a")).every(
-        (a) => !a.href.includes("humdata.org"),
-      ),
+      Array.from($(".movement-tip").querySelectorAll("a"))
+        .filter(
+          (a) => !a.closest(".tooltip-estimate,.tooltip-model-comparison"),
+        )
+        .every((a) => !a.href.includes("humdata.org")),
     );
     await waitFor(
       () => $("#official-residence-card")?.textContent.includes("133,000"),

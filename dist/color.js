@@ -463,7 +463,13 @@ function paintMovement(animate = false) {
       movement.start + movement.cursor - 1,
     );
     button.textContent = `${movement.direction === "in" ? name(peer) + " → " + name(movement.focus) : movement.direction === "both" ? name(movement.focus) + " ↔ " + name(peer) : name(movement.focus) + " → " + name(peer)} · ${formatSourceValue(cumulative(peer), q)} · ${q.label}`;
-    button.onclick = () => inspectMovement(peer);
+    button.setAttribute("aria-haspopup", "dialog");
+    button.setAttribute("aria-controls", "route-dialog");
+    const routePair =
+      movement.direction === "in"
+        ? [peer, movement.focus]
+        : [movement.focus, peer];
+    button.onclick = () => openMovementDetails(...routePair);
     $("#route-list").append(button);
   }
   $("#more").hidden = state.limit >= visiblePeers.length;
@@ -631,6 +637,99 @@ async function prepareMovement() {
     return false;
   }
 }
+let movementDetailsRequest = 0;
+async function openMovementDetails(origin, destination) {
+  const request = ++movementDetailsRequest;
+  const start = movement.start,
+    end = movement.end;
+  closeMovementInspection();
+  pauseMovement();
+  await setRange(start, end);
+  if (request !== movementDetailsRequest) return;
+  const saved = { ...state };
+  await openRouteDetails(origin, destination);
+  if (request === movementDetailsRequest) Object.assign(state, saved);
+}
+const inspectionModels = new Map();
+function inspectionModelSeries(focus, direction) {
+  const key = focus + ":" + direction;
+  if (!inspectionModels.has(key))
+    inspectionModels.set(
+      key,
+      fetch(`data/series/${direction}/${focus}.json`)
+        .then((r) => {
+          if (!r.ok) throw Error("Model series unavailable");
+          return r.json();
+        })
+        .then((series) => {
+          if (series.country !== focus || !series.peers)
+            throw Error("Invalid model series");
+          return series;
+        })
+        .catch((error) => {
+          inspectionModels.delete(key);
+          throw error;
+        }),
+    );
+  return inspectionModels.get(key);
+}
+async function renderInspectionEstimate(target, corridors, scope, key) {
+  target.textContent = "Loading migration estimate…";
+  try {
+    const directions = [
+      ...new Set(corridors.map(([a]) => (a === scope.focus ? "out" : "in"))),
+    ];
+    const parts = await Promise.all(
+      directions.map((d) => inspectionModelSeries(scope.focus, d)),
+    );
+    if (!target.isConnected || movementInspection?.key !== key) return;
+    const series = Object.fromEntries(directions.map((d, i) => [d, parts[i]]));
+    let cumulative = 0,
+      total = 0;
+    for (const [a, b] of corridors) {
+      const d = a === scope.focus ? "out" : "in",
+        peer = d === "out" ? b : a;
+      const values = series[d].peers[peer];
+      if (
+        !values ||
+        values.length !== 65 ||
+        values.some((v) => !Number.isSafeInteger(v) || v < 0)
+      )
+        throw Error("Incomplete model series");
+      cumulative += values
+        .slice(scope.start - 1960, scope.through - 1959)
+        .reduce((a, b) => a + b, 0);
+      total += values
+        .slice(scope.start - 1960, scope.end - 1959)
+        .reduce((a, b) => a + b, 0);
+    }
+    target.replaceChildren();
+    const label = document.createElement("span");
+    label.textContent = "Migration estimate · FLOW model";
+    const number = document.createElement("strong");
+    number.textContent = formatSourceValue(
+      cumulative / 10,
+      { basis: "modelled" },
+      "model",
+    );
+    const note = document.createElement("p");
+    note.textContent = `Estimated movements through ${scope.through}. Selected range ${scope.start}–${scope.end}: ${formatSourceValue(total / 10, { basis: "modelled" }, "model")}. These are statistical estimates, not verified official arrival counts.`;
+    target.append(
+      label,
+      number,
+      note,
+      sourceNode(currentOfficialResolver().sources[MODEL_SOURCE_ID]),
+    );
+  } catch {
+    if (!target.isConnected || movementInspection?.key !== key) return;
+    target.textContent = "Migration estimate could not be loaded. ";
+    const retry = document.createElement("button");
+    retry.textContent = "Retry estimate";
+    retry.onclick = () =>
+      renderInspectionEstimate(target, corridors, scope, key);
+    target.append(retry);
+  }
+}
 async function inspectMovement(code, route = null) {
   if (state.year < 1960) {
     closeMovementInspection();
@@ -774,6 +873,22 @@ function renderMovementInspection() {
         movement.start +
         " population (World Bank estimate).";
   }
+  if (participating && movement.cursor && !official.official) {
+    const estimate = document.createElement("section");
+    estimate.className = "tooltip-estimate tooltip-general-count";
+    colorTip.append(estimate);
+    renderInspectionEstimate(
+      estimate,
+      corridors,
+      {
+        focus: movement.focus,
+        start: movement.start,
+        end: movement.end,
+        through,
+      },
+      key,
+    );
+  }
   colorTip.append(info);
   if (participating) {
     const badge = document.createElement("p");
@@ -818,19 +933,14 @@ function renderMovementInspection() {
     const details = document.createElement("button");
     details.type = "button";
     details.textContent = "View route details ↗";
-    details.onclick = async () => {
-      closeMovementInspection();
-      pauseMovement();
-      await setRange(movement.start, movement.end);
-      const saved = { ...state };
-      openRouteDetails(
+    details.onclick = () =>
+      openMovementDetails(
         ...(route
           ? route
           : movement.direction !== "in"
             ? [movement.focus, code]
             : [code, movement.focus]),
-      ).then(() => Object.assign(state, saved));
-    };
+      );
     colorTip.append(details);
   }
 }

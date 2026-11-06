@@ -246,3 +246,28 @@
   cursor: pointer;
   font-weight: 600;
 }
+.tooltip-estimate {
+  padding: 12px;
+  margin: 12px 0;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+}
+.tooltip-estimate > span {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+}
+.tooltip-estimate > strong {
+  display: block;
+  font:
+    28px/1.3 Georgia,
+    serif;
+  margin: 7px 0;
+  color: #243c37;
+}
+.tooltip-estimate p {
+  font-size: 12px;
+  line-height: 1.6;
+}

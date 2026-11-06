@@ -97,7 +97,7 @@ async function boot() {
   function primary() {
     const clone = $(".movement-tip").cloneNode(true);
     clone
-      .querySelectorAll("details.tooltip-model-comparison")
+      .querySelectorAll("details.tooltip-model-comparison, .tooltip-estimate")
       .forEach((el) => el.remove());
     return clone.textContent;
   }
@@ -124,14 +124,26 @@ async function boot() {
     );
     assert.doesNotMatch(primary(), /19,500|13,700|30,700|\b0%/);
     assert.ok(
-      Array.from($(".movement-tip").querySelectorAll("a")).every(
-        (a) => !a.href.includes("humdata.org"),
-      ),
+      Array.from($(".movement-tip").querySelectorAll("a"))
+        .filter(
+          (a) => !a.closest(".tooltip-estimate,.tooltip-model-comparison"),
+        )
+        .every((a) => !a.href.includes("humdata.org")),
       "official inspection does not cite FLOW as its selected source",
     );
     assert.equal(api.movement.focus, "BLR");
     assert.deepEqual(Array.from(api.movement.peers), ["POL"]);
 
+    await waitFor(
+      () => $(".tooltip-general-count strong"),
+      "visible fallback estimate",
+    );
+    assert.match($(".tooltip-general-count").textContent, /FLOW model/);
+    assert.match($(".tooltip-general-count strong").textContent, /19,500/);
+    assert.match(
+      $(".tooltip-general-count").textContent,
+      /not verified official/,
+    );
     // An open tooltip follows the playback year and never borrows a later residence observation.
     api.movement.cursor = 3;
     api.paintMovement();
@@ -264,6 +276,40 @@ async function boot() {
     assert.equal(api.movement.end, 2024);
     assert.match($(".movement-tip .tooltip-period").textContent, /2024/);
     assert.doesNotMatch(primary(), /28,000/);
+    // Routes in focus open the detailed two-way window directly for both directions.
+    await setup("MAR", "FRA", 2000, 2024);
+    await $("#route-list .route-card").onclick();
+    assert.equal($("#route-dialog").open, true);
+    assert.match($("#route-view-title").textContent, /Morocco → France/);
+    assert.equal($("#route-range-start").value, "2000");
+    assert.equal($("#route-range-end").value, "2024");
+    assert.ok($("#route-forward-count"));
+    assert.ok($("#route-reverse-count"));
+    assert.equal($(".movement-tip").hidden, true);
+    await setup("FRA", "MAR", 2000, 2024);
+    $("#movement-direction").value = "in";
+    await api.prepareMovement();
+    await $("#route-list .route-card").onclick();
+    assert.equal($("#route-dialog").open, true);
+    assert.match($("#route-view-title").textContent, /Morocco → France/);
+    assert.equal(api.movement.focus, "FRA");
+    assert.equal(api.movement.direction, "in");
+    $("#route-close").click();
+    await setup("DZA", "FRA", 2000, 2024);
+    api.movement.cursor = 13;
+    api.paintMovement();
+    clickCountry("FRA");
+    await waitFor(
+      () => $(".tooltip-general-count strong"),
+      "Algeria-France estimate through2012",
+    );
+    const values = json("data/series/out/DZA.json").peers.FRA;
+    const estimate = values.slice(40, 53).reduce((a, b) => a + b, 0) / 10;
+    assert.equal(
+      $(".tooltip-general-count strong").textContent,
+      "≈ " + estimate.toLocaleString("en", { maximumSignificantDigits: 3 }),
+    );
+    assert.match($(".tooltip-general-count").textContent, /through 2012/);
     console.log(
       "PASS country tooltip: official flow and residence headlines in all map modes, collapsed model comparison, playback dates, non-mutating inspection, and stale-response protection.",
     );
