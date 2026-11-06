@@ -17,8 +17,8 @@
     "countriesWithImportedReporterObservations": 30,
     "countriesWithOnlyImportedMirrorObservations": 164,
     "countriesWithAnyImportedOfficialRouteObservation": 194,
-    "countriesWithNationalSourceMetadataReviewed": 11,
-    "countriesWithoutAnIndividuallyVerifiedNationalSource": 183,
+    "countriesWithNationalSourceMetadataReviewed": 12,
+    "countriesWithoutAnIndividuallyVerifiedNationalSource": 182,
     "historicalUndesa2015Reporters": 45,
     "importedSources": {
       "eurostat_imm5prv": {
@@ -587,6 +587,38 @@
       "reviewedAt": "2026-11-06",
       "imported": false,
       "defaultFlowEligibility": "context_only_definition_and_geography_mismatch"
+    },
+    "mex_inegi_census_2020": {
+      "label": "2020 Population and Housing Census: conceptual framework",
+      "provider": "Instituto Nacional de Estadística y Geografía (INEGI)",
+      "primaryUrl": "https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825197520.pdf",
+      "metric": "Census questions on previous residence and household emigration during a five-year reference period",
+      "geographicBasis": "previous_residence_and_destination_as_reported",
+      "caveats": [
+        "The census and five-year reference periods do not establish complete annual bilateral flows.",
+        "Survey coverage, household emigration and people absent from surveyed households need assessment before import.",
+        "Residence at a reference date is not automatically a count of every movement."
+      ],
+      "metadataReviewStatus": "primary_source_metadata_verified",
+      "reviewedAt": "2026-11-06",
+      "imported": false,
+      "defaultFlowEligibility": "candidate_only_pending_bilateral_and_period_review"
+    },
+    "mex_inegi_enadid_2023": {
+      "label": "National Survey of Demographic Dynamics 2023",
+      "provider": "Instituto Nacional de Estadística y Geografía (INEGI)",
+      "primaryUrl": "https://www.inegi.org.mx/programas/enadid/2023/",
+      "metric": "Survey of international departures during the previous five years with intention to live, study or work abroad",
+      "geographicBasis": "household_survey_departures",
+      "caveats": [
+        "Survey estimates are subject to sampling uncertainty and household coverage.",
+        "The five-year reference period and stated intentions do not directly equal annual usual-residence flows.",
+        "Country-specific tabulations, weights and uncertainty must be verified before import."
+      ],
+      "metadataReviewStatus": "primary_source_metadata_verified",
+      "reviewedAt": "2026-11-06",
+      "imported": false,
+      "defaultFlowEligibility": "context_only_until_sampling_and_bilateral_period_review"
     }
   },
   "countries": {
@@ -11008,11 +11040,16 @@
           ]
         }
       },
-      "nationalReviewStatus": "not_individually_reviewed",
-      "nationalPrimaryUrl": null,
-      "nationalSourceIds": [],
+      "nationalReviewStatus": "primary_source_metadata_reviewed_not_imported",
+      "nationalPrimaryUrl": "https://www.inegi.org.mx/programas/enadid/2023/",
+      "nationalSourceIds": [
+        "mex_inegi_census_2020",
+        "mex_inegi_enadid_2023"
+      ],
       "candidateSourceIds": [
-        "unsd_incoming_previous_residence"
+        "unsd_incoming_previous_residence",
+        "mex_inegi_census_2020",
+        "mex_inegi_enadid_2023"
       ],
       "historicalUndesa2015Reporter": false,
       "selectionPriority": [
@@ -11024,7 +11061,7 @@
       "notes": [
         "Every unfilled comparable route-year uses the explicitly labelled FLOW model fallback; official coverage is not complete worldwide.",
         "Imported official observations for this country are partner/mirror records reported by other countries, not a verified complete national series.",
-        "No national primary table was individually verified in this source review; the national URL is deliberately null."
+        "INEGI census and survey metadata reviewed; national bilateral annual flow data are not imported."
       ]
     },
     "MDA": {
