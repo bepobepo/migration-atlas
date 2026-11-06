@@ -1,0 +1,152 @@
+.data-controls {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+}
+.data-controls label {
+  font-size: 12px;
+  flex: 1;
+  min-width: 200px;
+}
+.data-controls select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px;
+  background: white;
+  border: 1px solid #94a3b8;
+  border-radius: 5px;
+  color: #1e293b;
+}
+.data-controls button {
+  font-size: 12px;
+  padding: 10px;
+}
+.data-quality,
+.data-warning {
+  grid-column: 1/-1;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 0;
+  color: #334155;
+}
+.data-quality {
+  border-left: 3px solid #2563eb;
+  padding: 6px 10px;
+}
+.data-warning {
+  padding: 12px;
+  background: #fff7ed;
+  border-left: 4px solid #b45309;
+  color: #78350f;
+}
+.data-warning[hidden] {
+  display: none;
+}
+#route-dialog .route-provenance {
+  font-size: 13px;
+  line-height: 1.65;
+  background: #eff6ff;
+  border-left-color: #2563eb;
+}
+.route-provenance p {
+  margin: 10px 0;
+}
+.route-provenance .data-warning {
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+.direction-quality {
+  font-weight: 500;
+}
+.data-badge,
+.cell-quality {
+  display: block;
+  font-size: 10px;
+  color: #475569;
+  line-height: 1.6;
+  margin-top: 4px;
+}
+.data-source-note {
+  font-size: 12px;
+  color: #334155;
+  border-top: 1px solid #cbd5e1;
+  padding-top: 8px;
+}
+.annual-provenance {
+  margin-top: 16px;
+}
+.annual-provenance summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.table-scroll {
+  overflow-x: auto;
+  max-height: 420px;
+}
+.source-values {
+  min-width: 600px;
+}
+.source-values td {
+  vertical-align: top;
+  font-size: 12px;
+}
+.source-dialog {
+  width: min(780px, 95vw);
+  max-height: 88dvh;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid #94a3b8;
+  border-radius: 10px;
+  background: #fafaf7;
+  color: #1e293b;
+}
+.source-dialog p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.source-dialog .source-close {
+  float: right;
+}
+.source-dialog input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+}
+.source-dialog section {
+  padding: 12px 0;
+  border-top: 1px solid #cbd5e1;
+}
+.source-dialog h3 {
+  font-size: 15px;
+}
+.source-dialog section p {
+  margin: 5px 0;
+}
+.movement-tip {
+  max-height: 75dvh;
+  overflow: auto;
+}
+.route-card small {
+  font-weight: 400;
+}
+@media (max-width: 580px) {
+  .data-controls {
+    gap: 8px;
+  }
+  .data-controls button {
+    width: 100%;
+  }
+  .source-dialog {
+    padding: 16px;
+  }
+  .data-quality,
+  .data-warning {
+    font-size: 10px;
+  }
+}

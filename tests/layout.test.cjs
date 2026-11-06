@@ -30,9 +30,13 @@ async function boot(preferences) {
     );
   w.eval(fs.readFileSync(path.join(root, "vendor/d3.js"), "utf8"));
   w.eval(
-    ["history.js", "app.js", "color.js", "layout.js"]
-      .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
-      .join("\n") +
+    fs.readFileSync(path.join(root, "provenance.js"), "utf8") +
+      "\n" +
+      fs.readFileSync(path.join(root, "data-ui.js"), "utf8") +
+      '\nsetDataPolicy("model");\n' +
+      ["history.js", "app.js", "color.js", "layout.js"]
+        .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
+        .join("\n") +
       "\nwindow.layoutTest={movement,prepareMovement,paintMovement,pauseMovement,runMovement};",
   );
   await new Promise((resolve) => setTimeout(resolve, 150));

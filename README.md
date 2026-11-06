@@ -2,7 +2,7 @@
 
 Static educational migration map; serve `dist` over HTTP. No build or backend is required. See [REVIEW.md](REVIEW.md) for the functional/data review and verification limits.
 
-Data: FLOW v1.0 (CC BY), 1960–2024. Annual female/male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. Source: Beyer RM, Schewe J, Abel GJ, Warner K, Campo SR (2026), *Annual Migration Flow Estimates by Sex between all Countries since 1960*, Scientific Data 13 (1389), https://www.nature.com/articles/s41597-026-07983-w. The model supports broad trends; precise individual-corridor counts should use official records where available. 1950s have historical context only.
+Data: compatible Eurostat official annual flows where available (2008–2024), with FLOW v1.0 (CC BY) fallback for 1960–2024. Source provenance is visible for each direction and range; see the official-first section below. The unchanged baseline model uses FLOW v1.0: Annual female/male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. Source: Beyer RM, Schewe J, Abel GJ, Warner K, Campo SR (2026), *Annual Migration Flow Estimates by Sex between all Countries since 1960*, Scientific Data 13 (1389), https://www.nature.com/articles/s41597-026-07983-w. The model supports broad trends; precise individual-corridor counts should use official records where available. 1950s have historical context only.
 
 ## Reproduce
 
@@ -34,3 +34,27 @@ Coverage now includes all 194 FLOW countries and 37,442 directed country pairs w
 Playback controls, year scrubbing, cumulative counts and the quantitative legend sit directly below the map. Selection/dates, contributions, migration details, historical drivers, routes and methodology can be collapsed independently. **Focus map** hides ancillary panels and expands the map; **Restore panels** restores section states without changing playback or zoom. Section preferences persist locally; Focus mode starts off after reload.
 
 History has explicit route, origin-country and destination-country scopes, matched by one shared date/direction filter. Venezuela → USA now shows Venezuelan country context from 2014 and a separate 2024 election/mobility record. The Spain-specific story stays confined to Venezuela → Spain. These accounts identify relevant historical circumstances rather than attributing the full migration total to a cause. Sources: [UNHCR, May 2018](https://data.unhcr.org/en/documents/download/63883) and [R4V, 2024 end-year report](https://rmrp.r4v.info/eyr2024/).
+
+## Official-first data and country inventory — 6 November 2026
+
+The default **Best available (official first)** view prefers destination-reported annual immigration by previous residence, then origin-reported emigration by next residence, and finally the unchanged FLOW model. **FLOW model only** provides a comparison. Every count surface and playback series uses `dist/provenance.js`; raw FLOW exports stay intact for independent reconciliation. Official numeric zero overrides a positive model estimate; missing/confidential observations never become official zeroes.
+
+The pinned Eurostat snapshots contain 116,909 source observations for 2008–2024. Choosing one reporter per corridor/year produces **111,297 official observations** (60,056 destination reports and 51,241 origin reports); 5,612 alternative reports remain inspectable and are never summed or averaged. This replaces about 4.6% of the 2,433,730 global annual model records. Thirty countries contribute their own reports; other countries appear through partner reports. Coverage remains partial. Sources can be estimated/imputed, provisional or subject to definition breaks, and those flags remain visible. Mixed totals combine differing provenance and must not be interpreted as a consistently measured official series.
+
+Route details show separate source coverage for both directions, annual published values, reporting countries, flags, alternatives and FLOW comparisons. The playback dock retains the source label in Focus mode. The searchable **Country coverage & sources** dialog records imported coverage and research status for every source country. See [OFFICIAL_SOURCES.md](OFFICIAL_SOURCES.md) and [reference/official-sources.json](reference/official-sources.json): eleven national agencies' metadata was checked; 183 have not been individually verified. Candidate sources are not presented as imported official data.
+
+Belarus → Poland in 2020–2024 still lacks a comparable annual flow in these official imports. Its FLOW total of 19,476.5 is **not validated as a headcount of the post-2020 exodus**. The app displays a warning and separate official residence-document stocks (approximately 28,000 in August 2020, nearly 124,500 on 29 February 2024, and approximately 133,000 permit holders excluding visas on 30 June 2024). These cannot be summed or substituted for arrivals. No 200,000-arrival replacement has been fabricated.
+
+Reproduce the official overlay offline from pinned snapshots:
+
+```sh
+python scripts/import_eurostat.py
+python scripts/build_official.py
+python scripts/build_coverage.py
+python tests/eurostat_test.py
+python tests/official_overlay_test.py
+python tests/coverage_test.py
+npm test
+```
+
+Use `python scripts/import_eurostat.py --download` only for an intentional refresh; review changed definitions, flags, dates and country-year coverage before rebuilding. The importer archives response checksums, retrieval dates and provider update dates. [Eurostat migration metadata](https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm) documents reporting definitions and national exceptions. Official publication does not guarantee a complete observed headcount; protection populations, citizenship and administrative classifications require separate attention. Browser visual QA remains unverified when the prescribed browser tooling is unavailable.

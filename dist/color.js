@@ -17,7 +17,7 @@ const movement = {
 };
 const panel = document.createElement("section");
 panel.className = "movement-panel";
-panel.innerHTML = `<div class="movement-switches"><label>Map view<select id="movement-view"><option value="color">Color movement</option><option value="arrows">Arrows</option></select></label><label>Color scale<select id="movement-metric"><option value="volume">Migration volume</option><option value="population">Share of population</option></select></label></div><div class="movement-pickers"><label>Focus country<select id="movement-focus"><option value="">Choose a country</option></select></label><label>Direction<select id="movement-direction"><option value="out">Outgoing — to destinations</option><option value="in">Incoming — from origins</option><option value="both">All movement — combined</option></select></label></div><details><summary>Choose origins / destinations</summary><label><input id="movement-all" type="checkbox" checked> Everywhere</label><input id="movement-search" type="search" placeholder="Find a country…" aria-label="Search counterpart countries"><div id="movement-peers"></div></details><div id="movement-status" role="status">Choose a focal country to explore color movement.</div><div class="movement-transport"><button id="movement-play">Play ▶</button><button id="movement-restart">Restart ↺</button><label>Speed<select id="movement-speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div><input id="movement-cursor" type="range" min="0" max="5" value="0" aria-label="Playback year"><strong id="movement-year">Start</strong><p id="movement-count" aria-live="polite"></p><p id="movement-legend"></p><div id="movement-contributions"></div><p class="small">Gross estimated movements, including repeat migration. Arrivals and departures do not establish overall population change. Population colors saturate at 10%; displayed percentages are uncapped. <a href="https://data.worldbank.org/indicator/SP.POP.TOTL" target="_blank" rel="noopener">Population source ↗</a></p>`;
+panel.innerHTML = `<div class="movement-switches"><label>Map view<select id="movement-view"><option value="color">Color movement</option><option value="arrows">Arrows</option></select></label><label>Color scale<select id="movement-metric"><option value="volume">Migration volume</option><option value="population">Share of population</option></select></label></div><div class="movement-pickers"><label>Focus country<select id="movement-focus"><option value="">Choose a country</option></select></label><label>Direction<select id="movement-direction"><option value="out">Outgoing — to destinations</option><option value="in">Incoming — from origins</option><option value="both">All movement — combined</option></select></label></div><details><summary>Choose origins / destinations</summary><label><input id="movement-all" type="checkbox" checked> Everywhere</label><input id="movement-search" type="search" placeholder="Find a country…" aria-label="Search counterpart countries"><div id="movement-peers"></div></details><div id="movement-status" role="status">Choose a focal country to explore color movement.</div><div class="movement-transport"><button id="movement-play">Play ▶</button><button id="movement-restart">Restart ↺</button><label>Speed<select id="movement-speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div><input id="movement-cursor" type="range" min="0" max="5" value="0" aria-label="Playback year"><strong id="movement-year">Start</strong><p id="movement-count" aria-live="polite"></p><p id="movement-legend"></p><div id="movement-contributions"></div><p class="small">Gross migration flows, including repeat migration; official coverage and model fallback are labelled below. Arrivals and departures do not establish overall population change. Population colors saturate at 10%; displayed percentages are uncapped. <a href="https://data.worldbank.org/indicator/SP.POP.TOTL" target="_blank" rel="noopener">Population source ↗</a></p>`;
 $(".map-wrap").before(panel);
 const colorTip = document.createElement("section");
 colorTip.className = "movement-tip";
@@ -184,7 +184,7 @@ function renderMovementArrows(counts) {
     .attr(
       "aria-label",
       (r) =>
-        `${name(r[0])} to ${name(r[1])}: ${fullEstimate(r[2])}, through ${movement.start + movement.cursor - 1}`,
+        `${name(r[0])} to ${name(r[1])}: ${formatSourceValue(r[2], summarizeProvenance([r], movement.start, movement.start + movement.cursor - 1))} · ${summarizeProvenance([r], movement.start, movement.start + movement.cursor - 1).label}, through ${movement.start + movement.cursor - 1}`,
     )
     .on("click", (e, r) =>
       inspectMovement(r[0] === movement.focus ? r[1] : r[0], r),
@@ -308,6 +308,11 @@ function paintMovement(animate = false) {
   // Color overlays must stay below arrow hit targets when switching views.
   if (movement.view === "arrows") g.select(".movement-arrows").raise();
   g.select(".movement-label").raise();
+  const quality = summarizeProvenance(
+    movementCorridors(),
+    movement.start,
+    movement.cursor ? movement.start + movement.cursor - 1 : movement.start - 1,
+  );
   const directionLabel =
     movement.direction === "in"
       ? "Incoming from selected origins"
@@ -315,14 +320,19 @@ function paintMovement(animate = false) {
         ? "Combined incoming and outgoing movements"
         : "Outgoing to selected destinations";
   $("#detail").innerHTML =
-    '<span class="story-tag">CUMULATIVE MIGRATION</span><h2>' +
+    '<span class="story-tag">CUMULATIVE MIGRATION · ' +
+    quality.label +
+    "</span><h2>" +
     name(movement.focus) +
     "</h2><p>" +
     directionLabel +
     "</p><strong>" +
-    fullEstimate(total) +
-    '</strong><p class="small">Annual FLOW estimates. Full selected range: ' +
-    fullEstimate(movement.total) +
+    formatSourceValue(total, quality) +
+    '</strong><p class="small">Annual migration flows. Full selected range: ' +
+    formatSourceValue(
+      movement.total,
+      summarizeProvenance(movementCorridors(), movement.start, movement.end),
+    ) +
     ". Gross movements include repeat migration.</p>";
   $("#movement-year").textContent = movement.cursor
     ? `Through ${movement.start + movement.cursor - 1}`
@@ -348,7 +358,16 @@ function paintMovement(animate = false) {
     const button = document.createElement("button");
     button.className = "destination-card";
     const pct = colorRatio(peer, cumulative(peer));
-    button.textContent = `${name(peer)} · ${fullEstimate(cumulative(peer))} · ${pct === null ? "Population unavailable" : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "%"}`;
+    const q = summarizeProvenance(
+      movementCorridors().filter(([a, b]) => a === peer || b === peer),
+      movement.start,
+      movement.start + movement.cursor - 1,
+    );
+    button.textContent = `${name(peer)} · ${formatSourceValue(cumulative(peer), q)} · ${pct === null ? "Population unavailable" : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "%"}`;
+    const badge = document.createElement("small");
+    badge.className = "cell-quality";
+    badge.textContent = q.label;
+    button.append(badge);
     button.onclick = () => inspectMovement(peer);
     list.append(button);
   }
@@ -363,7 +382,12 @@ function paintMovement(animate = false) {
   for (const peer of visiblePeers.slice(0, state.limit)) {
     const button = document.createElement("button");
     button.className = "route-card";
-    button.textContent = `${movement.direction === "in" ? name(peer) + " → " + name(movement.focus) : name(movement.focus) + " → " + name(peer)} · ${fullEstimate(cumulative(peer))}`;
+    const q = summarizeProvenance(
+      movementCorridors().filter(([a, b]) => a === peer || b === peer),
+      movement.start,
+      movement.start + movement.cursor - 1,
+    );
+    button.textContent = `${movement.direction === "in" ? name(peer) + " → " + name(movement.focus) : movement.direction === "both" ? name(movement.focus) + " ↔ " + name(peer) : name(movement.focus) + " → " + name(peer)} · ${formatSourceValue(cumulative(peer), q)} · ${q.label}`;
     button.onclick = () => inspectMovement(peer);
     $("#route-list").append(button);
   }
@@ -377,6 +401,7 @@ function paintMovement(animate = false) {
     end: through,
   });
   $("#event-count").textContent = relevant.length;
+  updateDataDisclosure();
   renderHistoryCards($("#events"), relevant, {
     start: movement.start,
     end: through,
@@ -416,6 +441,7 @@ async function prepareMovement() {
   $("#period").textContent = `${start}–${end}`;
   $("#movement-status").textContent = "Loading complete annual series…";
   try {
+    await officialDataReady();
     const directions = direction === "both" ? ["out", "in"] : [direction];
     const fetchSeries = async (d) => {
       const response = await fetch(`data/series/${d}/${movement.focus}.json`);
@@ -430,7 +456,7 @@ async function prepareMovement() {
         )
       )
         throw Error("Incomplete annual series");
-      return series;
+      return resolveSeries(series, d);
     };
     const [parts, pop] = await Promise.all([
       Promise.all(directions.map(fetchSeries)),
@@ -484,7 +510,9 @@ async function prepareMovement() {
     $("#show-all-routes").checked = false;
     $("#movement-cursor").max = end - start + 1;
     $("#movement-status").textContent = movement.total
-      ? "Ready · worldwide FLOW estimates"
+      ? "Ready · " +
+        summarizeProvenance(movementCorridors(), movement.start, movement.end)
+          .label
       : "No positive migration estimates for this selection.";
     paintMovement();
     return true;
@@ -520,6 +548,32 @@ function inspectMovement(code, route = null) {
     ? "No migration is displayed for this country in the selected scenario."
     : `${fullEstimate(count)} cumulative estimated movements. ${pct === null ? "Population baseline unavailable." : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "% relative to " + name(code) + "’s " + movement.start + " population."}`;
   colorTip.append(close, title, info);
+  const corridors = route
+    ? [[route[0], route[1]]]
+    : code === movement.focus
+      ? movementCorridors()
+      : movementCorridors().filter(([a, b]) => a === code || b === code);
+  const quality = summarizeProvenance(
+    corridors,
+    movement.start,
+    movement.start + movement.cursor - 1,
+  );
+  const badge = document.createElement("p");
+  badge.className = "data-source-note";
+  badge.textContent =
+    sourceSummaryText(quality) +
+    (hasBelarusPoland(corridors, movement.start, movement.end)
+      ? " " + belarusCaution
+      : "");
+  colorTip.append(badge);
+  for (const id of quality.sourceIds) {
+    colorTip.append(
+      sourceNode(currentOfficialResolver().sources[id]),
+      document.createElement("br"),
+    );
+  }
+  if (participating)
+    info.textContent = `${formatSourceValue(count, quality)} cumulative ${movement.direction === "both" && !route ? "combined incoming and outgoing movements" : "migration flows"}. ${pct === null ? "Population baseline unavailable." : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "% relative to " + name(code) + "’s " + movement.start + " population (World Bank estimate)."}`;
   if (participating && code !== movement.focus) {
     const details = document.createElement("button");
     details.textContent = "View route details ↗";

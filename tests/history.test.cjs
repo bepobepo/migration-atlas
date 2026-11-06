@@ -87,7 +87,11 @@ assert.deepEqual(
   });
   w.eval(fs.readFileSync(path.join(root, "vendor/d3.js"), "utf8"));
   w.eval(
-    fs.readFileSync(path.join(root, "history.js"), "utf8") +
+    fs.readFileSync(path.join(root, "provenance.js"), "utf8") +
+      "\n" +
+      fs.readFileSync(path.join(root, "data-ui.js"), "utf8") +
+      '\nsetDataPolicy("model");\n' +
+      fs.readFileSync(path.join(root, "history.js"), "utf8") +
       "\n" +
       fs.readFileSync(path.join(root, "app.js"), "utf8") +
       "\nwindow.testHistory={state,setRange,renderRouteContext,selectEvent,get events(){return events}};",

@@ -22,7 +22,11 @@ const root = path.resolve(__dirname, "../dist");
   });
   w.eval(fs.readFileSync(root + "/vendor/d3.js", "utf8"));
   w.eval(
-    fs.readFileSync(root + "/history.js", "utf8") +
+    fs.readFileSync(path.join(root, "provenance.js"), "utf8") +
+      "\n" +
+      fs.readFileSync(path.join(root, "data-ui.js"), "utf8") +
+      '\nsetDataPolicy("model");\n' +
+      fs.readFileSync(root + "/history.js", "utf8") +
       "\n" +
       fs.readFileSync(root + "/app.js", "utf8") +
       "\n" +

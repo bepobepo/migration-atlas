@@ -37,7 +37,11 @@ async function boot(overrides = {}) {
   };
   w.eval(fs.readFileSync(path.join(root, "vendor/d3.js"), "utf8"));
   w.eval(
-    fs.readFileSync(path.join(root, "history.js"), "utf8") +
+    fs.readFileSync(path.join(root, "provenance.js"), "utf8") +
+      "\n" +
+      fs.readFileSync(path.join(root, "data-ui.js"), "utf8") +
+      '\nsetDataPolicy("model");\n' +
+      fs.readFileSync(path.join(root, "history.js"), "utf8") +
       "\n" +
       fs.readFileSync(
         process.env.APP_UNDER_TEST || path.join(root, "app.js"),
@@ -310,7 +314,7 @@ test("arrow clicks open a tooltip with the selected route, period, estimate and 
       `${origin}-${destination}`,
     );
     assert.deepEqual(Array.from(a.api.state.route), [origin, destination]);
-    assert.match(a.$("#detail").textContent, /MODELLED MIGRATION/);
+    assert.equal(a.$("#detail .story-tag").textContent, "Modelled estimate");
   } finally {
     a.api.state.route = null;
     await flush();
@@ -668,6 +672,7 @@ test("late history responses and queued close events cannot replace the newest r
       new a.w.Event("submit", { cancelable: true }),
     );
     a.$("#route-dialog").dispatchEvent(new a.w.Event("close"));
+    await flush();
     resolve({ ok: true, json: async () => data });
     await flush();
     await flush();
@@ -754,10 +759,21 @@ test("Italy-France data uses France in selectors, map labels and source attribut
     assert.equal(a.$("#route-view-title").textContent, "Italy → France");
     assert.equal(a.$("#route-forward-count").textContent, "≈ 774,000");
     assert.equal(a.$("#route-reverse-count").textContent, "≈ 512,000");
-    assert.equal(a.$("#route-source-codes").textContent, "ITA → FRA");
+    const directions = a.w.document.querySelectorAll(
+      ".route-provenance .direction-quality",
+    );
+    assert.equal(directions.length, 2);
+    assert.match(
+      directions[0].textContent,
+      /Italy → France · Modelled estimate: 0 official \/ 5 corridor-year records/,
+    );
+    assert.match(
+      directions[1].textContent,
+      /France → Italy · Modelled estimate: 0 official \/ 5 corridor-year records/,
+    );
     assert.match(
       a.$(".route-provenance").textContent,
-      /not observed migration counts/,
+      /Data basis · FLOW model only/,
     );
     assert.match(a.$(".route-provenance a").href, /data.humdata.org/);
     assert.ok(
@@ -958,6 +974,7 @@ test("Everywhere loading and fetch failures never become an estimated zero", asy
     const pending = a.api.setYear(2015);
     assert.equal(a.$("#outgoing-total").textContent, "Loading…");
     assert.equal(a.w.document.querySelectorAll(".destination-card").length, 0);
+    await flush();
     reject(Error("offline"));
     await pending;
     assert.equal(a.$("#outgoing-total").textContent, "Could not load");
@@ -1052,7 +1069,10 @@ test("arbitrary inclusive ranges sum annual data exactly and retain the selected
       new a.w.MouseEvent("click", { bubbles: true, detail: 1 }),
     );
     assert.equal(a.$(".tooltip-period").textContent, "2021");
-    assert.match(a.$(".tooltip-note").textContent, /1 calendar year/);
+    assert.match(
+      a.$(".tooltip-note").textContent,
+      /Modelled estimate: 0 official \/ 1 corridor-year records/,
+    );
   } finally {
     a.$("#route-close").click();
     a.api.state.route = null;

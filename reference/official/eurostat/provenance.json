@@ -1,0 +1,83 @@
+{
+  "eurostat_imm5prv": {
+    "provider": "Eurostat",
+    "dataset": "migr_imm5prv",
+    "label": "Immigration by age group, sex and country of previous residence",
+    "direction": "immigration",
+    "basis": "previous_residence",
+    "unit": "persons",
+    "classification": "official_statistic",
+    "methodology": "Annual changes of usual residence, generally actual or intended residence of at least 12 months. Country definitions, breaks and official estimation methods can differ; inspect source metadata and flags.",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm5prv?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=2008&untilTimePeriod=2024",
+    "metadataUrl": "https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm",
+    "updated": "2026-07-02T11:00:00+0200",
+    "retrievedAt": "2026-11-06T00:05:50.547039+00:00",
+    "sha256": "510475e8c4f5fac6eaf47ffa31c821e35013c090612678681c2d7018a40bd615",
+    "datasetVersion": "1.0",
+    "dataStructureVersion": "55.0",
+    "flags": {
+      "b": "break in time series",
+      "bp": "break in time series, provisional",
+      "p": "provisional",
+      "e": "estimated",
+      "be": "break in time series, estimated",
+      "b|N": "break in time series|not for publication",
+      "|N": "|not for publication",
+      "ep": "estimated, provisional",
+      "bep": "break in time series, estimated, provisional",
+      "ip": "value imputed by Eurostat or other receiving agencies, provisional"
+    },
+    "selection": {
+      "freq": "A",
+      "sex": "T",
+      "age": "TOTAL",
+      "unit": "NR",
+      "ageDefinition": "COMPLET preferred; REACH only when COMPLET unavailable"
+    },
+    "yearsRequested": [
+      2008,
+      2024
+    ],
+    "missingPolicy": "Absent/confidential/not-for-publication observations are not zero. Broad-region totals are never allocated to country pairs."
+  },
+  "eurostat_emi3nxt": {
+    "provider": "Eurostat",
+    "dataset": "migr_emi3nxt",
+    "label": "Emigration by age group, sex and country of next usual residence",
+    "direction": "emigration",
+    "basis": "next_residence",
+    "unit": "persons",
+    "classification": "official_statistic",
+    "methodology": "Annual changes of usual residence, generally actual or intended residence of at least 12 months. Country definitions, breaks and official estimation methods can differ; inspect source metadata and flags.",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi3nxt?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=2008&untilTimePeriod=2024",
+    "metadataUrl": "https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm",
+    "updated": "2026-09-22T23:00:00+0200",
+    "retrievedAt": "2026-11-06T00:05:50.547039+00:00",
+    "sha256": "7bab7836960bc7db87f8950b50fe30550fdb292f9a2d39ca405da90d88c21645",
+    "datasetVersion": "1.0",
+    "dataStructureVersion": "55.0",
+    "flags": {
+      "b": "break in time series",
+      "bp": "break in time series, provisional",
+      "p": "provisional",
+      "e": "estimated",
+      "be": "break in time series, estimated",
+      "b|N": "break in time series|not for publication",
+      "|N": "|not for publication",
+      "ep": "estimated, provisional",
+      "bep": "break in time series, estimated, provisional"
+    },
+    "selection": {
+      "freq": "A",
+      "sex": "T",
+      "age": "TOTAL",
+      "unit": "NR",
+      "ageDefinition": "COMPLET preferred; REACH only when COMPLET unavailable"
+    },
+    "yearsRequested": [
+      2008,
+      2024
+    ],
+    "missingPolicy": "Absent/confidential/not-for-publication observations are not zero. Broad-region totals are never allocated to country pairs."
+  }
+}

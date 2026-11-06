@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "corridor": {
+    "origin": "BLR",
+    "destination": "POL"
+  },
+  "records": [
+    {
+      "countries": [
+        "BLR",
+        "POL"
+      ],
+      "direction": "BLR→POL",
+      "citizenshipCountry": "BLR",
+      "reportingCountry": "POL",
+      "metricKey": "valid_residence_documents_stock",
+      "unit": "document_holders",
+      "official": true,
+      "notComparableToFlow": true,
+      "approximate": true,
+      "retrieved": "2026-11-06",
+      "id": "udsc-blr-pol-stock-2020-08",
+      "value": 28000,
+      "date": "2020-08",
+      "datePrecision": "month",
+      "label": "Valid Polish residence-document holders",
+      "definition": "Approximate number of Belarusian citizens holding valid residence documents issued in Poland at the stated time. This is a stock of document holders, not new arrivals during a year or range.",
+      "provider": "Polish Office for Foreigners (UdSC)",
+      "sourceTitle": "Report on citizens of Belarus, as of 29 February 2024",
+      "sourceDate": "2024-02-29",
+      "sourcePage": 1,
+      "url": "https://www.gov.pl/attachment/12f6e993-c103-49c7-99e2-7e8e388131bb",
+      "sourceQuoteShort": "w sierpniu 2020 r. – 28 tys."
+    },
+    {
+      "countries": [
+        "BLR",
+        "POL"
+      ],
+      "direction": "BLR→POL",
+      "citizenshipCountry": "BLR",
+      "reportingCountry": "POL",
+      "metricKey": "valid_residence_documents_stock",
+      "unit": "document_holders",
+      "official": true,
+      "notComparableToFlow": true,
+      "approximate": true,
+      "retrieved": "2026-11-06",
+      "id": "udsc-blr-pol-stock-2024-02-29",
+      "value": 124500,
+      "date": "2024-02-29",
+      "datePrecision": "day",
+      "label": "Valid Polish residence-document holders",
+      "definition": "Nearly 124,500 Belarusian citizens held valid residence documents issued in Poland on 29 February 2024. The measure is a point-in-time stock; it does not count all visa-based residents or identify when each holder migrated.",
+      "provider": "Polish Office for Foreigners (UdSC)",
+      "sourceTitle": "Report on citizens of Belarus, as of 29 February 2024",
+      "sourceDate": "2024-02-29",
+      "sourcePage": 1,
+      "url": "https://www.gov.pl/attachment/12f6e993-c103-49c7-99e2-7e8e388131bb",
+      "sourceValueQualifier": "nearly"
+    },
+    {
+      "countries": [
+        "BLR",
+        "POL"
+      ],
+      "direction": "BLR→POL",
+      "citizenshipCountry": "BLR",
+      "reportingCountry": "POL",
+      "metricKey": "residence_permit_holders_stock",
+      "unit": "document_holders",
+      "official": true,
+      "notComparableToFlow": true,
+      "approximate": true,
+      "retrieved": "2026-11-06",
+      "id": "nbp-udsc-blr-pol-stock-2024-06-30",
+      "value": 133000,
+      "date": "2024-06-30",
+      "datePrecision": "day",
+      "label": "Polish residence-permit holders, excluding visas",
+      "definition": "Approximately 133,000 Belarusian citizens held residence permits in Poland on 30 June 2024, as reported by NBP citing UdSC. Permits issued in Poland are included; visas issued by Polish consulates are excluded. This is a stock of permit holders, not cumulative arrivals.",
+      "provider": "National Bank of Poland (NBP), citing Polish Office for Foreigners (UdSC)",
+      "sourceTitle": "The situation of immigrants from Belarus in Poland: results of the 2024 survey",
+      "sourcePage": 6,
+      "url": "https://nbp.pl/wp-content/uploads/2025/01/Sytuacja-uchodzcow-z-Bialorusi-2024-ANG-DS.pdf",
+      "verification": "Primary official report text verified through indexed source; direct PDF retrieval returned HTTP 403."
+    }
+  ],
+  "warning": {
+    "title": "Official residence evidence is not an arrival count",
+    "text": "The FLOW model totals 19,476.5 estimated Belarus-to-Poland movements during 2020–2024. The official figures below describe stocks of Belarusian residence-document or permit holders on specific dates. They provide important evidence of the scale of the community, but cannot be substituted for an annual migration flow, summed across dates, or treated as proof that 200,000 distinct people arrived during 2020–2024.",
+    "flowReference": {
+      "provider": "FLOW v1.0",
+      "measure": "modelled_gross_migration_flow",
+      "startYear": 2020,
+      "endYear": 2024,
+      "value": 19476.5,
+      "official": false,
+      "url": "https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960"
+    },
+    "reliability": "Not validated against official corridor arrivals; retain the model label and display official residence evidence separately."
+  },
+  "comparisonRules": [
+    "Do not add the residence stocks, visas, asylum applications or permit decisions to migration-flow totals.",
+    "A difference between stocks is not a count of arrivals; documents may be acquired, expire or change while holders move, naturalise or remain in place.",
+    "Citizenship-based administrative figures are not automatically comparable with country-of-previous-residence flows.",
+    "The NBP report cites 16,392 for a 2020 baseline, while the UdSC February 2024 report cites approximately 28,000 for August 2020. These baselines are not merged or used to infer an exact migration total.",
+    "No approximately 200,000 arrivals figure or visa-count replacement is asserted by this file."
+  ]
+}
