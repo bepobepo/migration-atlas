@@ -665,8 +665,7 @@ async function openRouteDetails(origin, destination) {
         item.year,
         item.year + 4,
       );
-      if (!item.error && item[field] !== undefined)
-        td.textContent = formatSourceValue(item[field], quality);
+      if (!item.error) td.textContent = formatSourceValue(item[field], quality);
       const basis = document.createElement("small");
       basis.className = "cell-quality";
       basis.textContent = quality.label;
@@ -902,6 +901,28 @@ function detail() {
           : fullEstimate(total);
     $("#detail").innerHTML =
       `<span class="story-tag">${incoming ? "IMMIGRATION" : both ? "INCOMING + OUTGOING" : "EMIGRATION"}</span><h2 class="story-title">${state.everywhere ? `${name(state.country)}<br>→ Everywhere` : incoming ? `Into ${name(state.country)}` : both ? name(state.country) : `From ${name(state.country)}`}</h2><div id="${incoming ? "incoming-total" : both ? "country-total" : "outgoing-total"}" class="big-value" aria-live="polite">${value}</div><div class="small">${rangeLabel()} · migration flows<br>Total across all covered ${incoming ? "origins" : both ? "connections · both directions" : "destinations"}.</div><p id="outgoing-scope" class="story-text">${countries[state.country].europe ? `Worldwide ${incoming ? "origins" : both ? "connections" : "destinations"} covered by the dataset.` : (incoming ? "Worldwide origins. " : both ? "Worldwide connections. " : "Worldwide destinations. ") + "All countries covered by FLOW v1.0."}</p><p class="small">${outgoing.length ? `${outgoing.length} ${incoming ? "origins" : both ? "connections" : "destinations"} with estimates · ${positive.length} positive estimates.` : ""}${state.query ? ` Search filters the map and route list; the total includes all covered ${incoming ? "origins" : both ? "connections" : "destinations"}.` : ""}</p><h3 class="destinations-title">Largest ${incoming ? "origins" : both ? "connections" : "destinations"}</h3><div id="top-destinations"></div><a class="source" href="#route-list">Explore the full connection list ↓</a><p class="small">Official previous/next-residence flows are preferred; gaps use FLOW estimates. Gross movements may include repeat migrants. See the visible data-basis label for this selection.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · source ↗</a>`;
+    if (dataPolicy === "official") {
+      const scope = document.querySelector("#outgoing-scope");
+      scope.textContent =
+        "Official previous/next-residence flows where published. Missing country pairs and years remain unavailable. Any incomplete aggregate is a reported subtotal, not a complete migration total.";
+      const small = document.querySelector("#detail > .small");
+      if (small)
+        small.textContent =
+          rangeLabel() +
+          " · official reported movements; see coverage below the map.";
+      const note = document.querySelector("#detail p.small");
+      if (note)
+        note.textContent =
+          "Official statistics can contain estimated or provisional observations. Missing observations are not zero.";
+      const link = document.querySelector(
+        '#detail a.source[href^="https://data.humdata"]',
+      );
+      if (link) {
+        link.href =
+          "https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm";
+        link.textContent = "Official migration definitions and coverage ↗";
+      }
+    }
     positive.slice(0, 5).forEach(([origin, destination, count]) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -941,7 +962,9 @@ function detail() {
               ? "Comparable estimates begin in 1960."
               : countries[state.country].hasData === false
                 ? "This country or territory has no estimates in FLOW v1.0."
-                : "No positive estimates in this period.";
+                : dataPolicy === "official"
+                  ? "No positive official flows reported in this period. Missing observations remain unavailable."
+                  : "No positive estimates in this period.";
     return;
   }
   $("#detail").innerHTML =
@@ -959,6 +982,8 @@ async function load(y) {
       delete cache[y];
       throw error;
     }));
+  if (dataPolicy === "official" && raw.length !== 37442)
+    throw Error("Incomplete baseline asset");
   return resolveRows(raw, y, y + 4);
 }
 const annualCache = {};
@@ -973,6 +998,8 @@ async function loadAnnual(year) {
       delete annualCache[year];
       throw error;
     }));
+  if (dataPolicy === "official" && raw.length !== 37442)
+    throw Error("Incomplete baseline asset");
   return resolveRows(raw, year, year);
 }
 async function loadRange(start, end) {
@@ -1004,7 +1031,10 @@ async function loadRange(start, end) {
     }
   }
   // Incomplete corridors must not become undercounts or estimated zeros.
-  if ([...sums.values()].some((sum) => sum.count !== parts.length))
+  if (
+    dataPolicy !== "official" &&
+    [...sums.values()].some((sum) => sum.count !== parts.length)
+  )
     throw Error("Incomplete migration coverage");
   return [...sums.values()].map(({ a, b, tenths }) => [a, b, tenths / 10]);
 }
@@ -1099,7 +1129,7 @@ function modal(html) {
 }
 const methodology = () =>
   modal(
-    '<div class="eyebrow">METHODOLOGY & SOURCES</div><h2>Reading the atlas</h2><p>Best available uses compatible Eurostat annual flows for available country pairs during 2008–2024: destination-reported immigration by previous residence first, then origin-reported emigration by next residence. All other route-years use FLOW model estimates. Values are classified as official statistics, official estimates, model estimates or mixed; official does not mean complete observed arrivals. Estimates/imputations, provisional values and definition breaks retain their flags. Reports follow country-specific metadata, including exclusions affecting protected populations in Poland. Receiver and sender reports may disagree and are never summed or averaged. Missing official data does not mean zero. Country coverage &amp; sources shows actual imports and research candidates; most national sources have not been individually verified. Switch to FLOW model only for comparison.</p><p><a href="https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm" target="_blank" rel="noopener">Eurostat definitions, flags and national exceptions ↗</a></p><p>FLOW v1.0 supplies annual modelled bilateral migration estimates for 1960–2024. Female and male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. These are estimates of migration, not border crossings or unique individuals across years. No quantitative estimates are supplied for 1950–1959.</p><p>Beyer, Schewe, Abel, Warner and Campo (2026) provide this model for broad patterns. Their usage notes describe individual migration corridors as one of its least suitable uses; official or statistically harmonised records should be preferred when available. Estimated zero does not establish that no migration occurred. Missing observations are never converted to zero.</p><p>Worldwide coverage includes all 194 FLOW countries, including routes with no European endpoint. Modern boundaries provide geographic reference throughout. Historical state changes are not reconstructed or allocated by this app.</p><p>Overview arrows show the 30 largest positive estimates for your filters. Choosing Everywhere shows all positive outgoing estimates by default; you can switch back to the largest 30. The total includes every covered destination, including estimated zeros, regardless of search text or the arrow limit. All destinations covered by the source are included. The list includes all available estimates, including estimated zeros. Line width uses one square-root scale across periods, capped at 2.4 screen pixels. Arrowheads remain 7 screen pixels across zoom levels; line width and arrowhead size never grow with zoom. Incoming/outgoing filters refer to the selected country. Country label points mark schematic connections, not physical travel routes. Small countries omitted from the simplified boundaries are shown as points. Dashed story connections are unweighted and excluded from estimates. Canary Islands stories are regional context within Spain.</p><p>Historical events have individual source links. Event ranges identify featured periods, not necessarily the beginning or end of a migration wave. Residence permits, asylum applications, refugee registrations and population stocks must retain their own meanings; they are not added to map totals. Historical associations do not establish causation from model changes.</p><p><a href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · HDX · CC BY</a><br><a href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Research paper and usage limitations</a><br><a href="https://osf.io/download/p58ay/" target="_blank" rel="noopener">Archived source CSV</a><br><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth · public-domain boundaries</a><br>D3 v7 · ISC license. Data snapshot: November 2026.</p>',
+    '<div class="eyebrow">METHODOLOGY & SOURCES</div><h2>Reading the atlas</h2><p>Official statistics is the default: it shows published compatible official flows and keeps missing observations unavailable. Partial figures are reported subtotals, never complete range totals. Residence figures appear separately with their dates and measure; they do not drive migration arrows or shading. Best available comparison is optional and uses compatible Eurostat annual flows for available country pairs during 2008–2024: destination-reported immigration by previous residence first, then origin-reported emigration by next residence. Only the selected comparison modes use FLOW estimates for other route-years. Values are classified as official statistics, official estimates, model estimates or mixed; official does not mean complete observed arrivals. Estimates/imputations, provisional values and definition breaks retain their flags. Reports follow country-specific metadata, including exclusions affecting protected populations in Poland. Receiver and sender reports may disagree and are never summed or averaged. Missing official data does not mean zero. Country coverage &amp; sources shows actual imports and research candidates; most national sources have not been individually verified. Switch to Best available comparison or FLOW model only to inspect model estimates.</p><p><a href="https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm" target="_blank" rel="noopener">Eurostat definitions, flags and national exceptions ↗</a></p><p>FLOW v1.0 supplies annual modelled bilateral migration estimates for 1960–2024. Female and male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. These are estimates of migration, not border crossings or unique individuals across years. No quantitative estimates are supplied for 1950–1959.</p><p>Beyer, Schewe, Abel, Warner and Campo (2026) provide this model for broad patterns. Their usage notes describe individual migration corridors as one of its least suitable uses; official or statistically harmonised records should be preferred when available. Estimated zero does not establish that no migration occurred. Missing observations are never converted to zero.</p><p>Worldwide coverage includes all 194 FLOW countries, including routes with no European endpoint. Modern boundaries provide geographic reference throughout. Historical state changes are not reconstructed or allocated by this app.</p><p>Overview arrows show the 30 largest positive estimates for your filters. Choosing Everywhere shows all positive outgoing estimates by default; you can switch back to the largest 30. The total includes every covered destination, including estimated zeros, regardless of search text or the arrow limit. All destinations covered by the source are included. The list includes all available estimates, including estimated zeros. Line width uses one square-root scale across periods, capped at 2.4 screen pixels. Arrowheads remain 7 screen pixels across zoom levels; line width and arrowhead size never grow with zoom. Incoming/outgoing filters refer to the selected country. Country label points mark schematic connections, not physical travel routes. Small countries omitted from the simplified boundaries are shown as points. Dashed story connections are unweighted and excluded from estimates. Canary Islands stories are regional context within Spain.</p><p>Historical events have individual source links. Event ranges identify featured periods, not necessarily the beginning or end of a migration wave. Residence permits, asylum applications, refugee registrations and population stocks must retain their own meanings; they are not added to map totals. Historical associations do not establish causation from model changes.</p><p><a href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · HDX · CC BY</a><br><a href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Research paper and usage limitations</a><br><a href="https://osf.io/download/p58ay/" target="_blank" rel="noopener">Archived source CSV</a><br><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth · public-domain boundaries</a><br>D3 v7 · ISC license. Data snapshot: November 2026.</p>',
   );
 $("#about").onclick = $("#method-open").onclick = methodology;
 $("#close-modal").onclick = () => $("#modal").close();

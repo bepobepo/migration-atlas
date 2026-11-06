@@ -7,8 +7,22 @@ const dataUI = {
   context: null,
 };
 function formatSourceValue(value, summary) {
+  if (dataPolicy === "official") {
+    if (summary?.total === 0 && value === 0) return "0 · before observations";
+    if (!summary?.official || value == null || !Number.isFinite(value))
+      return "Official data unavailable";
+    const number =
+      (summary.officialEstimated ? "≈ " : "") +
+      value.toLocaleString("en", { maximumFractionDigits: 1 });
+    return summary.missing ? number + " reported · incomplete" : number;
+  }
   if (value == null || !Number.isFinite(value)) return "No comparable data";
-  if (value === 0) return summary?.basis === "official-statistic" ? "0" : "≈ 0";
+  if (value === 0)
+    return summary?.basis === "official-statistic"
+      ? "0"
+      : summary?.basis === "modelled"
+        ? "Estimated zero"
+        : "≈ 0";
   const exact = summary?.basis === "official-statistic";
   const published = exact || summary?.basis === "official-estimate";
   return (
@@ -32,6 +46,11 @@ function sourceSummaryText(summary) {
       n(summary.total) +
       " corridor-year records",
   ];
+  if (summary.missing)
+    parts.push(
+      n(summary.missing) +
+        " unavailable; excluded from reported subtotals, not treated as zero",
+    );
   if (summary.modelled)
     parts.push(n(summary.modelled) + " FLOW model fallback");
   if (summary.officialEstimated)
@@ -58,9 +77,15 @@ function flagDescription(flag) {
   );
 }
 function sourceForSummary(summary) {
-  return currentOfficialResolver().sources[
-    summary?.sourceIds?.[0] || MODEL_SOURCE_ID
-  ];
+  return (
+    currentOfficialResolver().sources[summary?.sourceIds?.[0]] ||
+    (dataPolicy === "official"
+      ? {
+          name: "Official coverage and definitions",
+          url: "https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm",
+        }
+      : currentOfficialResolver().sources[MODEL_SOURCE_ID])
+  );
 }
 function sourceNode(source) {
   const a = document.createElement("a");
@@ -71,28 +96,50 @@ function sourceNode(source) {
   return a;
 }
 function scenarioProvenance() {
-  if (typeof movement !== "undefined" && movement.series) {
+  if (typeof movement !== "undefined" && movement.series)
     return {
       corridors: movementCorridors(),
       start: movement.start,
       end: movement.end,
       through: movement.start + movement.cursor - 1,
     };
+  if (
+    typeof countries === "undefined" ||
+    !countries ||
+    typeof state === "undefined"
+  )
+    return null;
+  const key = [state.country, state.dir, (state.route || []).join(":")].join(
+    "|",
+  );
+  if (dataUI.corridorKey !== key) {
+    const codes = Object.values(countries)
+      .filter((c) => c.hasData)
+      .map((c) => c.code);
+    dataUI.corridors = state.route
+      ? [state.route]
+      : state.country
+        ? countries[state.country]?.hasData
+          ? codes
+              .filter((c) => c !== state.country)
+              .flatMap((c) =>
+                state.dir === "both"
+                  ? [
+                      [state.country, c],
+                      [c, state.country],
+                    ]
+                  : [
+                      state.dir === "in"
+                        ? [c, state.country]
+                        : [state.country, c],
+                    ],
+              )
+          : []
+        : codes.flatMap((a) => codes.filter((b) => a !== b).map((b) => [a, b]));
+    dataUI.corridorKey = key;
   }
-  if (typeof rows === "undefined" || typeof state === "undefined") return null;
-  const list = state.route
-    ? [state.route]
-    : rows.filter(
-        (r) =>
-          !state.country ||
-          (state.dir === "in"
-            ? r[1] === state.country
-            : state.dir === "out"
-              ? r[0] === state.country
-              : r[0] === state.country || r[1] === state.country),
-      );
   return {
-    corridors: list.map((r) => r.slice(0, 2)),
+    corridors: dataUI.corridors,
     start: state.year,
     end: state.endYear,
     through: state.endYear,
@@ -156,7 +203,16 @@ function updateDataDisclosure() {
       state.route ||
       (typeof movement !== "undefined" && movement.focus)
     ) || !hasBelarusPoland(corridors, start, end);
-  caution.textContent = belarusCaution;
+  caution.textContent =
+    dataPolicy === "official"
+      ? "Belarus → Poland: official annual arrivals are unavailable in the imported sources. The dated official residence figure is shown separately; it is not an arrival total."
+      : belarusCaution;
+  renderOfficialResidence(
+    document.querySelector("#official-residence-card"),
+    corridors,
+    start,
+    through,
+  );
   if (typeof movement !== "undefined" && movement.series) {
     const q = summarizeProvenance(corridors, start, through);
     const total =
@@ -181,6 +237,99 @@ function updateDataDisclosure() {
         quality,
       );
     }
+  }
+}
+async function renderOfficialResidence(target, corridors, start, through) {
+  if (!target) return;
+  const eligible = hasBelarusPoland(corridors, start, through);
+  const key = [eligible, start, through].join(":");
+  if (target.dataset.key === key) return;
+  target.dataset.key = key;
+  target.hidden = true;
+  target.replaceChildren();
+  if (!eligible) return;
+  try {
+    const context = await contextData();
+    if (target.dataset.key !== key || !target.isConnected) return;
+    const records = context.records
+      .filter(
+        (r) =>
+          Number(r.date.slice(0, 4)) >= start &&
+          Number(r.date.slice(0, 4)) <= through,
+      )
+      .sort((a, b) => a.date.localeCompare(b.date));
+    if (!records.length) return;
+    const latest = records.at(-1);
+    const tag = document.createElement("span");
+    tag.className = "residence-tag";
+    tag.textContent = "OFFICIAL RESIDENCE STATISTIC";
+    const heading = document.createElement("h3");
+    heading.textContent =
+      latest.metricKey === "residence_permit_holders_stock"
+        ? "Belarusian citizens holding Polish residence permits"
+        : "Belarusian citizens holding valid Polish residence documents";
+    const number = document.createElement("strong");
+    number.className = "residence-value";
+    number.textContent =
+      (latest.approximate ? "≈ " : "") + latest.value.toLocaleString("en");
+    const date = document.createElement("p");
+    date.className = "residence-date";
+    date.textContent =
+      "As of " +
+      new Date(
+        latest.date.length === 7
+          ? latest.date + "-01T12:00:00Z"
+          : latest.date + "T12:00:00Z",
+      ).toLocaleDateString(
+        "en-GB",
+        latest.datePrecision === "month"
+          ? { year: "numeric", month: "long", timeZone: "UTC" }
+          : { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" },
+      ) +
+      " · " +
+      latest.date;
+    const meaning = document.createElement("p");
+    meaning.textContent =
+      "Latest sourced official residence figure within the displayed years. This is a stock of residents at a date, not arrivals during the selected range. " +
+      (latest.metricKey === "residence_permit_holders_stock"
+        ? "Residence-permit holders, excluding visas. "
+        : "");
+    target.append(
+      tag,
+      heading,
+      number,
+      date,
+      meaning,
+      sourceNode({ name: latest.provider, url: latest.url }),
+    );
+    const history = document.createElement("details");
+    const summary = document.createElement("summary");
+    summary.textContent = "Earlier official residence figures";
+    history.append(summary);
+    for (const record of records.slice(0, -1)) {
+      const p = document.createElement("p");
+      p.textContent =
+        record.date +
+        ": ≈ " +
+        record.value.toLocaleString("en") +
+        " · " +
+        record.label +
+        ". ";
+      p.append(sourceNode({ name: record.provider, url: record.url }));
+      history.append(p);
+    }
+    if (records.length > 1) target.append(history);
+    target.hidden = false;
+  } catch {
+    if (target.dataset.key !== key || !target.isConnected) return;
+    const retry = document.createElement("button");
+    retry.textContent = "Retry official residence figures";
+    retry.onclick = () => {
+      delete target.dataset.key;
+      renderOfficialResidence(target, corridors, start, through);
+    };
+    target.append(retry);
+    target.hidden = false;
   }
 }
 async function rawRouteSeries(code) {
@@ -239,9 +388,11 @@ async function renderRouteDataPanel(origin, destination) {
   const h = document.createElement("strong");
   h.textContent =
     "Data basis · " +
-    (dataPolicy === "best"
-      ? "official first, model fallback"
-      : "FLOW model only");
+    (dataPolicy === "official"
+      ? "Official statistics · gaps remain unavailable"
+      : dataPolicy === "best"
+        ? "Best available comparison · official first, model fallback"
+        : "FLOW model only");
   box.append(h);
   for (const [a, b] of [
     [origin, destination],
@@ -262,6 +413,12 @@ async function renderRouteDataPanel(origin, destination) {
           ? " · not a verified arrival count"
           : "");
       stat.append(badge);
+      stat
+        .querySelector("strong")
+        ?.classList.toggle(
+          "unavailable-value",
+          dataPolicy === "official" && !info.official,
+        );
     }
     p.className = "direction-quality";
     p.textContent = `${name(a)} → ${name(b)} · ${sourceSummaryText(info)}`;
@@ -282,11 +439,30 @@ async function renderRouteDataPanel(origin, destination) {
   const explain = document.querySelector(".route-explanation");
   if (explain)
     explain.textContent =
-      "Annual changes of usual residence across the selected calendar years, both included. Official previous/next-residence statistics are preferred; missing route-years use statistical FLOW estimates. Gross movements may include repeat migrants. These are not citizenship-based resident populations, residence permits or visas.";
+      dataPolicy === "official"
+        ? "Only published official annual changes of usual residence are shown. Missing observations remain unavailable; partial values are reported subtotals, not complete range totals. Gross movements can include repeat migrants. Residence stocks and permits are separate measures."
+        : "Annual changes of usual residence across the selected calendar years, both included. Official previous/next-residence statistics are preferred; missing route-years use statistical FLOW estimates. Gross movements may include repeat migrants. These are not citizenship-based resident populations, residence permits or visas.";
   const method = document.querySelector(".route-method p");
   if (method)
     method.textContent =
-      "Best available prefers destination-reported immigration by previous residence, then origin-reported emigration by next residence. It uses FLOW only where no comparable official observation was imported. Official estimates, provisional figures and definition/series breaks retain their source flags. Receiver and sender reports can disagree; they are never added or averaged. A mixed sum is not a consistently measured official time series. FLOW model only provides a consistent model comparison. Neither source establishes why an individual migrated.";
+      "Official statistics is the default and never fills gaps with FLOW. Partial figures are reported subtotals. Optional Best available comparison prefers destination-reported immigration by previous residence, then origin-reported emigration by next residence. It uses FLOW only where no comparable official observation was imported. Official estimates, provisional figures and definition/series breaks retain their source flags. Receiver and sender reports can disagree; they are never added or averaged. A mixed sum is not a consistently measured official time series. FLOW model only provides a consistent model comparison. Neither source establishes why an individual migrated.";
+  let residence = document.querySelector("#route-official-residence-card");
+  if (!residence) {
+    residence = document.createElement("section");
+    residence.id = "route-official-residence-card";
+    residence.className = "official-residence-card";
+    residence.hidden = true;
+    document.querySelector(".route-stats").before(residence);
+  }
+  renderOfficialResidence(
+    residence,
+    [
+      [origin, destination],
+      [destination, origin],
+    ],
+    start,
+    end,
+  );
   if (
     hasBelarusPoland(
       [
@@ -301,41 +477,17 @@ async function renderRouteDataPanel(origin, destination) {
     warning.className = "data-warning";
     warning.id = "route-reliability-warning";
     const title = document.createElement("strong");
-    title.textContent = "Belarus → Poland: model limitation";
+    title.textContent =
+      dataPolicy === "official"
+        ? "Official annual arrivals unavailable"
+        : "Belarus → Poland: model limitation";
     const p = document.createElement("p");
-    p.textContent = belarusCaution;
+    p.textContent =
+      dataPolicy === "official"
+        ? "No comparable official annual Belarus → Poland flow is available in the imported sources for these years. The official residence statistic above counts residents on a date. Model estimates are available only through the comparison controls."
+        : belarusCaution;
     warning.append(title, p);
     box.prepend(warning);
-    try {
-      const context = await contextData();
-      if (token !== dataUI.routeToken || !box.isConnected) return;
-      const heading = document.createElement("h4");
-      heading.textContent =
-        "Official residence figures — context, not arrivals";
-      warning.append(heading);
-      for (const record of context.records.filter(
-        (r) =>
-          Number(r.date.slice(0, 4)) >= start &&
-          Number(r.date.slice(0, 4)) <= end,
-      )) {
-        const line = document.createElement("p");
-        line.textContent = `${record.date}: ≈ ${record.value.toLocaleString("en")} · ${record.label}. `;
-        line.append(sourceNode({ name: record.provider, url: record.url }));
-        warning.append(line);
-      }
-      const caveat = document.createElement("p");
-      caveat.textContent =
-        "These are stocks of Belarusian citizens on specific dates. Do not add them, subtract them to infer arrivals, or substitute them for migration flows. A figure near 200,000 has not been verified here as unique arrivals during 2020–2024.";
-      warning.append(caveat);
-    } catch {
-      const retry = document.createElement("button");
-      retry.textContent = "Retry official residence context";
-      retry.onclick = () => {
-        dataUI.routeKey = "";
-        renderRouteDataPanel(origin, destination);
-      };
-      warning.append(retry);
-    }
   }
   const details = document.createElement("details");
   details.className = "annual-provenance";
@@ -367,20 +519,25 @@ async function renderRouteDataPanel(origin, destination) {
       ])
         for (const point of getRouteProvenance(a, b, start, end).years) {
           const model = raw.peers[b][point.year - 1960] / 10;
-          const value = point.value ?? model,
+          const value =
+              point.kind === "unavailable" ? null : (point.value ?? model),
             tr = document.createElement("tr");
           const label = document.createElement("th");
           label.scope = "row";
           label.textContent = `${point.year} · ${name(a)} → ${name(b)}`;
           const number = document.createElement("td");
           number.textContent =
-            (point.kind === "modelled" ? "≈ " : "") +
-            value.toLocaleString("en", { maximumFractionDigits: 1 });
+            value === null
+              ? "Official data unavailable"
+              : (point.kind === "modelled" || point.kind === "official-estimate"
+                  ? "≈ "
+                  : "") +
+                value.toLocaleString("en", { maximumFractionDigits: 1 });
           const source = document.createElement("td");
-          source.append(sourceNode(point.source));
+          if (point.source) source.append(sourceNode(point.source));
           const description = document.createElement("small");
           description.className = "cell-quality";
-          description.textContent = `${point.kind === "modelled" ? "Modelled estimate" : point.kind === "official-estimate" ? "Official estimate" : "Official statistic"} · ${point.measure || "residence flow"}${point.reportingCountry ? " · reporter " + point.reportingCountry : ""}${point.flags.length ? " · " + point.flags.map(flagDescription).join(", ") : ""}`;
+          description.textContent = `${point.kind === "unavailable" ? "Official data unavailable" : point.kind === "modelled" ? "Modelled estimate" : point.kind === "official-estimate" ? "Official estimate" : "Official statistic"} · ${point.measure || "residence flow"}${point.reportingCountry ? " · reporter " + point.reportingCountry : ""}${point.flags.length ? " · " + point.flags.map(flagDescription).join(", ") : ""}`;
           source.append(description);
           if (point.alternatives.length) {
             const alt = document.createElement("details");
@@ -422,7 +579,7 @@ async function showCountryCoverage() {
     document.body.append(dialog);
   }
   dialog.innerHTML =
-    '<button class="source-close" type="button">Close ×</button><h2>Country coverage & sources</h2><p>194 countries have FLOW model coverage. Official imports cover only some country pairs and years from 2008–2024. Appearing as a partner in another country’s report does not mean complete national coverage. Eleven national agencies’ metadata has been reviewed; 183 have not been individually verified.</p><p>Priority: destination immigration by previous residence → origin emigration by next residence → FLOW model. Permit holders, visas, nationality-based flows and resident stocks remain separate measures.</p><label>Find a country<input id="coverage-search" type="search"></label><div id="coverage-results" role="status">Loading coverage…</div>';
+    '<button class="source-close" type="button">Close ×</button><h2>Country coverage & sources</h2><p>194 countries have FLOW model coverage. Official imports cover only some country pairs and years from 2008–2024. Appearing as a partner in another country’s report does not mean complete national coverage. Eleven national agencies’ metadata has been reviewed; 183 have not been individually verified.</p><p>Official statistics uses destination immigration by previous residence, then origin emigration by next residence. Gaps stay unavailable; FLOW is opt-in through comparison modes. Permit holders, visas, nationality-based flows and resident stocks remain separate measures.</p><label>Find a country<input id="coverage-search" type="search"></label><div id="coverage-results" role="status">Loading coverage…</div>';
   dialog.querySelector("button").onclick = () => dialog.close();
   dialog.showModal();
   dialog.querySelector("button").focus();
@@ -441,7 +598,7 @@ async function showCountryCoverage() {
         const h = document.createElement("h3");
         h.textContent = country.name + " · " + code;
         const p = document.createElement("p");
-        p.textContent = `Selected official incoming: ${country.incomingRecordYears.toLocaleString("en")} corridor-years; outgoing: ${country.outgoingRecordYears.toLocaleString("en")} corridor-years. ${country.years.length ? "Some coverage in " + Math.min(...country.years) + "–" + Math.max(...country.years) + "." : "No comparable official import."} Missing pairs/years use FLOW. National review: ${String(country.nationalReviewStatus).replaceAll("_", " ")}.`;
+        p.textContent = `Selected official incoming: ${country.incomingRecordYears.toLocaleString("en")} corridor-years; outgoing: ${country.outgoingRecordYears.toLocaleString("en")} corridor-years. ${country.years.length ? "Some coverage in " + Math.min(...country.years) + "–" + Math.max(...country.years) + "." : "No comparable official import."} Missing pairs/years stay unavailable in Official statistics. National review: ${String(country.nationalReviewStatus).replaceAll("_", " ")}.`;
         item.append(h, p);
         const reporting = document.createElement("p");
         reporting.textContent =
@@ -488,7 +645,7 @@ function mountDataUI() {
   const controls = document.createElement("div");
   controls.className = "data-controls";
   controls.innerHTML =
-    '<label>Data basis<select id="data-policy"><option value="best">Best available (official first)</option><option value="model">FLOW model only</option></select></label><button id="source-coverage" type="button">Country coverage & sources ↗</button>';
+    '<label>Data basis<select id="data-policy"><option value="official">Official statistics</option><option value="best">Best available comparison</option><option value="model">FLOW model only</option></select></label><button id="source-coverage" type="button">Country coverage & sources ↗</button>';
   const target =
     document.querySelector(".movement-switches") ||
     document.querySelector(".toolbar");
@@ -505,7 +662,11 @@ function mountDataUI() {
   const dock =
     document.querySelector("#playback-dock") ||
     document.querySelector(".map-column");
-  dock.append(note, warning);
+  const residence = document.createElement("section");
+  residence.id = "official-residence-card";
+  residence.className = "official-residence-card";
+  residence.hidden = true;
+  dock.append(residence, note, warning);
   document.querySelector("#source-coverage").onclick = showCountryCoverage;
   document.querySelector("#data-policy").value = dataPolicy;
   document.querySelector("#data-policy").disabled =

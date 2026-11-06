@@ -62,7 +62,7 @@ const payload = {
 };
 
 async function main() {
-  const r = provenance.createProvenanceResolver(payload);
+  const r = provenance.createProvenanceResolver(payload, "best");
   const annual = [
     ["BLR", "POL", 10],
     ["POL", "BLR", 5],
@@ -204,6 +204,118 @@ async function main() {
   assert.deepEqual(modelPoint.flags, []);
   assert.throws(() => r.setPolicy("unknown"), /Unknown/);
 
+  // Official-only is the public default and preserves unavailable observations.
+  const officialOnly = provenance.createProvenanceResolver(payload);
+  assert.equal(officialOnly.policy, "official");
+  assert.equal(provenance.dataPolicy, "official");
+  const officialAnnual = officialOnly.resolveRows(annual, 2020, 2020);
+  assert.deepEqual(officialAnnual, [
+    ["BLR", "POL", 1000],
+    ["POL", "BLR", 7],
+  ]);
+  const officialRange = officialOnly.resolveRows(
+    [
+      ["BLR", "POL", 150],
+      ["ITA", "FRA", 80],
+    ],
+    2020,
+    2024,
+  );
+  assert.deepEqual(
+    officialRange,
+    [["BLR", "POL", 1200]],
+    "only published official observations enter the subtotal",
+  );
+  assert.deepEqual(
+    officialOnly.resolveRows(officialRange, 2020, 2024),
+    officialRange,
+  );
+  assert.deepEqual(
+    officialOnly.resolveRows([["BLR", "POL", 20]], 2021, 2021),
+    [["BLR", "POL", 0]],
+    "published zero survives official-only filtering",
+  );
+  const missingPoint = officialOnly.getPoint("ITA", "FRA", 2020);
+  assert.deepEqual(
+    [missingPoint.value, missingPoint.sourceId, missingPoint.source],
+    [null, null, null],
+  );
+  assert.equal(missingPoint.basis, "unavailable");
+  assert.equal(missingPoint.measure, "official-flow-unavailable");
+  const officialSummary = officialOnly.summarizeProvenance(
+    [["BLR", "POL"]],
+    2020,
+    2024,
+  );
+  assert.deepEqual(
+    [
+      officialSummary.official,
+      officialSummary.missing,
+      officialSummary.modelled,
+      officialSummary.total,
+    ],
+    [3, 2, 0, 5],
+  );
+  assert.equal(officialSummary.label, "Partial official estimates");
+  assert.equal(officialSummary.basis, "official-partial");
+  assert.deepEqual(officialSummary.sourceIds, ["immigration"]);
+  const noOfficial = officialOnly.getRouteProvenance("ITA", "FRA", 2020, 2024);
+  assert.equal(noOfficial.label, "Official data unavailable");
+  assert.equal(noOfficial.missing, 5);
+  assert.equal(noOfficial.basis, "unavailable");
+  assert.deepEqual(noOfficial.sources, []);
+  assert.equal(
+    officialOnly.summarizeProvenance([["BLR", "POL"]], 2020, 2021).label,
+    "Official statistics",
+  );
+  assert.equal(
+    officialOnly.summarizeProvenance([["POL", "BLR"]], 2020, 2021).label,
+    "Partial official statistics",
+  );
+  const officialOut = officialOnly.resolveSeries(rawOut, "out");
+  const officialIn = officialOnly.resolveSeries(rawIn, "in");
+  assert.deepEqual(officialOut.peers.POL, [10000, 0, 2000, null, null]);
+  assert.deepEqual(officialOut.peers.ISR, [null, null, null, null, null]);
+  assert.deepEqual(officialIn.peers.BLR, officialOut.peers.POL);
+  assert.deepEqual(officialOnly.resolveSeries(officialOut, "out"), officialOut);
+  assert.deepEqual(rawOut.peers.POL, [100, 200, 300, 400, 500]);
+  assert.equal(
+    officialOut.peers.POL.reduce((sum, value) => sum + (value ?? 0), 0) / 10,
+    officialRange[0][2],
+  );
+  officialOnly.setPolicy("best");
+  assert.deepEqual(
+    officialOnly.resolveRows(officialRange, 2020, 2024),
+    [
+      ["BLR", "POL", 1290],
+      ["ITA", "FRA", 80],
+    ],
+    "mixed comparison restores all original corridors after official filtering",
+  );
+  assert.deepEqual(
+    officialOnly.resolveSeries(officialOut, "out").peers.POL,
+    out.peers.POL,
+  );
+  officialOnly.setPolicy("model");
+  assert.deepEqual(officialOnly.resolveRows(officialRange, 2020, 2024), [
+    ["BLR", "POL", 150],
+    ["ITA", "FRA", 80],
+  ]);
+  assert.deepEqual(officialOnly.resolveSeries(officialOut, "out"), rawOut);
+  officialOnly.setPolicy("official");
+  assert.throws(
+    () => officialOnly.resolveRows([["BLR", "POL", 11]], 2020, 2020),
+    /baseline/,
+  );
+  assert.throws(
+    () =>
+      officialOnly.resolveSeries(
+        { country: "BLR", startYear: 2020, peers: { POL: [999] } },
+        "out",
+      ),
+    /baseline|match/,
+  );
+
   assert.throws(
     () =>
       provenance.createProvenanceResolver({
@@ -252,7 +364,7 @@ async function main() {
   assert.equal(provenance.dataPolicy, "model");
   assert.equal(provenance.resolveRows(annual, 2020, 2020)[0][2], 10);
   console.log(
-    "PASS provenance: annual/range/series agreement, zero overrides, immutable baseline, directional consistency, flags, mixed coverage, model policy, explicit failures and retry.",
+    "PASS provenance: official-only default, missing observations, partial coverage, annual/range/series agreement, zero overrides, immutable baseline, directional consistency, flags, all policy comparisons, failures and retry.",
   );
 }
 main().catch((error) => {

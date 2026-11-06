@@ -150,3 +150,74 @@
     font-size: 10px;
   }
 }
+.official-residence-card {
+  grid-column: 1/-1;
+  padding: 18px 20px;
+  border: 1px solid #93c5fd;
+  border-left: 4px solid #1d4ed8;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #172554;
+}
+.official-residence-card[hidden] {
+  display: none;
+}
+.official-residence-card .residence-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.official-residence-card h3 {
+  font:
+    19px/1.4 Georgia,
+    serif;
+  margin: 8px 0 10px !important;
+}
+.official-residence-card .residence-value {
+  display: block;
+  font:
+    38px/1.2 Georgia,
+    serif;
+  margin: 8px 0;
+  color: #1e40af;
+}
+.official-residence-card p {
+  font-size: 12px;
+  line-height: 1.65;
+  margin: 7px 0;
+}
+.official-residence-card .residence-date {
+  font-weight: 600;
+}
+.official-residence-card a {
+  font-size: 11px;
+  color: #1e40af;
+}
+.official-residence-card details {
+  font-size: 12px;
+  margin-top: 12px;
+}
+.official-residence-card summary {
+  cursor: pointer;
+}
+#route-official-residence-card {
+  margin: 0 0 18px;
+}
+#route-dialog .route-stats strong.unavailable-value {
+  font:
+    18px/1.4 "DM Sans",
+    Arial,
+    sans-serif;
+  color: #475569;
+}
+@media (max-width: 580px) {
+  .official-residence-card {
+    padding: 14px;
+  }
+  .official-residence-card h3 {
+    font-size: 16px;
+  }
+  .official-residence-card .residence-value {
+    font-size: 32px;
+  }
+}

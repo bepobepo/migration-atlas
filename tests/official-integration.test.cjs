@@ -76,7 +76,11 @@ async function boot() {
       "color.js",
       "layout.js",
     ]
-      .map(read)
+      .map(
+        (file) =>
+          read(file) +
+          (file === "provenance.js" ? '\nsetDataPolicy("best");\n' : ""),
+      )
       .join("\n") +
       `\nwindow.officialTest = {
         state, movement, loadRange, setRange, prepareMovement, paintMovement,
@@ -121,7 +125,11 @@ async function boot() {
   const app = await boot();
   const { $, api, setup, policy } = app;
   try {
-    assert.equal(api.policy, "best", "official first is the default policy");
+    assert.equal(
+      api.policy,
+      "best",
+      "best available comparison is explicitly selected in this suite",
+    );
     assert.equal($("#data-policy").value, "best");
     assert.equal(app.requests.get("data/official/flows.json"), 1);
     assert.ok(
@@ -321,12 +329,19 @@ async function boot() {
     assert.match($("#data-quality").textContent, /Modelled estimate/);
     await api.openRouteDetails("BLR", "POL");
     await waitFor(
-      () => $("#route-reliability-warning")?.textContent.includes("133,000"),
+      () =>
+        $("#route-official-residence-card")?.textContent.includes("133,000"),
       "separate official residence-stock context",
     );
-    assert.match($("#route-reliability-warning").textContent, /not arrivals/);
+    assert.match(
+      $("#route-official-residence-card").textContent,
+      /not arrivals/,
+    );
     assert.match($("#route-reliability-warning").textContent, /not validated/);
-    assert.match($("#route-reliability-warning").textContent, /200,000/);
+    assert.match(
+      $("#route-official-residence-card").textContent,
+      /residence permits/,
+    );
     assert.equal($("#route-forward-count").textContent, "≈ 19,500");
     assert.equal(
       api.movement.total,

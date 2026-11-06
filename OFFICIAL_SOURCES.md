@@ -2,7 +2,7 @@
 
 Reviewed 2026-11-06. The machine-readable inventory is [reference/official-sources.json](reference/official-sources.json). It covers exactly the **194 FLOW countries**, matched to the pinned UN M49 ISO3 identities. Country entries distinguish actual imported observations, source metadata that has been reviewed, and candidates that still require verification.
 
-This is **not a claim that every country's national migration data has been reviewed or that every migration estimate is correct**. The importer currently provides partial comparable official coverage from Eurostat. FLOW remains the explicitly labelled model fallback outside those route-years. A national statistics agency can publish estimates, provisional values or imputed values; “official” does not mean a complete observed headcount.
+This is **not a claim that every country's national migration data has been reviewed or that every migration estimate is correct**. The importer currently provides partial comparable official coverage from Eurostat. The default Official statistics view keeps gaps unavailable. FLOW remains an explicitly selected model comparison outside those route-years. A national statistics agency can publish estimates, provisional values or imputed values; “official” does not mean a complete observed headcount.
 
 ## What is imported
 
@@ -27,11 +27,11 @@ The archived Eurostat source responses are `reference/official/eurostat/migr_imm
 
 ## Metric and selection rules
 
-The preferred map measure is an annual change of usual residence: arrivals by **previous residence**, or departures by **next residence**, generally using an actual/intended stay of at least 12 months. Prefer a compatible destination-country report, then a compatible origin-country report, then a clearly labelled FLOW estimate. Preserve the individual source and flags for each year.
+The preferred map measure is an annual change of usual residence: arrivals by **previous residence**, or departures by **next residence**, generally using an actual/intended stay of at least 12 months. Prefer a compatible destination-country report, then a compatible origin-country report, then an unavailable observation in the default view. The optional Best available comparison instead fills such gaps with a clearly labelled FLOW estimate. Preserve the individual source and flags for each year.
 
 Country of citizenship, birth and previous residence answer different questions. A Belarusian citizen could arrive in Poland from another country; a person arriving from Belarus might have another citizenship. A stock of valid residence permits, visas issued, border crossings, permanent-registration events and migrant residents at a date also measures different things. None is silently substituted for annual changes of usual residence. Never allocate an unspecified regional total across missing country pairs. Missing, confidential or restricted values are unavailable; a published numeric zero is a valid zero.
 
-For a multi-year range, source coverage is checked annually. If comparable official coverage is incomplete and FLOW is used for some years, the result must disclose its mixed provenance. It must not be labelled entirely observed official migration. Origin/destination mirror statistics can disagree; choose according to the stated priority and keep both reports inspectable instead of summing them.
+For a multi-year range, source coverage is checked annually. The default official view labels incomplete coverage as a reported subtotal. If the optional comparison fills some years with FLOW, the result must disclose its mixed provenance. It must not be labelled entirely observed official migration. Origin/destination mirror statistics can disagree; choose according to the stated priority and keep both reports inspectable instead of summing them.
 
 This distinction matters for **Belarus → Poland**. A count of Belarusian citizens holding valid Polish residence documents is a legal-residence stock on a date. It includes people resident before the selected range and excludes some people living under other legal arrangements. The GUS permanent-residence series is narrower than all long-term immigration. Neither is automatically the same as all arrivals from Belarus during 2020–2024, and neither validates the FLOW model's precise corridor estimate.
 

@@ -1,10 +1,10 @@
 /* Resolve comparable annual official flows over the unchanged FLOW baseline. */
 const MODEL_SOURCE_ID = "flow-v1";
-let dataPolicy = "best";
+let dataPolicy = "official";
 let officialResolver = null;
 let officialReadyPromise = null;
 
-function createProvenanceResolver(payload, initialPolicy = "best") {
+function createProvenanceResolver(payload, initialPolicy = "official") {
   const sources = {
     [MODEL_SOURCE_ID]: {
       id: MODEL_SOURCE_ID,
@@ -24,7 +24,7 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
   const byPair = new Map();
   const resolvedRows = new WeakMap();
   const resolvedSeries = new WeakMap();
-  let policy = "best";
+  let policy = "official";
   const key = (a, b, year) => `${a}:${b}:${year}`;
   const pair = (a, b) => `${a}:${b}`;
   const tenths = (value) => {
@@ -94,7 +94,7 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
   for (const records of byPair.values())
     records.sort((a, b) => a.year - b.year);
   function setPolicy(value) {
-    if (value !== "best" && value !== "model")
+    if (!["official", "best", "model"].includes(value))
       throw Error("Unknown migration data policy");
     policy = value;
     return policy;
@@ -110,8 +110,22 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
   }
   function getPoint(origin, destination, year) {
     const record = index.get(key(origin, destination, year));
-    const official = policy === "best" && !!record;
+    const official = policy !== "model" && !!record;
+    const unavailable = policy === "official" && !record;
+    const sourceId = official
+      ? record.sourceId
+      : unavailable
+        ? null
+        : MODEL_SOURCE_ID;
+    const source = sourceId ? sources[sourceId] : null;
     const isEstimate = official && estimated(record);
+    const basis = unavailable
+      ? "unavailable"
+      : official
+        ? isEstimate
+          ? "official-estimate"
+          : "official-statistic"
+        : "modelled";
     return {
       year,
       origin,
@@ -120,20 +134,10 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
       officialValue: record?.value ?? null,
       officialSourceId: record?.sourceId ?? null,
       modelValue: record?.modelValue ?? null,
-      sourceId: official ? record.sourceId : MODEL_SOURCE_ID,
-      provider:
-        sources[official ? record.sourceId : MODEL_SOURCE_ID]?.provider ||
-        sources[official ? record.sourceId : MODEL_SOURCE_ID]?.name,
-      basis: official
-        ? isEstimate
-          ? "official-estimate"
-          : "official-statistic"
-        : "modelled",
-      kind: official
-        ? isEstimate
-          ? "official-estimate"
-          : "official-statistic"
-        : "modelled",
+      sourceId,
+      provider: source?.provider || source?.name || null,
+      basis,
+      kind: basis,
       flags: official ? record.flags.slice() : [],
       reportingCountry: official
         ? record.reportingCountry ||
@@ -141,13 +145,16 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
           null
         : null,
       ageDefinition: official ? record.ageDefinition || null : null,
-      measure: official
-        ? record.measure || sources[record.sourceId]?.measure || null
-        : "modelled-flow",
-      source: sources[official ? record.sourceId : MODEL_SOURCE_ID],
+      measure: unavailable
+        ? "official-flow-unavailable"
+        : official
+          ? record.measure || sources[record.sourceId]?.measure || null
+          : "modelled-flow",
+      source,
       alternatives: official ? record.alternatives || [] : [],
     };
   }
+
   function summarizeProvenance(corridors, start, end) {
     const unique = new Map();
     for (const corridor of corridors || []) {
@@ -159,6 +166,7 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
       official: 0,
       officialEstimated: 0,
       modelled: 0,
+      missing: 0,
       total: 0,
       sourceIds: [],
       flags: [],
@@ -173,8 +181,11 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
         // Most worldwide corridor-years have no official import. Avoid building
         // per-year inspection objects or searching an entirely modelled pair.
         if (policy === "model" || !byPair.has(pairKey)) {
-          result.modelled += last - first + 1;
-          sourceIds.add(MODEL_SOURCE_ID);
+          if (policy === "official") result.missing += last - first + 1;
+          else {
+            result.modelled += last - first + 1;
+            sourceIds.add(MODEL_SOURCE_ID);
+          }
           continue;
         }
         for (let year = first; year <= last; year++) {
@@ -184,7 +195,8 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
             if (estimated(record)) result.officialEstimated++;
             sourceIds.add(record.sourceId);
             for (const flag of record.flags) flags.add(flag);
-          } else {
+          } else if (policy === "official") result.missing++;
+          else {
             result.modelled++;
             sourceIds.add(MODEL_SOURCE_ID);
           }
@@ -193,24 +205,43 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
     }
     result.sourceIds = [...sourceIds];
     result.flags = [...flags].sort();
-    result.label = !result.total
-      ? "No comparable data"
-      : result.official && result.modelled
-        ? "Mixed official and modelled"
-        : result.modelled
-          ? "Modelled estimate"
+    if (policy === "official") {
+      result.label = !result.official
+        ? "Official data unavailable"
+        : result.missing
+          ? result.officialEstimated
+            ? "Partial official estimates"
+            : "Partial official statistics"
           : result.officialEstimated
             ? "Official estimates"
             : "Official statistics";
-    result.basis = !result.total
-      ? "unavailable"
-      : result.official && result.modelled
-        ? "mixed"
-        : result.modelled
-          ? "modelled"
+      result.basis = !result.official
+        ? "unavailable"
+        : result.missing
+          ? "official-partial"
           : result.officialEstimated
             ? "official-estimate"
             : "official-statistic";
+    } else {
+      result.label = !result.total
+        ? "No comparable data"
+        : result.official && result.modelled
+          ? "Mixed official and modelled"
+          : result.modelled
+            ? "Modelled estimate"
+            : result.officialEstimated
+              ? "Official estimates"
+              : "Official statistics";
+      result.basis = !result.total
+        ? "unavailable"
+        : result.official && result.modelled
+          ? "mixed"
+          : result.modelled
+            ? "modelled"
+            : result.officialEstimated
+              ? "official-estimate"
+              : "official-statistic";
+    }
     return result;
   }
   function getRouteProvenance(origin, destination, start, end) {
@@ -230,7 +261,7 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
       start,
       end,
       years,
-      sources: summary.sourceIds.map((id) => sources[id]),
+      sources: summary.sourceIds.map((id) => sources[id]).filter(Boolean),
     };
   }
   function resolveRows(rawRows, start, end) {
@@ -240,7 +271,7 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
         "Resolved migration rows cannot be reused for a different interval",
       );
     const baseline = prior ? prior.baseline : rawRows.map((row) => row.slice());
-    const rows = baseline.map((row) => row.slice());
+    let rows = baseline.map((row) => row.slice());
     const positions = new Map();
     for (let i = 0; i < rows.length; i++) {
       const [a, b, value] = rows[i],
@@ -249,7 +280,8 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
       tenths(value);
       positions.set(id, i);
     }
-    if (policy === "best") {
+    if (policy !== "model") {
+      const available = new Set();
       for (const [id, position] of positions) {
         const records = (byPair.get(id) || []).filter(
           (record) => record.year >= start && record.year <= end,
@@ -269,11 +301,16 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
           (sum, record) => sum + record.valueTenths - record.modelTenths,
           0,
         );
-        const value = baselineTenths + delta;
+        const value =
+          policy === "official"
+            ? records.reduce((sum, record) => sum + record.valueTenths, 0)
+            : baselineTenths + delta;
         if (!Number.isSafeInteger(value) || value < 0)
           throw Error("Invalid resolved migration total");
         rows[position][2] = value / 10;
+        available.add(position);
       }
+      if (policy === "official") rows = rows.filter((_, i) => available.has(i));
     }
     resolvedRows.set(rows, { baseline, start, end });
     return rows;
@@ -310,12 +347,13 @@ function createProvenanceResolver(payload, initialPolicy = "best") {
     for (const [peer, values] of Object.entries(result.peers)) {
       const origin = direction === "out" ? baseline.country : peer;
       const destination = direction === "out" ? peer : baseline.country;
+      if (policy === "official") values.fill(null);
       for (const record of byPair.get(pair(origin, destination)) || []) {
         const offset = record.year - startYear;
         if (offset < 0 || offset >= values.length) continue;
-        if (values[offset] !== record.modelTenths)
+        if (baseline.peers[peer][offset] !== record.modelTenths)
           throw Error("Official override does not match annual FLOW series");
-        if (policy === "best") values[offset] = record.valueTenths;
+        if (policy !== "model") values[offset] = record.valueTenths;
       }
     }
     resolvedSeries.set(result, { baseline, direction });
@@ -360,7 +398,7 @@ async function officialDataReady(options = {}) {
   return officialReadyPromise;
 }
 function setDataPolicy(policy) {
-  if (policy !== "best" && policy !== "model")
+  if (!["official", "best", "model"].includes(policy))
     throw Error("Unknown migration data policy");
   dataPolicy = policy;
   officialResolver?.setPolicy(policy);

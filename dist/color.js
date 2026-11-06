@@ -17,7 +17,7 @@ const movement = {
 };
 const panel = document.createElement("section");
 panel.className = "movement-panel";
-panel.innerHTML = `<div class="movement-switches"><label>Map view<select id="movement-view"><option value="color">Color movement</option><option value="arrows">Arrows</option></select></label><label>Color scale<select id="movement-metric"><option value="volume">Migration volume</option><option value="population">Share of population</option></select></label></div><div class="movement-pickers"><label>Focus country<select id="movement-focus"><option value="">Choose a country</option></select></label><label>Direction<select id="movement-direction"><option value="out">Outgoing — to destinations</option><option value="in">Incoming — from origins</option><option value="both">All movement — combined</option></select></label></div><details><summary>Choose origins / destinations</summary><label><input id="movement-all" type="checkbox" checked> Everywhere</label><input id="movement-search" type="search" placeholder="Find a country…" aria-label="Search counterpart countries"><div id="movement-peers"></div></details><div id="movement-status" role="status">Choose a focal country to explore color movement.</div><div class="movement-transport"><button id="movement-play">Play ▶</button><button id="movement-restart">Restart ↺</button><label>Speed<select id="movement-speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div><input id="movement-cursor" type="range" min="0" max="5" value="0" aria-label="Playback year"><strong id="movement-year">Start</strong><p id="movement-count" aria-live="polite"></p><p id="movement-legend"></p><div id="movement-contributions"></div><p class="small">Gross migration flows, including repeat migration; official coverage and model fallback are labelled below. Arrivals and departures do not establish overall population change. Population colors saturate at 10%; displayed percentages are uncapped. <a href="https://data.worldbank.org/indicator/SP.POP.TOTL" target="_blank" rel="noopener">Population source ↗</a></p>`;
+panel.innerHTML = `<div class="movement-switches"><label>Map view<select id="movement-view"><option value="color">Color movement</option><option value="arrows">Arrows</option></select></label><label>Color scale<select id="movement-metric"><option value="volume">Migration volume</option><option value="population">Share of population</option></select></label></div><div class="movement-pickers"><label>Focus country<select id="movement-focus"><option value="">Choose a country</option></select></label><label>Direction<select id="movement-direction"><option value="out">Outgoing — to destinations</option><option value="in">Incoming — from origins</option><option value="both">All movement — combined</option></select></label></div><details><summary>Choose origins / destinations</summary><label><input id="movement-all" type="checkbox" checked> Everywhere</label><input id="movement-search" type="search" placeholder="Find a country…" aria-label="Search counterpart countries"><div id="movement-peers"></div></details><div id="movement-status" role="status">Choose a focal country to explore color movement.</div><div class="movement-transport"><button id="movement-play">Play ▶</button><button id="movement-restart">Restart ↺</button><label>Speed<select id="movement-speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div><input id="movement-cursor" type="range" min="0" max="5" value="0" aria-label="Playback year"><strong id="movement-year">Start</strong><p id="movement-count" aria-live="polite"></p><p id="movement-legend"></p><div id="movement-contributions"></div><p class="small">Gross migration flows, including repeat migration; official coverage is labelled below. Missing observations remain unavailable in Official statistics; model values require a comparison mode. Arrivals and departures do not establish overall population change. Population colors saturate at 10%; displayed percentages are uncapped. <a href="https://data.worldbank.org/indicator/SP.POP.TOTL" target="_blank" rel="noopener">Population source ↗</a></p>`;
 $(".map-wrap").before(panel);
 const colorTip = document.createElement("section");
 colorTip.className = "movement-tip";
@@ -40,7 +40,7 @@ function cumulative(peer) {
   return (
     movement.series?.peers[peer]
       ?.slice(movement.start - 1960, movement.start - 1960 + movement.cursor)
-      .reduce((a, b) => a + b, 0) / 10 || 0
+      .reduce((a, b) => a + (b ?? 0), 0) / 10 || 0
   );
 }
 function selectedPeers() {
@@ -54,8 +54,35 @@ function finalCount(peer) {
   return (
     movement.series.peers[peer]
       .slice(movement.start - 1960, movement.end - 1959)
-      .reduce((a, b) => a + b, 0) / 10
+      .reduce((a, b) => a + (b ?? 0), 0) / 10
   );
+}
+function peerCorridors(peer) {
+  return movement.direction === "both"
+    ? [
+        [movement.focus, peer],
+        [peer, movement.focus],
+      ]
+    : [
+        movement.direction === "in"
+          ? [peer, movement.focus]
+          : [movement.focus, peer],
+      ];
+}
+function peerProvenance(peer, through = movement.start + movement.cursor - 1) {
+  return summarizeProvenance(peerCorridors(peer), movement.start, through);
+}
+function migrationCoverageMissing(code, count) {
+  if (
+    dataPolicy !== "official" ||
+    !(movement.cursor > 0) ||
+    count > 0 ||
+    code === movement.focus ||
+    !movement.series?.peers[code] ||
+    (movement.peers !== null && !movement.peers.includes(code))
+  )
+    return false;
+  return peerProvenance(code).missing > 0;
 }
 function migrationOpacity(code, count) {
   if (!(count > 0) || code === movement.focus) return 0;
@@ -74,6 +101,7 @@ function migrationOpacity(code, count) {
   );
 }
 function migrationFill(code, count) {
+  if (migrationCoverageMissing(code, count)) return "url(#migration-missing)";
   const intensity = migrationOpacity(code, count);
   if (intensity === null) return "url(#population-missing)";
   return count > 0 && code !== movement.focus
@@ -121,7 +149,7 @@ function renderMovementArrows(counts) {
               movement.start - 1960,
               movement.start - 1960 + movement.cursor,
             )
-            .reduce((sum, v) => sum + v, 0) / 10;
+            .reduce((sum, v) => sum + (v ?? 0), 0) / 10;
         if (value > 0)
           directionRows.push(
             direction === "out"
@@ -197,7 +225,7 @@ function renderMovementArrows(counts) {
       }
     });
   $("#coverage").textContent =
-    `${shown.length} arrows · shading includes every selected positive flow · ${movement.start}–${movement.end}`;
+    `${shown.length} arrows · ${dataPolicy === "official" ? "reported official flows only; missing observations excluded" : "shading includes every selected positive flow"} · ${movement.start}–${movement.end}`;
 }
 function paintMovement(animate = false) {
   const active = !!movement.series;
@@ -214,8 +242,14 @@ function paintMovement(animate = false) {
   g.selectAll(".country-point").style("fill", "#ffffff");
   $("#movement-cursor").disabled = !active;
   $("#movement-restart").disabled = !active;
-  $("#movement-play").disabled = active && !movement.total;
+  $("#movement-play").disabled =
+    active && !movement.total && dataPolicy !== "official";
   if (!active) {
+    const residenceCard = document.querySelector("#official-residence-card");
+    if (residenceCard) {
+      residenceCard.hidden = true;
+      delete residenceCard.dataset.key;
+    }
     g.selectAll(".migration-fill,.movement-arrows").remove();
     $("#movement-year").textContent = "No active playback";
     $("#movement-count").textContent =
@@ -261,12 +295,24 @@ function paintMovement(animate = false) {
       world.features.filter(
         (f) =>
           counts.get(f.properties.code) > 0 ||
+          migrationCoverageMissing(
+            f.properties.code,
+            counts.get(f.properties.code) || 0,
+          ) ||
           f.properties.code === movement.focus,
       ),
       (f) => f.properties.code,
     )
     .join((enter) => enter.append("path").attr("fill", "#ffffff"))
     .attr("data-country", (f) => f.properties.code)
+    .attr("data-coverage", (f) =>
+      migrationCoverageMissing(
+        f.properties.code,
+        counts.get(f.properties.code) || 0,
+      )
+        ? "missing"
+        : "reported",
+    )
     .attr("d", path)
     .attr("stroke", (f) =>
       f.properties.code === movement.focus ? "#0f172a" : "#64748b",
@@ -287,7 +333,10 @@ function paintMovement(animate = false) {
   else polygons.attr("fill", fill);
   const polygonCodes = new Set(world.features.map((f) => f.properties.code));
   const pointCounts = [...counts].filter(
-    ([code, count]) => count > 0 && !polygonCodes.has(code) && centers[code],
+    ([code, count]) =>
+      (count > 0 || migrationCoverageMissing(code, count)) &&
+      !polygonCodes.has(code) &&
+      centers[code],
   );
   if (!polygonCodes.has(movement.focus) && centers[movement.focus])
     pointCounts.push([movement.focus, 0]);
@@ -296,6 +345,9 @@ function paintMovement(animate = false) {
     .data(pointCounts, (d) => d[0])
     .join("circle")
     .attr("data-country", (d) => d[0])
+    .attr("data-coverage", (d) =>
+      migrationCoverageMissing(d[0], d[1]) ? "missing" : "reported",
+    )
     .attr("cx", (d) => centers[d[0]][0])
     .attr("cy", (d) => centers[d[0]][1])
     .attr("r", 3 / mapScale())
@@ -339,17 +391,28 @@ function paintMovement(animate = false) {
     : "Start — before selected movements";
   $("#movement-cursor").value = movement.cursor;
   $("#movement-count").textContent =
-    `${fullEstimate(total)} accumulated · ${fullEstimate(movement.total)} across ${movement.start}–${movement.end}`;
+    `${formatSourceValue(total, quality)} accumulated · ${formatSourceValue(movement.total, summarizeProvenance(movementCorridors(), movement.start, movement.end))} across ${movement.start}–${movement.end}`;
   const partnerLabel =
     movement.direction === "in"
       ? "Contributing origins"
       : movement.direction === "both"
         ? "Combined movements by counterpart"
         : "Receiving destinations";
+  const maximumLabel =
+    dataPolicy === "official"
+      ? movement.maximum > 0
+        ? movement.maximum.toLocaleString("en", { maximumFractionDigits: 1 }) +
+          " reported"
+        : "no positive official flow"
+      : fullEstimate(movement.maximum);
   $("#movement-legend").textContent =
     movement.metric === "volume"
-      ? `${partnerLabel}: darker blue = more migration. White = no positive flow displayed. Square-root scale, fixed to largest partner's full-range total (${fullEstimate(movement.maximum)}). Focal country outlined.`
+      ? `${partnerLabel}: darker blue = more migration. White = no positive flow displayed. Square-root scale, fixed to largest partner's ${dataPolicy === "official" ? "reported subtotal" : "full-range total"} (${maximumLabel}). Focal country outlined.`
       : `${partnerLabel}: cumulative migrations relative to ${movement.start} population. Blue scale 0–10% (10%+ saturated); hatched = population unavailable. Focal country outlined.`;
+  if (dataPolicy === "official") {
+    $("#movement-legend").textContent +=
+      " Official reports only; missing years are excluded, never filled with model values. Gray crosshatching marks incomplete official coverage with no reported positive flow; white is outside the selection or reported zero. Blue partial totals include reported observations only.";
+  }
   $("#everywhere-controls").hidden = movement.view !== "arrows";
   const list = $("#movement-contributions");
   list.replaceChildren();
@@ -357,13 +420,12 @@ function paintMovement(animate = false) {
   for (const peer of ordered) {
     const button = document.createElement("button");
     button.className = "destination-card";
-    const pct = colorRatio(peer, cumulative(peer));
-    const q = summarizeProvenance(
-      movementCorridors().filter(([a, b]) => a === peer || b === peer),
-      movement.start,
-      movement.start + movement.cursor - 1,
-    );
-    button.textContent = `${name(peer)} · ${formatSourceValue(cumulative(peer), q)} · ${pct === null ? "Population unavailable" : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "%"}`;
+    const q = peerProvenance(peer);
+    const missingFlow =
+      dataPolicy === "official" &&
+      (!q.official || (!cumulative(peer) && q.missing));
+    const pct = missingFlow ? null : colorRatio(peer, cumulative(peer));
+    button.textContent = `${name(peer)} · ${formatSourceValue(cumulative(peer), q)} · ${missingFlow ? "Percentage unavailable: missing official flow data" : pct === null ? "Population unavailable" : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "%"}`;
     const badge = document.createElement("small");
     badge.className = "cell-quality";
     badge.textContent = q.label;
@@ -477,7 +539,12 @@ async function prepareMovement() {
             peers: Object.fromEntries(
               Object.keys(parts[0].peers).map((peer) => [
                 peer,
-                parts[0].peers[peer].map((v, i) => v + parts[1].peers[peer][i]),
+                parts[0].peers[peer].map((v, i) => {
+                  const other = parts[1].peers[peer][i];
+                  return v === null && other === null
+                    ? null
+                    : (v ?? 0) + (other ?? 0);
+                }),
               ]),
             ),
           }
@@ -490,7 +557,12 @@ async function prepareMovement() {
     if (
       Object.values(series.peers).some(
         (a) =>
-          a.length !== 65 || a.some((v) => !Number.isSafeInteger(v) || v < 0),
+          a.length !== 65 ||
+          a.some(
+            (v) =>
+              !(dataPolicy === "official" && v === null) &&
+              (!Number.isSafeInteger(v) || v < 0),
+          ),
       )
     )
       throw Error();
@@ -509,11 +581,23 @@ async function prepareMovement() {
     state.customRange = true;
     $("#show-all-routes").checked = false;
     $("#movement-cursor").max = end - start + 1;
-    $("#movement-status").textContent = movement.total
-      ? "Ready · " +
-        summarizeProvenance(movementCorridors(), movement.start, movement.end)
-          .label
-      : "No positive migration estimates for this selection.";
+    const rangeQuality = summarizeProvenance(
+      movementCorridors(),
+      movement.start,
+      movement.end,
+    );
+    $("#movement-status").textContent =
+      dataPolicy === "official" && !rangeQuality.official
+        ? "Official flow data unavailable for this selection. Missing reports are not zero arrivals."
+        : movement.total
+          ? "Ready · " +
+            rangeQuality.label +
+            (dataPolicy === "official" && rangeQuality.missing
+              ? " · playback accumulates reported observations only; gaps remain unavailable."
+              : "")
+          : dataPolicy === "official"
+            ? "Official reports contain no positive movements; coverage gaps remain unavailable."
+            : "No positive migration estimates for this selection.";
     paintMovement();
     return true;
   } catch {
@@ -531,7 +615,7 @@ function inspectMovement(code, route = null) {
     : code === movement.focus
       ? selectedPeers().reduce((s, p) => s + cumulative(p), 0)
       : cumulative(code);
-  const pct = colorRatio(code, count);
+  let pct = colorRatio(code, count);
   const participating =
     code === movement.focus || selectedPeers().includes(code);
   colorTip.replaceChildren();
@@ -546,7 +630,7 @@ function inspectMovement(code, route = null) {
   const info = document.createElement("p");
   info.textContent = !participating
     ? "No migration is displayed for this country in the selected scenario."
-    : `${fullEstimate(count)} cumulative estimated movements. ${pct === null ? "Population baseline unavailable." : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "% relative to " + name(code) + "’s " + movement.start + " population."}`;
+    : "Reading the selected observations…";
   colorTip.append(close, title, info);
   const corridors = route
     ? [[route[0], route[1]]]
@@ -563,17 +647,23 @@ function inspectMovement(code, route = null) {
   badge.textContent =
     sourceSummaryText(quality) +
     (hasBelarusPoland(corridors, movement.start, movement.end)
-      ? " " + belarusCaution
+      ? dataPolicy === "official"
+        ? " Official annual Belarus → Poland arrivals are unavailable. The dated residence statistic on the main page is a separate measure."
+        : " " + belarusCaution
       : "");
   colorTip.append(badge);
-  for (const id of quality.sourceIds) {
+  for (const id of quality.sourceIds.filter(Boolean)) {
     colorTip.append(
       sourceNode(currentOfficialResolver().sources[id]),
       document.createElement("br"),
     );
   }
+  const missingFlow =
+    dataPolicy === "official" &&
+    (!quality.official || (!count && quality.missing));
+  if (missingFlow) pct = null;
   if (participating)
-    info.textContent = `${formatSourceValue(count, quality)} cumulative ${movement.direction === "both" && !route ? "combined incoming and outgoing movements" : "migration flows"}. ${pct === null ? "Population baseline unavailable." : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "% relative to " + name(code) + "’s " + movement.start + " population (World Bank estimate)."}`;
+    info.textContent = `${formatSourceValue(count, quality)} cumulative ${movement.direction === "both" && !route ? "combined incoming and outgoing movements" : "migration flows"}. ${missingFlow ? "Population-relative percentage unavailable because official flow observations are missing." : pct === null ? "Population baseline unavailable." : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "% relative to " + name(code) + "’s " + movement.start + " population (World Bank estimate)."}`;
   if (participating && code !== movement.focus) {
     const details = document.createElement("button");
     details.textContent = "View route details ↗";
@@ -593,7 +683,7 @@ function inspectMovement(code, route = null) {
   }
 }
 function runMovement() {
-  if (!movement.total) return;
+  if (!movement.total && dataPolicy !== "official") return;
   clearInterval(movement.clock);
   $("#movement-play").textContent = "Pause Ⅱ";
   movement.clock = setInterval(() => {
@@ -747,6 +837,22 @@ const bootMovement = setInterval(() => {
     .append("path")
     .attr("d", "M0,0L6,6")
     .attr("stroke", "#777");
+  const migrationPattern = defs
+    .append("pattern")
+    .attr("id", "migration-missing")
+    .attr("width", 7)
+    .attr("height", 7)
+    .attr("patternUnits", "userSpaceOnUse");
+  migrationPattern
+    .append("rect")
+    .attr("width", 7)
+    .attr("height", 7)
+    .attr("fill", "#f8fafc");
+  migrationPattern
+    .append("path")
+    .attr("d", "M0,0L7,7M7,0L0,7")
+    .attr("stroke", "#94a3b8")
+    .attr("stroke-width", 0.65);
   const originalClick = g.select(".country").on("click");
   g.selectAll(".country").on("click", function (event, d) {
     if (movement.series) {
