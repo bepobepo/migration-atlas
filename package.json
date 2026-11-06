@@ -2,7 +2,7 @@
   "name": "migration-atlas",
   "private": true,
   "scripts": {
-    "test": "node tests/app.test.cjs && node tests/color.test.cjs && node tests/history.test.cjs && node tests/layout.test.cjs && node tests/provenance.test.cjs && node tests/official-integration.test.cjs && node tests/official-default.test.cjs"
+    "test": "node tests/app.test.cjs && node tests/color.test.cjs && node tests/history.test.cjs && node tests/layout.test.cjs && node tests/provenance.test.cjs && node tests/official-integration.test.cjs && node tests/official-default.test.cjs && node tests/country-tooltip.test.cjs"
   },
   "devDependencies": {
     "jsdom": "26.1.0"

@@ -316,6 +316,72 @@ async function main() {
     /baseline|match/,
   );
 
+  // Official inspection can ignore a selected model/comparison view without
+  // mutating its policy or changing later map/series resolution.
+  for (const selectedPolicy of ["model", "best"]) {
+    const inspection = provenance.createProvenanceResolver(
+      payload,
+      selectedPolicy,
+    );
+    const officialPoint = inspection.getPoint("BLR", "POL", 2022, "official");
+    assert.equal(officialPoint.value, 200);
+    assert.equal(officialPoint.kind, "official-estimate");
+    assert.equal(officialPoint.sourceId, "immigration");
+    assert.deepEqual(officialPoint.flags, ["i", "p"]);
+    assert.equal(inspection.policy, selectedPolicy);
+    const zeroPoint = inspection.getPoint("BLR", "POL", 2021, "official");
+    assert.equal(zeroPoint.value, 0);
+    assert.equal(zeroPoint.kind, "official-statistic");
+    const missingPoint = inspection.getPoint("BLR", "POL", 2024, "official");
+    assert.equal(missingPoint.value, null);
+    assert.equal(missingPoint.source, null);
+    const officialSummary = inspection.summarizeProvenance(
+      [["BLR", "POL"]],
+      2020,
+      2024,
+      "official",
+    );
+    assert.equal(officialSummary.official, 3);
+    assert.equal(officialSummary.missing, 2);
+    assert.equal(officialSummary.modelled, 0);
+    const route = inspection.getRouteProvenance(
+      "BLR",
+      "POL",
+      2020,
+      2024,
+      "official",
+    );
+    assert.deepEqual(route.summary, officialSummary);
+    assert.deepEqual(
+      route.years.map((point) => point.value),
+      [1000, 0, 200, null, null],
+    );
+    assert.equal(route.sources[0].id, "immigration");
+    assert.equal(inspection.policy, selectedPolicy);
+    assert.equal(
+      inspection.getPoint("BLR", "POL", 2020).kind,
+      selectedPolicy === "model" ? "modelled" : "official-statistic",
+    );
+    assert.equal(
+      inspection.resolveRows(annual, 2020, 2020)[0][2],
+      selectedPolicy === "model" ? 10 : 1000,
+    );
+    assert.throws(
+      () => inspection.getPoint("BLR", "POL", 2020, "unknown"),
+      /Unknown migration data policy/,
+    );
+    assert.throws(
+      () =>
+        inspection.summarizeProvenance([["BLR", "POL"]], 2020, 2024, "unknown"),
+      /Unknown migration data policy/,
+    );
+    assert.throws(
+      () => inspection.getRouteProvenance("BLR", "POL", 2020, 2024, "unknown"),
+      /Unknown migration data policy/,
+    );
+    assert.equal(inspection.policy, selectedPolicy);
+  }
+
   assert.throws(
     () =>
       provenance.createProvenanceResolver({

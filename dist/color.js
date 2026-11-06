@@ -25,6 +25,18 @@ colorTip.hidden = true;
 colorTip.setAttribute("role", "dialog");
 colorTip.setAttribute("aria-label", "Country migration details");
 $(".map-wrap").append(colorTip);
+let movementInspection = null;
+function closeMovementInspection() {
+  movementInspection = null;
+  colorTip.hidden = true;
+  colorTip.replaceChildren();
+}
+colorTip.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeMovementInspection();
+  }
+});
 function pauseMovement() {
   clearInterval(movement.clock);
   movement.clock = null;
@@ -217,11 +229,11 @@ function renderMovementArrows(counts) {
     .on("click", (e, r) =>
       inspectMovement(r[0] === movement.focus ? r[1] : r[0], r),
     )
-    .on("keydown", (e, r) => {
+    .on("keydown", async (e, r) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        inspectMovement(r[0] === movement.focus ? r[1] : r[0], r);
-        colorTip.querySelector("button").focus();
+        await inspectMovement(r[0] === movement.focus ? r[1] : r[0], r);
+        colorTip.querySelector("button")?.focus();
       }
     });
   $("#coverage").textContent =
@@ -245,6 +257,7 @@ function paintMovement(animate = false) {
   $("#movement-play").disabled =
     active && !movement.total && dataPolicy !== "official";
   if (!active) {
+    closeMovementInspection();
     const residenceCard = document.querySelector("#official-residence-card");
     if (residenceCard) {
       residenceCard.hidden = true;
@@ -472,10 +485,19 @@ function paintMovement(animate = false) {
     emptyMessage:
       "No sourced historical context for the selected corridors through this playback year.",
   });
+  if (movementInspection) {
+    if (
+      state.year < 1960 ||
+      Number($("#range-start").value) !== movement.start ||
+      Number($("#range-end").value) !== movement.end
+    )
+      closeMovementInspection();
+    else renderMovementInspection();
+  }
 }
 async function prepareMovement() {
   pauseMovement();
-  colorTip.hidden = true;
+  closeMovementInspection();
   movement.series = null;
   movement.cursor = 0;
   paintMovement();
@@ -609,71 +631,201 @@ async function prepareMovement() {
     return false;
   }
 }
-function inspectMovement(code, route = null) {
-  const count = route
-    ? route[2]
-    : code === movement.focus
-      ? selectedPeers().reduce((s, p) => s + cumulative(p), 0)
-      : cumulative(code);
-  let pct = colorRatio(code, count);
+async function inspectMovement(code, route = null) {
+  if (state.year < 1960) {
+    closeMovementInspection();
+    return;
+  }
+  if (
+    Number($("#range-start").value) !== movement.start ||
+    Number($("#range-end").value) !== movement.end
+  ) {
+    const pending = prepareMovement();
+    const requestToken = movement.token;
+    if (!(await pending) || requestToken !== movement.token) return;
+  }
+  movementInspection = {
+    code,
+    route: route ? route.slice(0, 2) : null,
+    key: null,
+  };
+  renderMovementInspection();
+}
+function renderMovementInspection() {
+  if (!movementInspection || !movement.series) return;
+  const { code, route } = movementInspection;
+  const through = movement.start + movement.cursor - 1;
+  const key = [
+    code,
+    (route || []).join(":"),
+    movement.focus,
+    movement.direction,
+    (movement.peers || []).join(","),
+    movement.start,
+    movement.end,
+    through,
+    movement.metric,
+    dataPolicy,
+  ].join("|");
+  if (movementInspection.key === key) return;
+  const comparisonOpen =
+    movementInspection.key !== null &&
+    colorTip.querySelector(".tooltip-model-comparison")?.open;
+  movementInspection.key = key;
   const participating =
     code === movement.focus || selectedPeers().includes(code);
+  const corridors = route
+    ? [route]
+    : code === movement.focus
+      ? movementCorridors()
+      : movementCorridors().filter(([a, b]) => a === code || b === code);
+  const official = summarizeProvenance(
+    corridors,
+    movement.start,
+    through,
+    "official",
+  );
+  let reportedTenths = 0;
+  for (const [a, b] of corridors)
+    for (const point of getRouteProvenance(
+      a,
+      b,
+      movement.start,
+      through,
+      "official",
+    ).years) {
+      if (point.value !== null) reportedTenths += Math.round(point.value * 10);
+    }
+  const reported = reportedTenths / 10;
+  const selectedCount = route
+    ? (() => {
+        const peer = route[0] === movement.focus ? route[1] : route[0];
+        const direction = route[0] === movement.focus ? "out" : "in";
+        const series =
+          movement.direction === "both"
+            ? movement.directionSeries[direction]
+            : movement.series;
+        return (
+          (series?.peers[peer]
+            ?.slice(
+              movement.start - 1960,
+              movement.start - 1960 + movement.cursor,
+            )
+            .reduce((sum, v) => sum + (v ?? 0), 0) || 0) / 10
+        );
+      })()
+    : code === movement.focus
+      ? selectedPeers().reduce((sum, peer) => sum + cumulative(peer), 0)
+      : cumulative(code);
   colorTip.replaceChildren();
   colorTip.hidden = false;
   const close = document.createElement("button");
+  close.type = "button";
   close.textContent = "Close ×";
-  close.onclick = () => (colorTip.hidden = true);
+  close.onclick = closeMovementInspection;
   const title = document.createElement("h3");
   title.textContent = route
     ? `${name(route[0])} → ${name(route[1])}`
     : name(code);
-  const info = document.createElement("p");
-  info.textContent = !participating
-    ? "No migration is displayed for this country in the selected scenario."
-    : "Reading the selected observations…";
-  colorTip.append(close, title, info);
-  const corridors = route
-    ? [[route[0], route[1]]]
-    : code === movement.focus
-      ? movementCorridors()
-      : movementCorridors().filter(([a, b]) => a === code || b === code);
-  const quality = summarizeProvenance(
-    corridors,
-    movement.start,
-    movement.start + movement.cursor - 1,
-  );
-  const badge = document.createElement("p");
-  badge.className = "data-source-note";
-  badge.textContent =
-    sourceSummaryText(quality) +
-    (hasBelarusPoland(corridors, movement.start, movement.end)
-      ? dataPolicy === "official"
-        ? " Official annual Belarus → Poland arrivals are unavailable. The dated residence statistic on the main page is a separate measure."
-        : " " + belarusCaution
-      : "");
-  colorTip.append(badge);
-  for (const id of quality.sourceIds.filter(Boolean)) {
-    colorTip.append(
-      sourceNode(currentOfficialResolver().sources[id]),
-      document.createElement("br"),
-    );
+  const period = document.createElement("p");
+  period.className = "tooltip-period";
+  period.textContent = movement.cursor
+    ? `Official figures through ${through} · selected range ${movement.start}–${movement.end}`
+    : "Before the selected annual observations";
+  colorTip.append(close, title, period);
+  if (participating) {
+    const residence = document.createElement("section");
+    residence.className = "official-residence-card tooltip-official-residence";
+    residence.hidden = true;
+    colorTip.append(residence);
+    renderOfficialResidence(residence, corridors, movement.start, through);
   }
-  const missingFlow =
-    dataPolicy === "official" &&
-    (!quality.official || (!count && quality.missing));
-  if (missingFlow) pct = null;
-  if (participating)
-    info.textContent = `${formatSourceValue(count, quality)} cumulative ${movement.direction === "both" && !route ? "combined incoming and outgoing movements" : "migration flows"}. ${missingFlow ? "Population-relative percentage unavailable because official flow observations are missing." : pct === null ? "Population baseline unavailable." : pct.toLocaleString("en", { maximumSignificantDigits: 4 }) + "% relative to " + name(code) + "’s " + movement.start + " population (World Bank estimate)."}`;
+  const info = document.createElement("p");
+  info.className = "tooltip-official-info";
+  if (!participating)
+    info.textContent =
+      "This country is outside the selected migration scenario.";
+  else if (!movement.cursor)
+    info.textContent =
+      "No completed annual observations yet. Advance the timeline to inspect official figures.";
+  else {
+    info.textContent =
+      formatSourceValue(reported, official, "official") +
+      " · " +
+      (movement.direction === "both" && !route
+        ? "combined official incoming and outgoing movements"
+        : "official migration flows") +
+      ".";
+    const hasPercentage =
+      official.official > 0 && (reported > 0 || !official.missing);
+    const pct = hasPercentage ? colorRatio(code, reported) : null;
+    if (!hasPercentage)
+      info.textContent +=
+        " Population-relative migration percentage unavailable.";
+    else if (pct === null)
+      info.textContent += " Population baseline unavailable.";
+    else
+      info.textContent +=
+        " " +
+        pct.toLocaleString("en", { maximumSignificantDigits: 4 }) +
+        "% reported movements relative to " +
+        name(code) +
+        "’s " +
+        movement.start +
+        " population (World Bank estimate).";
+  }
+  colorTip.append(info);
+  if (participating) {
+    const badge = document.createElement("p");
+    badge.className = "data-source-note";
+    badge.textContent = sourceSummaryText(official);
+    colorTip.append(badge);
+    for (const id of official.sourceIds)
+      colorTip.append(
+        sourceNode(currentOfficialResolver().sources[id]),
+        document.createElement("br"),
+      );
+    if (dataPolicy !== "official") {
+      const comparison = document.createElement("details");
+      comparison.className = "tooltip-model-comparison";
+      comparison.open = !!comparisonOpen;
+      const label = document.createElement("summary");
+      label.textContent =
+        "Selected map comparison · " +
+        (dataPolicy === "model" ? "FLOW model only" : "Best available");
+      comparison.append(label);
+      const quality = summarizeProvenance(corridors, movement.start, through);
+      const value = document.createElement("p");
+      value.textContent =
+        formatSourceValue(selectedCount, quality) +
+        " cumulative comparison movements. " +
+        sourceSummaryText(quality);
+      comparison.append(value);
+      for (const id of quality.sourceIds)
+        comparison.append(
+          sourceNode(currentOfficialResolver().sources[id]),
+          document.createElement("br"),
+        );
+      if (hasBelarusPoland(corridors, movement.start, through)) {
+        const p = document.createElement("p");
+        p.textContent = belarusCaution;
+        comparison.append(p);
+      }
+      colorTip.append(comparison);
+    }
+  }
   if (participating && code !== movement.focus) {
     const details = document.createElement("button");
+    details.type = "button";
     details.textContent = "View route details ↗";
     details.onclick = async () => {
+      closeMovementInspection();
       pauseMovement();
       await setRange(movement.start, movement.end);
       const saved = { ...state };
       openRouteDetails(
         ...(route
-          ? route.slice(0, 2)
+          ? route
           : movement.direction !== "in"
             ? [movement.focus, code]
             : [code, movement.focus]),
@@ -796,11 +948,13 @@ $("#range-form").onsubmit = (e) => {
 };
 const originalMovementModal = modal;
 modal = function (html) {
+  closeMovementInspection();
   pauseMovement();
   return originalMovementModal(html);
 };
 const originalMovementRouteDetails = openRouteDetails;
 openRouteDetails = function (...args) {
+  closeMovementInspection();
   pauseMovement();
   return originalMovementRouteDetails(...args);
 };
@@ -896,10 +1050,11 @@ const bootMovement = setInterval(() => {
   g.selectAll(".country,.country-point")
     .attr("tabindex", 0)
     .attr("role", "button")
-    .on("keydown.color", function (e, d) {
+    .on("keydown.color", async function (e, d) {
       if (movement.series && (e.key === "Enter" || e.key === " ")) {
         e.preventDefault();
-        inspectMovement(d.properties?.code || d.code);
+        await inspectMovement(d.properties?.code || d.code);
+        colorTip.querySelector("button")?.focus();
       }
     });
   const pointClick = g.select(".country-point").on("click");

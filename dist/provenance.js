@@ -93,10 +93,13 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
   }
   for (const records of byPair.values())
     records.sort((a, b) => a.year - b.year);
-  function setPolicy(value) {
+  function validatePolicy(value) {
     if (!["official", "best", "model"].includes(value))
       throw Error("Unknown migration data policy");
-    policy = value;
+    return value;
+  }
+  function setPolicy(value) {
+    policy = validatePolicy(value);
     return policy;
   }
   setPolicy(initialPolicy);
@@ -108,10 +111,11 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
       sources[record.sourceId]?.estimated === true
     );
   }
-  function getPoint(origin, destination, year) {
+  function getPoint(origin, destination, year, requestedPolicy = policy) {
+    const activePolicy = validatePolicy(requestedPolicy);
     const record = index.get(key(origin, destination, year));
-    const official = policy !== "model" && !!record;
-    const unavailable = policy === "official" && !record;
+    const official = activePolicy !== "model" && !!record;
+    const unavailable = activePolicy === "official" && !record;
     const sourceId = official
       ? record.sourceId
       : unavailable
@@ -155,7 +159,13 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
     };
   }
 
-  function summarizeProvenance(corridors, start, end) {
+  function summarizeProvenance(
+    corridors,
+    start,
+    end,
+    requestedPolicy = policy,
+  ) {
+    const activePolicy = validatePolicy(requestedPolicy);
     const unique = new Map();
     for (const corridor of corridors || []) {
       const [origin, destination] = corridor;
@@ -180,8 +190,8 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
         result.total += last - first + 1;
         // Most worldwide corridor-years have no official import. Avoid building
         // per-year inspection objects or searching an entirely modelled pair.
-        if (policy === "model" || !byPair.has(pairKey)) {
-          if (policy === "official") result.missing += last - first + 1;
+        if (activePolicy === "model" || !byPair.has(pairKey)) {
+          if (activePolicy === "official") result.missing += last - first + 1;
           else {
             result.modelled += last - first + 1;
             sourceIds.add(MODEL_SOURCE_ID);
@@ -195,7 +205,7 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
             if (estimated(record)) result.officialEstimated++;
             sourceIds.add(record.sourceId);
             for (const flag of record.flags) flags.add(flag);
-          } else if (policy === "official") result.missing++;
+          } else if (activePolicy === "official") result.missing++;
           else {
             result.modelled++;
             sourceIds.add(MODEL_SOURCE_ID);
@@ -205,7 +215,7 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
     }
     result.sourceIds = [...sourceIds];
     result.flags = [...flags].sort();
-    if (policy === "official") {
+    if (activePolicy === "official") {
       result.label = !result.official
         ? "Official data unavailable"
         : result.missing
@@ -244,15 +254,27 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
     }
     return result;
   }
-  function getRouteProvenance(origin, destination, start, end) {
-    const summary = summarizeProvenance([[origin, destination]], start, end);
+  function getRouteProvenance(
+    origin,
+    destination,
+    start,
+    end,
+    requestedPolicy = policy,
+  ) {
+    const activePolicy = validatePolicy(requestedPolicy);
+    const summary = summarizeProvenance(
+      [[origin, destination]],
+      start,
+      end,
+      activePolicy,
+    );
     const years = [];
     for (
       let year = Math.max(1960, start);
       Number.isInteger(year) && year <= Math.min(2024, end);
       year++
     )
-      years.push(getPoint(origin, destination, year));
+      years.push(getPoint(origin, destination, year, activePolicy));
     return {
       ...summary,
       summary,

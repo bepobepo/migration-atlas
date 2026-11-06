@@ -221,3 +221,28 @@
     font-size: 32px;
   }
 }
+.movement-tip .tooltip-period {
+  font-size: 11px;
+  color: #475569;
+}
+.movement-tip .tooltip-official-residence {
+  padding: 12px;
+  margin: 12px 0;
+}
+.movement-tip .tooltip-official-residence h3 {
+  font-size: 15px;
+}
+.movement-tip .tooltip-official-residence .residence-value {
+  font-size: 30px;
+}
+.movement-tip .tooltip-model-comparison {
+  border-top: 1px solid #cbd5e1;
+  padding-top: 12px;
+  margin: 12px 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.movement-tip .tooltip-model-comparison > summary {
+  cursor: pointer;
+  font-weight: 600;
+}

@@ -6,8 +6,8 @@ const dataUI = {
   raw: new Map(),
   context: null,
 };
-function formatSourceValue(value, summary) {
-  if (dataPolicy === "official") {
+function formatSourceValue(value, summary, policy = dataPolicy) {
+  if (policy === "official") {
     if (summary?.total === 0 && value === 0) return "0 · before observations";
     if (!summary?.official || value == null || !Number.isFinite(value))
       return "Official data unavailable";
