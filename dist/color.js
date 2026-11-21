@@ -410,7 +410,7 @@ function paintMovement(animate = false) {
     : "Start — before selected movements";
   $("#movement-cursor").value = movement.cursor;
   $("#movement-count").textContent =
-    `${formatSourceValue(total, quality)} accumulated · ${formatSourceValue(movement.total, summarizeProvenance(movementCorridors(), movement.start, movement.end))} across ${movement.start}–${movement.end}`;
+    `${formatSourceValue(total, quality)} accumulated on selected routes · ${formatSourceValue(movement.total, summarizeProvenance(movementCorridors(), movement.start, movement.end))} across ${movement.start}–${movement.end}`;
   const partnerLabel =
     movement.direction === "in"
       ? "Contributing origins"

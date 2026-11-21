@@ -1,0 +1,105 @@
+{
+  "source": {
+    "name": "Office for National Statistics",
+    "title": "Long-term international immigration, emigration and net migration flows, provisional",
+    "releaseDate": "2026-05-21",
+    "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/datasets/longterminternationalimmigrationemigrationandnetmigrationflowsprovisional/yearendingdecember2025",
+    "workbookUrl": "https://www.ons.gov.uk/file?uri=%2Fpeoplepopulationandcommunity%2Fpopulationandmigration%2Finternationalmigration%2Fdatasets%2Flongterminternationalimmigrationemigrationandnetmigrationflowsprovisional%2Fyearendingdecember2025%2Fmay2026publicationspreadsheet.xlsx",
+    "bulletinUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/bulletins/longterminternationalmigrationprovisional/yearendingdecember2025",
+    "table": "Table 1, All Nationalities, year ending December",
+    "licence": "Open Government Licence v3.0"
+  },
+  "years": [
+    {
+      "year": 2012,
+      "revised": false,
+      "immigration": 643000,
+      "emigration": 448000,
+      "net": 195000
+    },
+    {
+      "year": 2013,
+      "revised": false,
+      "immigration": 713000,
+      "emigration": 469000,
+      "net": 244000
+    },
+    {
+      "year": 2014,
+      "revised": false,
+      "immigration": 778000,
+      "emigration": 494000,
+      "net": 284000
+    },
+    {
+      "year": 2015,
+      "revised": false,
+      "immigration": 797000,
+      "emigration": 494000,
+      "net": 303000
+    },
+    {
+      "year": 2016,
+      "revised": false,
+      "immigration": 772000,
+      "emigration": 523000,
+      "net": 249000
+    },
+    {
+      "year": 2017,
+      "revised": false,
+      "immigration": 752000,
+      "emigration": 544000,
+      "net": 208000
+    },
+    {
+      "year": 2018,
+      "revised": false,
+      "immigration": 825000,
+      "emigration": 549000,
+      "net": 276000
+    },
+    {
+      "year": 2019,
+      "revised": false,
+      "immigration": 788000,
+      "emigration": 605000,
+      "net": 184000
+    },
+    {
+      "year": 2020,
+      "revised": false,
+      "immigration": 662000,
+      "emigration": 569000,
+      "net": 93000
+    },
+    {
+      "year": 2021,
+      "revised": false,
+      "immigration": 947000,
+      "emigration": 480000,
+      "net": 467000
+    },
+    {
+      "year": 2022,
+      "revised": false,
+      "immigration": 1398000,
+      "emigration": 508000,
+      "net": 891000
+    },
+    {
+      "year": 2023,
+      "revised": false,
+      "immigration": 1441000,
+      "emigration": 593000,
+      "net": 848000
+    },
+    {
+      "year": 2024,
+      "revised": true,
+      "immigration": 1012000,
+      "emigration": 680000,
+      "net": 331000
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "filename": "may2026publicationspreadsheet.xlsx",
+  "sha256": "254a57a0d1e30c40c42843290c6dcc8ccb935ad26ac9148ad2665846ff7e9147",
+  "retrieved": "2026-11-21",
+  "source": {
+    "name": "Office for National Statistics",
+    "title": "Long-term international immigration, emigration and net migration flows, provisional",
+    "releaseDate": "2026-05-21",
+    "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/datasets/longterminternationalimmigrationemigrationandnetmigrationflowsprovisional/yearendingdecember2025",
+    "workbookUrl": "https://www.ons.gov.uk/file?uri=%2Fpeoplepopulationandcommunity%2Fpopulationandmigration%2Finternationalmigration%2Fdatasets%2Flongterminternationalimmigrationemigrationandnetmigrationflowsprovisional%2Fyearendingdecember2025%2Fmay2026publicationspreadsheet.xlsx",
+    "bulletinUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/bulletins/longterminternationalmigrationprovisional/yearendingdecember2025",
+    "table": "Table 1, All Nationalities, year ending December",
+    "licence": "Open Government Licence v3.0"
+  }
+}

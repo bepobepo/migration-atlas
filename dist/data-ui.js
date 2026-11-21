@@ -221,7 +221,7 @@ function updateDataDisclosure() {
         0,
       ) / 10;
     document.querySelector("#movement-count").textContent =
-      `${formatSourceValue(total, q)} accumulated · ${formatSourceValue(movement.total, quality)} across ${start}–${end}`;
+      `${formatSourceValue(total, q)} accumulated on selected routes · ${formatSourceValue(movement.total, quality)} across ${start}–${end}`;
   } else if (typeof dataStatus !== "undefined" && dataStatus === "ready") {
     const total = document.querySelector(
       "#outgoing-total,#incoming-total,#country-total",

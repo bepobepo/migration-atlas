@@ -55,6 +55,26 @@
 #overview-prompt { font-size: 12px; color: #214e67; margin: 10px 0 0; }
 #overview-summary { margin-top: 14px; }
 #overview-period { font-family: inherit; line-height: 1.4; font-weight: 600; font-size: 13px; margin: 0 0 6px; }
+#overview-national {
+  background: #f1f6f9;
+  color: #19384c;
+  border-left: 3px solid #377191;
+  padding: .9rem 1rem;
+  margin-bottom: 1rem;
+  min-width: 0;
+}
+#overview-national h2 { font-family: inherit; font-size: 1.12rem; line-height: 1.4; font-weight: 600; margin: 0; }
+#overview-national p, #overview-route-note { font-size: .875rem; line-height: 1.5; margin: .45rem 0; }
+#overview-national .uk-totals { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7.25rem), 1fr)); gap: .5rem 1rem; margin: .65rem 0; }
+#overview-national dt { font-size: .875rem; }
+#overview-national dd { margin: .1rem 0; font: 1.3rem/1.25 Georgia, serif; font-variant-numeric: tabular-nums; }
+#overview-national summary { padding: .4rem 0; cursor: pointer; font-size: .9rem; }
+#uk-annual { overflow-x: auto; }
+#uk-years { border-collapse: collapse; width: 100%; font-size: .875rem; font-variant-numeric: tabular-nums; }
+#uk-years caption { text-align: left; margin: .25rem 0; }
+#uk-years th, #uk-years td { padding: .4rem .2rem; text-align: right; border-bottom: 1px solid #becdd5; }
+#uk-years th:first-child { text-align: left; }
+#overview-national .uk-source { margin-bottom: 0; font-size: .813rem; }
 .overview-totals, .overview-rank-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
 .overview-totals > div { padding-left: 10px; border-left: 2px solid #628eae; }
 .overview-totals > div + div { border-color: #789388; }

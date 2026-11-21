@@ -17,10 +17,15 @@ async function test() {
   const get = id => w.document.getElementById(id);
   const event = type => new w.Event(type, {bubbles: true, cancelable: true});
   const failures = new Set();
-  w.fetch = async file => ({
-    ok: !failures.has(file) && fs.existsSync(path.join(root, file)),
-    json: async () => JSON.parse(read(file)),
-  });
+  const ukFile = "data/official/uk-national.json";
+  let holdUK = null;
+  w.fetch = async file => {
+    if (file === ukFile && holdUK) await holdUK;
+    return {
+      ok: !failures.has(file) && fs.existsSync(path.join(root, file)),
+      json: async () => JSON.parse(read(file)),
+    };
+  };
   w.requestAnimationFrame = fn => w.setTimeout(fn, 0);
   w.matchMedia = () => ({matches: true});
   w.HTMLElement.prototype.scrollIntoView = () => {};
@@ -59,7 +64,7 @@ async function test() {
 
     await api.applyCountryScenario({focus:"ESP",direction:"out",peers:["ROU"],start:2020,end:2024});
     await until(() => get("overview-out-total").textContent.includes("reported"));
-    assert.match(get("overview-period").textContent, /Spain · All partners · 2020–2024/);
+    assert.match(get("overview-period").textContent, /Spain · Partner-country flows · 2020–2024/);
     assert.equal(get("overview-out").getAttribute("aria-pressed"), "false");
     get("overview-out").click();
     await until(() => api.movement.series && api.movement.peers === null && api.movement.direction === "out");
@@ -92,6 +97,56 @@ async function test() {
     await until(() => get("overview-out-basis").textContent.includes("route-years"));
     assert(get("overview-retry").hidden);
 
+    // Published December LTIM estimates and bilateral reports answer separate questions.
+    const uk = {focus:"GBR", direction:"in", peers:null, start:2020, end:2024};
+    failures.add(ukFile);
+    await api.applyCountryScenario(uk);
+    await until(() => !get("overview-national").hidden && !get("uk-retry").hidden);
+    assert(get("uk-figures").hidden);
+    await until(() => get("overview-in-total").textContent.includes("578,309"));
+    assert.match(get("overview-out-total").textContent, /553,192/);
+
+    failures.delete(ukFile);
+    let releaseUK;
+    holdUK = new Promise(resolve => { releaseUK = resolve; });
+    get("uk-retry").click();
+    await api.applyCountryScenario({...uk, focus:"DEU"});
+    await until(() => get("overview-national").hidden);
+    holdUK = null;
+    releaseUK();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert(get("overview-national").hidden, "A late ONS response must not appear for Germany");
+
+    await api.applyCountryScenario(uk);
+    await until(() => !get("uk-figures").hidden && get("uk-net").textContent.includes("2,630,000"));
+    assert(!get("overview-national").hidden);
+    assert(get("overview-national").compareDocumentPosition(get("overview-in-total")) &
+      w.Node.DOCUMENT_POSITION_FOLLOWING);
+    assert.match(get("uk-immigration").textContent, /5,460,000/);
+    assert.match(get("uk-emigration").textContent, /2,830,000/);
+    const annualRows = [...get("uk-years").querySelectorAll("tbody tr")];
+    assert.equal(annualRows.length, 5);
+    for (const [year, number] of [[2020,"93,000"],[2021,"467,000"],[2022,"891,000"],[2023,"848,000"],[2024,"331,000"]]) {
+      assert(annualRows.some(row => row.textContent.includes(String(year)) &&
+        [...row.cells].some(cell => cell.textContent.includes(number))), "ONS net for December " + year);
+    }
+    await api.applyCountryScenario({...uk, start:2024, peers:["ESP"]});
+    await until(() => get("uk-net").textContent.includes("331,000"));
+    assert.match(get("uk-immigration").textContent, /1,012,000/);
+    assert.match(get("uk-emigration").textContent, /680,000/);
+    // ONS covers the entire UK even when the map selects one partner. Subtracting its rounded components gives 332,000.
+    assert.equal(get("uk-years").querySelectorAll("tbody tr").length, 1);
+    for (const mode of ["model", "best", "official"]) {
+      const policy = get("data-policy");
+      policy.value = mode;
+      await policy.onchange({target:policy});
+      await until(() => !get("uk-figures").hidden && get("uk-net").textContent.includes("331,000"));
+    }
+    await api.applyCountryScenario({...uk, start:2011});
+    await until(() => get("uk-net").textContent.includes("Unavailable for full range"));
+    assert(!get("uk-figures").hidden);
+    assert(!get("uk-net").textContent.includes("331,000"));
+
     selectCountry("");
     await until(() => !api.movement.focus && get("overview-summary").hidden);
     get("overview-residents").click();
@@ -99,7 +154,7 @@ async function test() {
     assert(get("residents-dialog").open);
     assert.match(get("residents-dialog").querySelector("h2").textContent, /France/);
     await until(() => api.movement.series?.country === "FRA");
-    console.log("PASS overview: shared country and dates, totals and source coverage, direction-first exploration, ranked period comparison and route details, resident action, recovery.");
+    console.log("PASS overview: shared country and dates, source coverage, ranked period comparison, resident action, UK national and partner figures, unavailable years and recovery.");
   } finally {
     await new Promise(resolve => setTimeout(resolve, 50));
     dom.window.close();
