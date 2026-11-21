@@ -29,7 +29,7 @@ const { JSDOM } = require("jsdom");
     if (code === "BEL") return { ok:true, json:async () => data };
     if (code === "USA") return new Promise(resolve => { resolveSlowRequest = resolve; });
     if (code === "FRA" && fail) throw Error("Fetch failed");
-    if (["DZA", "ISR", "JPN", "BEN", "SOM"].includes(code))
+    if (["DZA", "ISR", "JPN", "BEN", "SOM", "PSE"].includes(code))
       return {ok: true, json: async () => require("../dist/data/residents/" + code + ".json")};
     return {status:404, ok:false};
   };
@@ -69,7 +69,7 @@ const { JSDOM } = require("jsdom");
   assert.match($(".residents-date").textContent, /1 July 2024/);
   assert.match($(".residents-source a").href, /^https:\/\/www.un.org\//);
   await w.openResidents("ISR");
-  assert.equal($(".residents-total-label").textContent, "Residents born abroad");
+  assert.equal($(".residents-total-label").textContent, "Migrant residents (birthplace-based estimate)");
   assert.match($(".residents-definition").textContent, /became a citizen/);
   assert.match($(".residents-definition").textContent, /refugee/);
   assert.equal($(".residents-total").textContent, "2,091,569");
@@ -87,6 +87,10 @@ const { JSDOM } = require("jsdom");
     await w.openResidents(country);
     assert.match($(".residents-definition").textContent, description);
   }
+  await w.openResidents("PSE");
+  assert.equal($(".residents-total-label").textContent, "Residents born abroad");
+  assert.equal($(".residents-country-note").hidden, false);
+  assert.match($(".residents-country-note").textContent, /East Jerusalem/);
   dom.window.close();
   console.log("PASS resident country selection, dated snapshots, fixed share denominator, search, missing/zero handling, retry, stale requests and focus return.");
 })().catch(err => { console.error(err); process.exitCode = 1; });

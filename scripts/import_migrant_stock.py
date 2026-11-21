@@ -21,22 +21,23 @@ WORLD, OTHERS = 900, 2003
 
 def basis(flags):
     codes = set(flags.split())
-    if {"B", "C"} <= codes:
+    method = codes - {"R"}
+    if method == {"B", "C"}:
         label = "International migrant residents"
-        definition = "The UN uses both birthplace and citizenship records here. Depending on the source, residents are counted because they were born abroad or because they hold foreign citizenship."
-    elif "B" in codes:
-        label = "Residents born abroad"
-        definition = "The UN counts residents who were born in another country or area. Someone who moved here decades ago and became a citizen still counts. Children born here to parents who moved from abroad are counted as locally born."
-    elif "C" in codes:
-        label = "Residents with foreign citizenship"
-        definition = "The UN uses citizenship here. It counts residents recorded as foreign citizens, including people born here who hold only foreign citizenship."
-    elif "I" in codes:
+        definition = "The UN uses both birthplace and citizenship records here. An origin can mean a birthplace or a country of citizenship. The UN identifies these sources for the series as a whole."
+    elif method == {"B"}:
+        label = "Migrant residents (birthplace-based estimate)" if "R" in codes else "Residents born abroad"
+        definition = "The UN uses birthplace here. Someone born in another country or area who moved here decades ago and became a citizen still counts. Under this rule, a child born here to parents who moved from abroad counts as locally born."
+    elif method == {"C"}:
+        label = "Migrant residents (citizenship-based estimate)" if "R" in codes else "Residents with foreign citizenship"
+        definition = "The UN uses citizenship here. An origin means a country of citizenship. Someone born here who holds only foreign citizenship can count."
+    elif method == {"I"}:
         label = "Estimated international migrant residents"
-        definition = "The UN estimated how many international migrants lived here because direct data were unavailable. It generally identifies migrants by birthplace, using foreign citizenship where birthplace data are unavailable."
+        definition = "The UN estimated the migrant population because direct data were unavailable. The workbook gives no observed birthplace or citizenship breakdown for this destination."
     else:
         raise ValueError(f"Unknown country data type: {flags}")
     if "R" in codes:
-        definition += " The UN also uses refugee and displacement records in this estimate."
+        definition += " The UN supplements this estimate with figures for refugees, asylum seekers and other displaced people where applicable."
     return label, definition
 
 
@@ -135,9 +136,6 @@ def extract(workbook, meta):
             # bilateral observation. Never use the residual to infer its value.
             if known_sum + other[index] != grand_total:
                 raise ValueError(f"Origin sum differs from UN total for {dest}, {YEARS[index]}")
-        coverage = "The UN lists individually reported origins and an “Other origins” group. An unlisted origin has no separate published figure."
-        if footnote:
-            coverage += " " + notes[footnote]
         label, definition = basis(flags)
         result[dest] = {
             "destination": dest,
@@ -148,9 +146,11 @@ def extract(workbook, meta):
             "other": other,
             "label": label,
             "basis": definition,
+            "sourceDataType": flags,
+            "countryNote": notes[footnote] if footnote else None,
             "population": [population[dest][year] for year in YEARS],
             "populationSource": population_source,
-            "coverageNote": coverage,
+            "coverageNote": "The UN lists individually reported origins and an “Other origins” group. An unlisted origin has no separate published figure.",
             "source": source,
         }
     return result

@@ -2,6 +2,7 @@
 import csv
 import hashlib
 import json
+from collections import Counter
 from decimal import Decimal
 from pathlib import Path
 
@@ -53,9 +54,23 @@ def test_resident_exports():
 
     original = {}
     wb = load_workbook(workbook, read_only=True, data_only=True)
+    notes = {k: " ".join(v.replace("Ã©", "é").replace("Ã§", "ç").split())
+             for k, v in wb["Migrant notes"].iter_rows(max_col=2, values_only=True) if isinstance(k, int)}
+    method_labels = {
+        "B": "Residents born abroad", "B R": "Migrant residents (birthplace-based estimate)",
+        "C": "Residents with foreign citizenship", "C R": "Migrant residents (citizenship-based estimate)",
+        "C B R": "International migrant residents", "I R": "Estimated international migrant residents",
+    }
+    counts = Counter()
     for r in wb["Table 1"].iter_rows(min_row=12, max_col=15, values_only=True):
         dest = codes.get(r[4])
         if dest in destinations:
+            record = records[dest]
+            assert record["sourceDataType"] == r[3] and record["label"] == method_labels[r[3]], dest
+            assert record["countryNote"] == notes.get(r[2]), dest
+            assert ("supplements this estimate" in record["basis"]) == ("R" in r[3].split()), dest
+            if r[6] == 900:
+                counts[r[3]] += 1
             if r[6] in codes:
                 key = dest, codes[r[6]]
             elif r[5] in ("World", "Others"):
@@ -65,6 +80,7 @@ def test_resident_exports():
             assert key not in original
             original[key] = list(r[7:])
     wb.close()
+    assert counts == {"B": 38, "B R": 109, "C": 14, "C R": 28, "C B R": 2, "I R": 3}
 
     assert actual.keys() == original.keys()
     for pair, values in original.items():
@@ -74,11 +90,10 @@ def test_resident_exports():
     assert actual["DZA", "FRA"][-1] == 563
     assert actual["BEL", "World"][-1] == 2_349_032
     assert actual["BEL", "NLD"][-1] == 136_488
-    assert records["ISR"]["label"] == "Residents born abroad"
     assert actual["ISR", "World"][-1] == 2_091_569 and populations["ISR", 2024] == 9_387_021
     assert any(0 in vals for vals in actual.values())
     assert "citizenship" in records["JPN"]["basis"]
-    assert "East Jerusalem" in records["PSE"]["coverageNote"]
+    assert "East Jerusalem" in records["PSE"]["countryNote"]
     print(f"Verified {len(destinations)} destinations and {len(actual) * len(YEARS):,} cells against UN DESA Table 1.")
 
 

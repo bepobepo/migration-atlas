@@ -62,6 +62,7 @@
         <p class="residents-population" hidden></p>
       </div>
       <p class="residents-definition"></p>
+      <p class="residents-country-note" hidden></p>
       <div class="residents-filters">
         <label>Find an origin<input class="residents-search" type="search" placeholder="Country or area"></label>
       </div>
@@ -76,6 +77,11 @@
       <p class="residents-source"></p>`;
     body.querySelector(".residents-total-label").textContent = dataset.label || "International migrant residents";
     body.querySelector(".residents-definition").textContent = dataset.basis;
+    if (dataset.countryNote) {
+      const note = body.querySelector(".residents-country-note");
+      note.textContent = dataset.countryNote;
+      note.hidden = false;
+    }
     body.querySelector(".residents-coverage").textContent = dataset.coverageNote;
     const credits = body.querySelector(".residents-source");
     for (const [label, url] of [[dataset.source.name, dataset.source.url],
