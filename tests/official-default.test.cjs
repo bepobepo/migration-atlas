@@ -6,7 +6,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "../dist");
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 const json = (file) => JSON.parse(read(file));
-const records = json("data/official/flows.json").records;
+const records = JSON.parse(require("node:zlib").gunzipSync(fs.readFileSync(path.join(root, "../reference/official/flows.json.gz")))).records;
 const observations = new Map(
   records.map((r) => [`${r.origin}:${r.destination}:${r.year}`, r]),
 );
@@ -131,9 +131,9 @@ async function boot() {
     await api.openRouteDetails("AFG", "LIE");
     assert.equal($("#route-forward-count").textContent, "0");
 
-    // A range with one reported year cannot masquerade as a complete range total.
+    // A partially reported period cannot masquerade as a complete range total.
     const partial = expected([["AFG", "AUT"]], 2007, 2009);
-    assert.deepEqual(partial, { value: 808, known: 1, missing: 2, total: 3 });
+    assert.deepEqual(partial, { value: 1293, known: 2, missing: 1, total: 3 });
     await setup("AFG", "out", ["AUT"], 2007, 2009);
     assert.equal(api.movement.total, partial.value);
     const partialQuality = api.summarizeProvenance(
@@ -164,21 +164,21 @@ async function boot() {
       () => $(".source-values tbody tr"),
       "annual official coverage values",
     );
-    const year2007 = Array.from(
+    const year2009 = Array.from(
       app.w.document.querySelectorAll(".source-values tbody tr"),
     ).find(
       (tr) =>
-        tr.querySelector("th").textContent.includes("2007") &&
+        tr.querySelector("th").textContent.includes("2009") &&
         tr.querySelector("th").textContent.includes("Afghanistan"),
     );
-    assert.ok(year2007);
+    assert.ok(year2009);
     assert.match(
-      year2007.querySelector("td").textContent,
+      year2009.querySelector("td").textContent,
       /unavailable|not reported|missing/i,
     );
-    assert.doesNotMatch(year2007.querySelector("td").textContent, /\d/);
+    assert.doesNotMatch(year2009.querySelector("td").textContent, /\d/);
     assert.equal(
-      year2007.querySelectorAll("td")[1].querySelectorAll("a").length,
+      year2009.querySelectorAll("td")[1].querySelectorAll("a").length,
       0,
       "unavailable official values do not link to FLOW as their selected source",
     );

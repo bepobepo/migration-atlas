@@ -1,0 +1,33 @@
+{
+  "source": {
+    "name": "UN DESA World Population Prospects 2024",
+    "url": "https://population.un.org/wpp/",
+    "releaseDate": "2024-07-11",
+    "definition": "Estimated immigrants minus emigrants during the calendar year, in persons. The UN combines demographic evidence and estimates missing migration. Counts through 2023 are historical estimates. The 2024 figure is a medium-variant projection.",
+    "dataUrl": "https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard)/CSV_FILES/WPP2024_Demographic_Indicators_Medium.csv.gz",
+    "license": "CC BY 3.0 IGO",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/"
+  },
+  "retrieved": "2026-11-21",
+  "originalSha256": "286ac36bb1415e2e1ade03acfef0a29f0e4c087e2f78e38c48f50c5df89082bc",
+  "csvLastModified": "2024-12-13",
+  "column": "NetMigrations",
+  "sourceUnit": "thousands of persons",
+  "archive": "annual-net-migration.csv.gz",
+  "extract": "Original identity, year, variant and NetMigrations fields from the medium CSV for every Country/Area up to 2024. No geographical aggregates. ISO3 filtering and thousands-to-persons conversion occur in the exporter.",
+  "workbookUrl": "https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard)/EXCEL_FILES/1_General/WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx",
+  "workbookSha256": "98e34d9b65b53858cd08a57a566e45050b08093ad85ba5714fe6fbd78055ae6d",
+  "workbookColumn": "Net Number of Migrants (thousands)",
+  "workbookSheets": {
+    "Estimates": [
+      1950,
+      2023
+    ],
+    "Medium variant": [
+      2024,
+      2024
+    ]
+  },
+  "extractSha256": "0fd70dec63ad09c27fd22a8a16517b0d6a4f85f04204aab31f4ab0a8aad144bd",
+  "atlasCoverage": "201 atlas countries and areas matched by the exact published WPP ISO3 code, including seven without bilateral FLOW estimates. Each has all 75 annual values for 1950\u20132024. Four map features have no separately identified WPP series."
+}

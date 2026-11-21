@@ -76,7 +76,7 @@ def normalize(data: dict, source_id: str, code_map: dict, allowed: set):
             continue
         if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0 or int(value) != value:
             raise ValueError(f'Non-count value in {source_id}: {value}')
-        if 'c' in flags or '|N' in flags:
+        if 'c' in flags or 'N' in flags:
             skipped['confidential_or_not_for_publication'] += 1
             continue
         reporter = code_map.get(cell['geo'])
@@ -109,7 +109,55 @@ def normalize(data: dict, source_id: str, code_map: dict, allowed: set):
     return sorted(chosen.values()), dict(skipped), totals, conflicts
 
 
-def run(since=2008, until=2024, download=False, input_dir=None):
+def update_inventory(result, checksum, years):
+    """Refresh the quantitative portion of the reviewed source inventory."""
+    path = BASE / 'reference/official-sources.json'
+    inventory = json.loads(path.read_text())
+    inventory['coverageSnapshot'].update(sha256=checksum, yearsRequested=years)
+    reports = {code: {} for code in inventory['countries']}
+    by_country = defaultdict(lambda: defaultdict(list))
+    for origin, destination, year, _, source_id, _, _ in result['records']:
+        reporter = destination if result['sources'][source_id]['direction'] == 'immigration' else origin
+        by_country[origin]['outgoing'].append((destination, year, source_id, reporter == origin))
+        by_country[destination]['incoming'].append((origin, year, source_id, reporter == destination))
+    for source_id, source in result['sources'].items():
+        item = result['coverage'][source_id]
+        inventory['sources'][source_id].update(
+            primaryUrl=source['url'], updated=source['updated'], requestedYears=years,
+            snapshotSha256=source['sha256'], reportingCountryCoverage=sorted(item['reporters']),
+        )
+        inventory['summary']['importedSources'][source_id] = {
+            'observations': item['bilateralRecords'], 'reportingCountries': len(item['reporters']),
+            'zeroObservations': item['zeros'],
+        }
+        for code, reporter in item['reporters'].items():
+            reports[code][source_id] = {
+                'direction': source['direction'], 'years': reporter['years'],
+                'counterpartCountries': len(reporter['counterparties']),
+                'observations': sum(reporter['counterpartCountsByYear'].values()),
+                'counterpartCountsByYear': reporter['counterpartCountsByYear'],
+            }
+    own = sum(bool(reports[code]) for code in reports)
+    inventory['summary'].update(countriesWithImportedReporterObservations=own,
+                                countriesWithOnlyImportedMirrorObservations=len(by_country)-own,
+                                countriesWithAnyImportedOfficialRouteObservation=len(by_country))
+    for code, country in inventory['countries'].items():
+        country['officialReportingCoverage'] = reports[code]
+        country['comparableDataStatus'] = ('official_reporting_data_imported' if reports[code]
+                                          else 'official_mirror_data_only' if code in by_country else 'model_only')
+        route_coverage = {}
+        for direction, data in by_country[code].items():
+            own_count = sum(row[3] for row in data)
+            route_coverage[direction] = dict(
+                observations=len(data), reporterObservations=own_count, mirrorObservations=len(data)-own_count,
+                counterpartCountries=len({row[0] for row in data}), years=sorted({row[1] for row in data}),
+                sourceIds=sorted({row[2] for row in data}),
+            )
+        country['officialRouteCoverage'] = route_coverage
+    path.write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + '\n')
+
+
+def run(since=1960, until=2024, download=False, input_dir=None):
     raw_dir = BASE / 'reference/official/eurostat'
     raw_dir.mkdir(parents=True, exist_ok=True)
     metadata = json.loads((BASE / 'dist/data/countries.json').read_text())
@@ -123,32 +171,57 @@ def run(since=2008, until=2024, download=False, input_dir=None):
     now = datetime.now(timezone.utc).isoformat()
     for source_id, (dataset, direction, basis) in DATASETS.items():
         url = source_url(dataset, since, until)
-        archived = raw_dir / f'{dataset}_{since}_{until}.json.gz'
-        if input_dir:
-            raw = (Path(input_dir) / ('imm.json' if direction == 'immigration' else 'emi.json')).read_bytes()
-        elif download:
-            request = urllib.request.Request(url, headers={'User-Agent': 'MigrationAtlas/1.0 official-source-review'})
-            with urllib.request.urlopen(request, timeout=120) as response:
-                raw = response.read()
-        else:
-            raw = gzip.decompress(archived.read_bytes())
-        data = json.loads(raw)
-        if 'error' in data or data.get('class') != 'dataset':
-            raise ValueError(f'Invalid Eurostat response: {source_id}')
-        normalized, skipped, totals, conflicts = normalize(data, source_id, code_map, allowed)
-        if conflicts:
-            raise ValueError(f'Conflicting TOTAL-age values require review in {source_id}: {conflicts[:5]}')
-        archived.write_bytes(gzip.compress(raw, mtime=0))
-        flag_labels = data.get('extension', {}).get('status', {}).get('label', {})
-        digest = hashlib.sha256(raw).hexdigest()
+        spans = [(max(since, first), min(until, last)) for first, last in
+                 ((since, 2007), (2008, until)) if max(since, first) <= min(until, last)]
+        if not spans:
+            raise ValueError("Invalid Eurostat date selection")
+        normalized, totals, skipped, snapshots = [], {}, Counter(), []
         previous = previous_provenance.get(source_id, {})
-        retrieved_at = now if download or previous.get('sha256') != digest else previous.get('retrievedAt', now)
+        known_archives = {v['file']: v for v in previous.get('snapshots', [])}
+        matching_vintages = {v['sha256']: v for v in previous.get('snapshots', [previous]) if v.get('sha256')}
+        fingerprint = hashlib.sha256()
+        for start, end in spans:
+            archive_name = f'{dataset}_{start}_{end}.json.gz'
+            archived = raw_dir / archive_name
+            query = source_url(dataset, start, end)
+            if input_dir:
+                supplied = Path(input_dir) / archive_name.removesuffix(".gz")
+                if len(spans) == 1 and not supplied.exists():
+                    supplied = Path(input_dir) / ('imm.json' if direction == 'immigration' else 'emi.json')
+                raw = supplied.read_bytes()
+            elif download:
+                request = urllib.request.Request(query, headers={'User-Agent': 'MigrationAtlas/1.0 official-source-review'})
+                with urllib.request.urlopen(request, timeout=120) as response:
+                    raw = response.read()
+            else:
+                raw = gzip.decompress(archived.read_bytes())
+            data = json.loads(raw)
+            if 'error' in data or data.get('class') != 'dataset':
+                raise ValueError(f'Invalid Eurostat response: {source_id}')
+            records_part, discarded, all_partners, conflicts = normalize(data, source_id, code_map, allowed)
+            if conflicts or any(not start <= row[2] <= end for row in records_part) or all_partners.keys() & totals.keys():
+                raise ValueError(f'Overlapping or conflicting observations in {archive_name}: {conflicts[:5]}')
+            normalized.extend(records_part)
+            skipped.update(discarded)
+            totals.update(all_partners)
+            digest = hashlib.sha256(raw).hexdigest()
+            fingerprint.update(raw)
+            prior = matching_vintages.get(digest)
+            if not download and not input_dir and archive_name in known_archives and known_archives[archive_name]['sha256'] != digest:
+                raise ValueError(f'Pinned source checksum mismatch for {archive_name}')
+            if download or input_dir:
+                archived.write_bytes(gzip.compress(raw, mtime=0))
+            retrieved = prior['retrievedAt'] if prior and not download else now
+            snapshots.append(dict(file=archive_name, url=query, yearsRequested=[start,end], sha256=digest,
+                                  updated=data.get('updated'), retrievedAt=retrieved))
+        flag_labels = data.get('extension', {}).get('status', {}).get('label', {})
         sources[source_id] = dict(
             provider='Eurostat', dataset=dataset, label=data['label'], direction=direction, basis=basis,
             unit='persons', classification='official_statistic',
             methodology='Annual changes of usual residence, generally actual or intended residence of at least 12 months. Country definitions, breaks and official estimation methods can differ; inspect source metadata and flags.',
             url=url, metadataUrl='https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm',
-            updated=data.get('updated'), retrievedAt=retrieved_at, sha256=digest,
+            updated=max(s['updated'] for s in snapshots), retrievedAt=max(s['retrievedAt'] for s in snapshots),
+            sha256=fingerprint.hexdigest(), snapshots=snapshots,
             datasetVersion=data.get('extension', {}).get('version'), dataStructureVersion=data.get('extension', {}).get('datastructure', {}).get('version'),
             flags=flag_labels, selection=dict(freq='A',sex='T',age='TOTAL',unit='NR',ageDefinition='COMPLET preferred; REACH only when COMPLET unavailable'),
             yearsRequested=[since,until], missingPolicy='Absent/confidential/not-for-publication observations are not zero. Broad-region totals are never allocated to country pairs.',
@@ -170,6 +243,7 @@ def run(since=2008, until=2024, download=False, input_dir=None):
     output = BASE / 'dist/data/official/eurostat.json'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, separators=(',', ':')))
+    update_inventory(result, hashlib.sha256(output.read_bytes()).hexdigest(), [since,until])
     (raw_dir / 'provenance.json').write_text(json.dumps(sources, indent=2) + '\n')
     print(json.dumps({key:{'records':value['bilateralRecords'],'zeros':value['zeros'],'reporters':len(value['reporters'])} for key,value in coverage.items()}))
     print('BLR→POL records:', [row for row in records if row[:2]==['BLR','POL']])
@@ -178,7 +252,7 @@ def run(since=2008, until=2024, download=False, input_dir=None):
 
 if __name__ == '__main__':
     parser=argparse.ArgumentParser()
-    parser.add_argument('--since',type=int,default=2008)
+    parser.add_argument('--since',type=int,default=1960)
     parser.add_argument('--until',type=int,default=2024)
     parser.add_argument('--download',action='store_true')
     parser.add_argument('--input-dir',type=Path)

@@ -581,7 +581,7 @@ async function showCountryCoverage() {
     document.body.append(dialog);
   }
   dialog.innerHTML =
-    '<button class="source-close" type="button">Close ×</button><h2>Country coverage & sources</h2><p>194 countries have FLOW model coverage. Official imports cover only some country pairs and years from 2008–2024. Appearing as a partner in another country’s report does not mean complete national coverage.</p><p id="coverage-audit-summary" role="status">Loading national source review…</p><p>Official statistics uses destination immigration by previous residence, then origin emigration by next residence. Gaps stay unavailable; FLOW is opt-in through comparison modes. Permit holders, visas, nationality-based flows and resident stocks remain separate measures.</p><label>Find a country<input id="coverage-search" type="search"></label><div id="coverage-results" role="status">Loading coverage…</div>';
+    '<button class="source-close" type="button">Close ×</button><h2>Country coverage & sources</h2><p>Every atlas country has a national overview with source links and annual coverage from 1950. This directory describes the partner-country data behind the map. FLOW supplies model comparisons from 1960. Official imports cover some country pairs and years from 1998–2024. Appearing as a partner in another country’s report does not mean complete national coverage.</p><p id="coverage-audit-summary" role="status">Loading national source review…</p><p>Official statistics uses destination immigration by previous residence, then origin emigration by next residence. Gaps stay unavailable; FLOW is opt-in through comparison modes. Permit holders, visas, nationality-based flows and resident stocks remain separate measures.</p><label>Find a country<input id="coverage-search" type="search"></label><div id="coverage-results" role="status">Loading coverage…</div>';
   dialog.querySelector("button").onclick = () => dialog.close();
   dialog.showModal();
   dialog.querySelector("button").focus();
@@ -635,7 +635,7 @@ async function showCountryCoverage() {
             const line = document.createElement("p");
             line.textContent = source.imported
               ? "Imported official provider: "
-              : "National metadata reviewed, not imported: ";
+              : "Reviewed source for bilateral routes: ";
             line.append(sourceNode(source));
             item.append(line);
             if (!source.imported) {

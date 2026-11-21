@@ -1,18 +1,18 @@
 # Official migration source inventory
 
-Reviewed 2026-11-06. The machine-readable inventory is [reference/official-sources.json](reference/official-sources.json). It covers exactly the **194 FLOW countries**, matched to the pinned UN M49 ISO3 identities. Country entries distinguish actual imported observations, source metadata that has been reviewed, and candidates that still require verification.
+National metadata reviewed 6 November 2026. Bilateral observation coverage updated 21 November 2026. The machine-readable inventory is [reference/official-sources.json](reference/official-sources.json). It covers exactly the **194 FLOW countries**, matched to the pinned UN M49 ISO3 identities. Country entries distinguish actual imported observations, source metadata that has been reviewed, and candidates that still require verification.
 
 All 194 countries have a recorded source-search outcome. **This is not a claim that every national dataset has been reconciled or that every migration estimate is correct**. The importer currently provides partial comparable official coverage from Eurostat. The default Official statistics view keeps gaps unavailable. FLOW remains an explicitly selected model comparison outside those route-years. A national statistics agency can publish estimates, provisional values or imputed values; “official” does not mean a complete observed headcount.
 
 ## What is imported
 
-The archived Eurostat source responses are `reference/official/eurostat/migr_imm5prv_2008_2024.json.gz` and `reference/official/eurostat/migr_emi3nxt_2008_2024.json.gz`. Their source URLs, retrieval times, update dates and SHA-256 hashes are pinned in [reference/official/eurostat/provenance.json](reference/official/eurostat/provenance.json). Normalized observations and reporter coverage are in `dist/data/official/eurostat.json`.
+The four archived Eurostat responses in `reference/official/eurostat/` cover both directions for 1960–2007 and 2008–2024. The first published observation in these tables is in 1998. Their source URLs, retrieval times, update dates and SHA-256 hashes are pinned in [reference/official/eurostat/provenance.json](reference/official/eurostat/provenance.json). Normalized observations and reporter coverage are in `dist/data/official/eurostat.json`.
 
 | Coverage measure | Verified result |
 | --- | ---: |
 | FLOW country identities matched by ISO3 | 194 |
-| Countries with imported observations reported by their own authority | 30 |
-| Countries represented only as partners in another country's imported report | 164 |
+| Countries with imported observations reported by their own authority | 42 |
+| Countries represented only as partners in another country's imported report | 152 |
 | Countries appearing in at least one imported official corridor-year | 194 |
 | National source searches completed | 194 |
 | National primary-source metadata reviewed separately | 192 |
@@ -21,10 +21,10 @@ The archived Eurostat source responses are `reference/official/eurostat/migr_imm
 
 “Appears in an official corridor” does not imply complete national or world coverage. The observation counts below count source-specific pair-year rows, including published zeroes. An immigration report and an emigration report may describe the same movement and must not be added together.
 
-| Imported source | Requested years | Available bilateral observations | Reporters | Published zero observations |
+| Imported source | Available years | Available bilateral observations | Reporters | Published zero observations |
 | --- | --- | ---: | ---: | ---: |
-| `migr_imm5prv` | 2008–2024 | 60,056 | 29 | 15,748 |
-| `migr_emi3nxt` | 2008–2024 | 56,853 | 27 | 19,320 |
+| `migr_imm5prv` | 1998–2024 | 90,706 | 40 | 26,153 |
+| `migr_emi3nxt` | 1998–2024 | 84,790 | 38 | 30,582 |
 
 ## Metric and selection rules
 
@@ -40,7 +40,7 @@ This distinction matters for **Belarus → Poland**. A count of Belarusian citiz
 
 | Primary source | Verified scope | Use and limits |
 | --- | --- | --- |
-| [Eurostat immigration by previous residence](https://ec.europa.eu/eurostat/databrowser/view/migr_imm5prv/default/table?lang=en), [emigration by next residence](https://ec.europa.eu/eurostat/databrowser/view/migr_emi3nxt/default/table?lang=en), [metadata](https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm) | Imported, partial annual bilateral residence-flow observations for 2008–2024 | Country and year gaps remain. Official values may be estimated/provisional; preserve flags and country-specific definitions. |
+| [Eurostat immigration by previous residence](https://ec.europa.eu/eurostat/databrowser/view/migr_imm5prv/default/table?lang=en), [emigration by next residence](https://ec.europa.eu/eurostat/databrowser/view/migr_emi3nxt/default/table?lang=en), [metadata](https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm) | Imported, partial annual bilateral residence-flow observations for 1998–2024 | Country and year gaps remain. Official values may be estimated/provisional; preserve flags and country-specific definitions. |
 | [UNSD / UNdata incoming migrants by previous residence, table 406](https://data.un.org/Data.aspx?d=POP&f=tableCode%3A406), [migration collection](https://unstats.un.org/unsd/demographic-social/sconcerns/migration/) | Primary metadata describes national reports for 2010 onward as available; UNdata update 10 August 2026 | Promising comparable collector. Not imported. The unfiltered web view listed 40 reporting countries or areas and 65,203 records on 6 November 2026, including aggregate entries; per-country/year availability remains unverified. The CSV download handler returned HTTP 404 during this review. |
 | [UNDESA International Migration Flows 2015](https://www.un.org/development/desa/pd/data/international-migration-flows), [official documentation](https://www.un.org/development/desa/pd/sites/www.un.org.development.desa.pd/files/undesa_pd_2015_migration_flow_documentation.pdf) | Exactly 45 reporters, recorded per country in the source inventory from the official documentation's indexed text | Historical candidate, not imported. Mixes residence, birth and citizenship definitions; cannot supply post-2020 migration. Direct UN page/PDF fetch returned HTTP 403 during review. |
 | [OECD International Migration Database](https://www.oecd.org/en/data/datasets/overview-data-on-migration-flows-and-migrant-populations.html), [national definition notes](https://www.oecd.org/en/publications/international-migration-outlook-2025_ae26c893-en/full-report/statistical-annex_b490cd01.html) | Annual flows of foreign populations/asylum applicants, stocks and citizenship acquisitions; `DSD_MIG@DF_MIG` | Mostly nationality-based flow tables, with varying national administrative definitions. Not imported. Country-year membership has not been extracted; OECD membership is not treated as data coverage. |
@@ -64,14 +64,14 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | AGO | Angola | — | — | Mirror only | Metadata verified; not imported |
 | ATG | Antigua and Barbuda | — | — | Mirror only | Metadata verified; not imported |
 | ARG | Argentina | — | — | Mirror only | Metadata verified; not imported |
-| ARM | Armenia | — | — | Mirror only | Metadata verified; not imported |
+| ARM | Armenia | 2005, 2006, 2007 | 2005, 2006, 2007 | Includes own reports | Metadata verified; not imported |
 | AUS | Australia | — | — | Mirror only | Metadata verified; not imported |
-| AUT | Austria | 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
-| AZE | Azerbaijan | — | — | Mirror only | Metadata verified; not imported |
+| AUT | Austria | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| AZE | Azerbaijan | 2005, 2007 | 2005, 2007 | Includes own reports | Metadata verified; not imported |
 | BHR | Bahrain | — | — | Mirror only | Metadata verified; not imported |
 | BGD | Bangladesh | — | — | Mirror only | Metadata verified; not imported |
 | BRB | Barbados | — | — | Mirror only | Metadata verified; not imported |
-| BLR | Belarus | — | — | Mirror only | Metadata verified; not imported |
+| BLR | Belarus | 2005, 2006, 2007 | 2005, 2006, 2007 | Includes own reports | Metadata verified; not imported |
 | BEL | Belgium | 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024 | 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | BLZ | Belize | — | — | Mirror only | Metadata verified; not imported |
 | BEN | Benin | — | — | Mirror only | Metadata verified; not imported |
@@ -81,7 +81,7 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | BWA | Botswana | — | — | Mirror only | Metadata verified; not imported |
 | BRA | Brazil | — | — | Mirror only | Metadata verified; not imported |
 | BRN | Brunei | — | — | Mirror only | Metadata verified; not imported |
-| BGR | Bulgaria | 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| BGR | Bulgaria | 2007, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2007, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | BFA | Burkina Faso | — | — | Mirror only | Metadata verified; not imported |
 | BDI | Burundi | — | — | Mirror only | Metadata verified; not imported |
 | KHM | Cambodia | — | — | Mirror only | Metadata verified; not imported |
@@ -94,12 +94,12 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | COL | Colombia | — | — | Mirror only | Metadata verified; not imported |
 | COM | Comoros | — | — | Mirror only | Metadata verified; not imported |
 | CRI | Costa Rica | — | — | Mirror only | Metadata verified; not imported |
-| HRV | Croatia | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| HRV | Croatia | 1999, 2001, 2002, 2003, 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1999, 2001, 2002, 2003, 2004, 2006, 2007, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | CUB | Cuba | — | — | Mirror only | Metadata verified; not imported |
 | CYP | Cyprus | — | — | Mirror only | Metadata verified; not imported |
-| CZE | Czech Republic | 2021, 2022, 2023, 2024 | — | Includes own reports | Metadata verified; not imported |
+| CZE | Czech Republic | 2002, 2003, 2004, 2005, 2006, 2007, 2021, 2022, 2023, 2024 | 2002, 2003, 2004, 2005, 2006, 2007 | Includes own reports | Metadata verified; not imported |
 | COD | Democratic Republic of the Congo | — | — | Mirror only | Metadata verified; not imported |
-| DNK | Denmark | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 | Includes own reports | Metadata verified; not imported |
+| DNK | Denmark | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 | Includes own reports | Metadata verified; not imported |
 | DJI | Djibouti | — | — | Mirror only | Metadata verified; not imported |
 | DMA | Dominica | — | — | Mirror only | Metadata verified; not imported |
 | DOM | Dominican Republic | — | — | Mirror only | Metadata verified; not imported |
@@ -109,16 +109,16 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | SLV | El Salvador | — | — | Mirror only | Metadata verified; not imported |
 | GNQ | Equatorial Guinea | — | — | Mirror only | Metadata verified; not imported |
 | ERI | Eritrea | — | — | Mirror only | Search complete; unresolved |
-| EST | Estonia | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| EST | Estonia | 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | SWZ | Eswatini | — | — | Mirror only | Metadata verified; not imported |
 | ETH | Ethiopia | — | — | Mirror only | Metadata verified; not imported |
 | FSM | Federated States of Micronesia | — | — | Mirror only | Metadata verified; not imported |
 | FJI | Fiji | — | — | Mirror only | Metadata verified; not imported |
-| FIN | Finland | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| FIN | Finland | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | FRA | France | 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2013, 2014, 2015, 2016, 2017 | Includes own reports | Metadata verified; not imported |
 | GAB | Gabon | — | — | Mirror only | Metadata verified; not imported |
 | GEO | Georgia | — | — | Mirror only | Metadata verified; not imported |
-| DEU | Germany | 2008, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| DEU | Germany | 1998, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2007, 2008, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | GHA | Ghana | — | — | Mirror only | Metadata verified; not imported |
 | GRC | Greece | — | — | Mirror only | Metadata verified; not imported |
 | GRD | Grenada | — | — | Mirror only | Metadata verified; not imported |
@@ -129,13 +129,13 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | HTI | Haiti | — | — | Mirror only | Metadata verified; not imported |
 | HND | Honduras | — | — | Mirror only | Metadata verified; not imported |
 | HUN | Hungary | 2021, 2022 | — | Includes own reports | Metadata verified; not imported |
-| ISL | Iceland | 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| ISL | Iceland | 1998, 1999, 2000, 2001, 2002, 2007, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2001, 2002, 2007, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | IND | India | — | — | Mirror only | Metadata verified; not imported |
 | IDN | Indonesia | — | — | Mirror only | Metadata verified; not imported |
 | IRN | Iran | — | — | Mirror only | Metadata verified; not imported |
 | IRQ | Iraq | — | — | Mirror only | Metadata verified; not imported |
-| IRL | Ireland | 2008, 2009, 2010 | 2008, 2009, 2010 | Includes own reports | Metadata verified; not imported |
-| ISR | Israel | — | — | Mirror only | Metadata verified; not imported |
+| IRL | Ireland | 2006, 2007, 2008, 2009, 2010 | 2006, 2007, 2008, 2009, 2010 | Includes own reports | Metadata verified; not imported |
+| ISR | Israel | 2007 | — | Includes own reports | Metadata verified; not imported |
 | ITA | Italy | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | CIV | Ivory Coast | — | — | Mirror only | Metadata verified; not imported |
 | JAM | Jamaica | — | — | Mirror only | Metadata verified; not imported |
@@ -145,27 +145,27 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | KEN | Kenya | — | — | Mirror only | Metadata verified; not imported |
 | KIR | Kiribati | — | — | Mirror only | Metadata verified; not imported |
 | KWT | Kuwait | — | — | Mirror only | Metadata verified; not imported |
-| KGZ | Kyrgyzstan | — | — | Mirror only | Metadata verified; not imported |
+| KGZ | Kyrgyzstan | 2006, 2007 | 2006, 2007 | Includes own reports | Metadata verified; not imported |
 | LAO | Laos | — | — | Mirror only | Metadata verified; not imported |
-| LVA | Latvia | 2019 | 2019 | Includes own reports | Metadata verified; not imported |
+| LVA | Latvia | 1998, 1999, 2019 | 1998, 1999, 2019 | Includes own reports | Metadata verified; not imported |
 | LBN | Lebanon | — | — | Mirror only | Metadata verified; not imported |
 | LSO | Lesotho | — | — | Mirror only | Metadata verified; not imported |
 | LBR | Liberia | — | — | Mirror only | Metadata verified; not imported |
 | LBY | Libya | — | — | Mirror only | Metadata verified; not imported |
 | LIE | Liechtenstein | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021 | Includes own reports | Metadata verified; not imported |
-| LTU | Lithuania | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
-| LUX | Luxembourg | — | — | Mirror only | Metadata verified; not imported |
+| LTU | Lithuania | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| LUX | Luxembourg | 2003, 2004, 2005, 2006, 2007 | 2003, 2004, 2005, 2006, 2007 | Includes own reports | Metadata verified; not imported |
 | MDG | Madagascar | — | — | Mirror only | Metadata verified; not imported |
 | MWI | Malawi | — | — | Mirror only | Metadata verified; not imported |
 | MYS | Malaysia | — | — | Mirror only | Metadata verified; not imported |
 | MDV | Maldives | — | — | Mirror only | Metadata verified; not imported |
 | MLI | Mali | — | — | Mirror only | Metadata verified; not imported |
-| MLT | Malta | — | — | Mirror only | Metadata verified; not imported |
+| MLT | Malta | — | 2001 | Includes own reports | Metadata verified; not imported |
 | MHL | Marshall Islands | — | — | Mirror only | Metadata verified; not imported |
 | MRT | Mauritania | — | — | Mirror only | Metadata verified; not imported |
 | MUS | Mauritius | — | — | Mirror only | Metadata verified; not imported |
 | MEX | Mexico | — | — | Mirror only | Metadata verified; not imported |
-| MDA | Moldova | — | — | Mirror only | Metadata verified; not imported |
+| MDA | Moldova | 2006, 2007 | 2006, 2007 | Includes own reports | Metadata verified; not imported |
 | MCO | Monaco | — | — | Mirror only | Metadata verified; not imported |
 | MNG | Mongolia | — | — | Mirror only | Metadata verified; not imported |
 | MNE | Montenegro | 2010, 2011, 2012, 2020 | — | Includes own reports | Metadata verified; not imported |
@@ -175,14 +175,14 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | NAM | Namibia | — | — | Mirror only | Metadata verified; not imported |
 | NRU | Nauru | — | — | Mirror only | Metadata verified; not imported |
 | NPL | Nepal | — | — | Mirror only | Metadata verified; not imported |
-| NLD | Netherlands | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| NLD | Netherlands | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | NZL | New Zealand | — | — | Mirror only | Metadata verified; not imported |
 | NIC | Nicaragua | — | — | Mirror only | Metadata verified; not imported |
 | NER | Niger | — | — | Mirror only | Metadata verified; not imported |
 | NGA | Nigeria | — | — | Mirror only | Metadata verified; not imported |
 | PRK | North Korea | — | — | Mirror only | Search complete; unresolved |
-| MKD | North Macedonia | 2008, 2009, 2010, 2011, 2012, 2020, 2021 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 | Includes own reports | Metadata verified; not imported |
-| NOR | Norway | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| MKD | North Macedonia | 2000, 2001, 2002, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020, 2021 | 2000, 2001, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 | Includes own reports | Metadata verified; not imported |
+| NOR | Norway | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | OMN | Oman | — | — | Mirror only | Metadata verified; not imported |
 | PAK | Pakistan | — | — | Mirror only | Metadata verified; not imported |
 | PLW | Palau | — | — | Mirror only | Metadata verified; not imported |
@@ -193,12 +193,12 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | CHN | People's Republic of China | — | — | Mirror only | Metadata verified; not imported |
 | PER | Peru | — | — | Mirror only | Metadata verified; not imported |
 | PHL | Philippines | — | — | Mirror only | Metadata verified; not imported |
-| POL | Poland | 2019 | 2019 | Includes own reports | Metadata verified; not imported |
+| POL | Poland | 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2019 | 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2019 | Includes own reports | Metadata verified; not imported |
 | PRT | Portugal | — | — | Mirror only | Metadata verified; not imported |
 | QAT | Qatar | — | — | Mirror only | Metadata verified; not imported |
 | COG | Republic of the Congo | — | — | Mirror only | Metadata verified; not imported |
 | ROU | Romania | 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 | 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
-| RUS | Russia | — | — | Mirror only | Metadata verified; not imported |
+| RUS | Russia | 2005, 2006, 2007 | 2005, 2006, 2007 | Includes own reports | Metadata verified; not imported |
 | RWA | Rwanda | — | — | Mirror only | Metadata verified; not imported |
 | KNA | Saint Kitts and Nevis | — | — | Mirror only | Metadata verified; not imported |
 | LCA | Saint Lucia | — | — | Mirror only | Metadata verified; not imported |
@@ -211,22 +211,22 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | SYC | Seychelles | — | — | Mirror only | Metadata verified; not imported |
 | SLE | Sierra Leone | — | — | Mirror only | Metadata verified; not imported |
 | SGP | Singapore | — | — | Mirror only | Metadata verified; not imported |
-| SVK | Slovakia | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
-| SVN | Slovenia | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| SVK | Slovakia | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| SVN | Slovenia | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | SLB | Solomon Islands | — | — | Mirror only | Metadata verified; not imported |
 | SOM | Somalia | — | — | Mirror only | Metadata verified; not imported |
 | ZAF | South Africa | — | — | Mirror only | Metadata verified; not imported |
 | KOR | South Korea | — | — | Mirror only | Metadata verified; not imported |
 | SSD | South Sudan | — | — | Mirror only | Metadata verified; not imported |
-| ESP | Spain | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| ESP | Spain | 1998, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2002, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
 | LKA | Sri Lanka | — | — | Mirror only | Metadata verified; not imported |
 | SDN | Sudan | — | — | Mirror only | Metadata verified; not imported |
 | SUR | Suriname | — | — | Mirror only | Metadata verified; not imported |
-| SWE | Sweden | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
-| CHE | Switzerland | 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 | 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 | Includes own reports | Metadata verified; not imported |
+| SWE | Sweden | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 | Includes own reports | Metadata verified; not imported |
+| CHE | Switzerland | 2006, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 | 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 | Includes own reports | Metadata verified; not imported |
 | SYR | Syria | — | — | Mirror only | Metadata verified; not imported |
 | STP | São Tomé and Príncipe | — | — | Mirror only | Metadata verified; not imported |
-| TJK | Tajikistan | — | — | Mirror only | Metadata verified; not imported |
+| TJK | Tajikistan | 2006 | 2006 | Includes own reports | Metadata verified; not imported |
 | TZA | Tanzania | — | — | Mirror only | Metadata verified; not imported |
 | THA | Thailand | — | — | Mirror only | Metadata verified; not imported |
 | BHS | The Bahamas | — | — | Mirror only | Metadata verified; not imported |
@@ -235,16 +235,16 @@ Own incoming/outgoing lists years with at least one chosen official observation 
 | TON | Tonga | — | — | Mirror only | Metadata verified; not imported |
 | TTO | Trinidad and Tobago | — | — | Mirror only | Metadata verified; not imported |
 | TUN | Tunisia | — | — | Mirror only | Metadata verified; not imported |
-| TUR | Turkey | — | — | Mirror only | Metadata verified; not imported |
+| TUR | Turkey | 2005 | — | Includes own reports | Metadata verified; not imported |
 | TKM | Turkmenistan | — | — | Mirror only | Metadata verified; not imported |
 | TUV | Tuvalu | — | — | Mirror only | Metadata verified; not imported |
 | UGA | Uganda | — | — | Mirror only | Metadata verified; not imported |
 | UKR | Ukraine | — | 2020, 2021 | Includes own reports | Metadata verified; not imported |
 | ARE | United Arab Emirates | — | — | Mirror only | Metadata verified; not imported |
-| GBR | United Kingdom | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 | 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 | Includes own reports | Metadata verified; not imported |
+| GBR | United Kingdom | 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 | 1998, 1999, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 | Includes own reports | Metadata verified; not imported |
 | USA | United States of America | — | — | Mirror only | Metadata verified; not imported |
 | URY | Uruguay | — | — | Mirror only | Metadata verified; not imported |
-| UZB | Uzbekistan | — | — | Mirror only | Metadata verified; not imported |
+| UZB | Uzbekistan | 2006 | 2006 | Includes own reports | Metadata verified; not imported |
 | VUT | Vanuatu | — | — | Mirror only | Metadata verified; not imported |
 | VEN | Venezuela | — | — | Mirror only | Metadata verified; not imported |
 | VNM | Vietnam | — | — | Mirror only | Metadata verified; not imported |

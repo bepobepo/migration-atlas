@@ -1,5 +1,5 @@
 """Build a sparse, reproducible official-flow overlay; preserve raw FLOW exports."""
-import json, hashlib
+import json, hashlib, gzip
 from collections import defaultdict,Counter
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -88,7 +88,7 @@ for code,country in json.loads((ROOT/'dist/data/countries.json').read_text()).it
  incoming=[r for r in records if r['destination']==code];outgoing=[r for r in records if r['origin']==code]
  coverage[code]={'incomingRecordYears':len(incoming),'outgoingRecordYears':len(outgoing),'years':sorted({r['year'] for r in incoming+outgoing}),'status':'partial_official_coverage' if incoming or outgoing else 'model_only'}
 result={'schemaVersion':1,'sources':payload['sources'],'records':records,'coverage':coverage,'sourceChecksum':hashlib.sha256(raw.read_bytes()).hexdigest(),'policy':'Receiver-reported immigration by previous residence; sender-reported emigration by next residence; otherwise FLOW model. Residence stocks, citizenship flows, admissions and permit/visa counts are not substituted.'}
-(ROOT/'dist/data/official/flows.json').write_text(json.dumps(result,separators=(',',':')))
+(ROOT/'reference/official/flows.json.gz').write_bytes(gzip.compress(json.dumps(result,separators=(',',':')).encode(),mtime=0))
 (ROOT/'dist/data/official/flows.compact.json').write_text(json.dumps(pack_flows(result),separators=(',',':')))
 context=json.loads((ROOT/'reference/official/belarus-poland-context.json').read_text())
 (ROOT/'dist/data/official/context.json').write_text(json.dumps(context,separators=(',',':')))

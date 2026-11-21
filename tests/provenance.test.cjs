@@ -2,7 +2,9 @@ const assert = require("node:assert/strict");
 const provenance = require("../dist/provenance.js");
 
 function verifyPublishedRecords() {
-  const raw = require("../dist/data/official/flows.json");
+  const auditPath = require("node:path").join(__dirname, "../reference/official/flows.json.gz");
+  const archive = require("node:fs").readFileSync(auditPath);
+  const raw = JSON.parse(require("node:zlib").gunzipSync(archive));
   const compact = require("../dist/data/official/flows.compact.json");
   for (const key of ["sources", "policy", "coverage", "sourceChecksum"])
     assert.deepEqual(compact[key], raw[key]);

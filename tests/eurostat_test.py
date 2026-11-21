@@ -47,15 +47,22 @@ class EurostatTests(unittest.TestCase):
         euro_codes={iso:item['alpha2'] for iso,item in un.items()};euro_codes.update(GRC='EL',GBR='UK')
         sources={}
         for source_id,metadata in exported['sources'].items():
-            raw=gzip.decompress((ROOT/f"reference/official/eurostat/{metadata['dataset']}_2008_2024.json.gz").read_bytes())
-            self.assertEqual(hashlib.sha256(raw).hexdigest(),metadata['sha256'])
-            sources[source_id]=json.loads(raw)
+            fingerprint=hashlib.sha256()
+            for snapshot in metadata['snapshots']:
+                raw=gzip.decompress((ROOT/'reference/official/eurostat'/snapshot['file']).read_bytes())
+                self.assertEqual(hashlib.sha256(raw).hexdigest(),snapshot['sha256'])
+                fingerprint.update(raw)
+                data=json.loads(raw)
+                for year in data['dimension']['time']['category']['index']:
+                    self.assertNotIn((source_id,int(year)),sources)
+                    sources[source_id,int(year)]=data
+            self.assertEqual(fingerprint.hexdigest(),metadata['sha256'])
         self.assertEqual(exported['columns'],module.COLUMNS)
         seen=set()
         for origin,destination,year,value,source_id,flags,age in exported['records']:
             key=origin,destination,year,source_id
             self.assertNotIn(key,seen);seen.add(key)
-            source=sources[source_id]
+            source=sources[source_id,year]
             direction=exported['sources'][source_id]['direction']
             reporter,peer=(destination,origin) if direction=='immigration' else (origin,destination)
             dimensions=dict(freq='A',partner=euro_codes[peer],agedef=age,age='TOTAL',unit='NR',sex='T',geo=euro_codes[reporter],time=str(year))
@@ -66,7 +73,9 @@ class EurostatTests(unittest.TestCase):
             self.assertEqual(value,source['value'][str(index)])
             self.assertEqual(flags,source.get('status',{}).get(str(index),''))
             self.assertNotIn('c',flags);self.assertNotIn('|N',flags)
-        self.assertEqual(len(seen),116909)
+        self.assertEqual(len(seen),175496)
+        self.assertEqual(sum(key[2] >= 2008 for key in seen), 116909)
+        self.assertIn(['BLR','POL',2001,125,'eurostat_imm5prv','','COMPLET'],exported['records'])
         self.assertFalse(any(row[:2]==['BLR','POL'] and row[2]>=2020 for row in exported['records']))
         self.assertIn(['BLR','LTU',2023,15706,'eurostat_imm5prv','','COMPLET'],exported['records'])
         self.assertIn(['ITA','POL',2023,1584,'eurostat_emi3nxt','','COMPLET'],exported['records'])

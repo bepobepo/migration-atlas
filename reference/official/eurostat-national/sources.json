@@ -1,0 +1,32 @@
+{
+  "migr_imm5prv": {
+    "query": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm5prv?lang=en&sinceTimePeriod=1950&untilTimePeriod=2024&freq=A&sex=T&age=TOTAL&unit=NR&partner=TOTAL",
+    "sha256": "77b5649c67985110848cd979924dae1b472b2ddbbfacb46a9a3c0d5a856afaf1",
+    "retrieved": "2026-11-21"
+  },
+  "migr_emi3nxt": {
+    "query": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi3nxt?lang=en&sinceTimePeriod=1950&untilTimePeriod=2024&freq=A&sex=T&age=TOTAL&unit=NR&partner=TOTAL",
+    "sha256": "609d41f465a2bd4415a3c3e544566842a02e099a28edc3420d1cb157e062e0cd",
+    "retrieved": "2026-11-21"
+  },
+  "migr_imm8": {
+    "query": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm8?lang=en&sinceTimePeriod=1950&untilTimePeriod=2024&freq=A&sex=T&age=TOTAL&unit=NR",
+    "sha256": "3745653a46ef577173d11c1cf86e79b3430f439aba12564f9d1b006d87090bc4",
+    "retrieved": "2026-11-21"
+  },
+  "migr_emi2": {
+    "query": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi2?lang=en&sinceTimePeriod=1950&untilTimePeriod=2024&freq=A&sex=T&age=TOTAL&unit=NR",
+    "sha256": "50c2de89ad7d2b6c0b6807330fe9957500cffa8cc3138af8819acef4df4f01e3",
+    "retrieved": "2026-11-21"
+  },
+  "migr_imm1ctz": {
+    "query": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm1ctz?lang=en&sinceTimePeriod=1950&untilTimePeriod=2024&freq=A&sex=T&age=TOTAL&unit=NR&citizen=TOTAL",
+    "sha256": "ea6e5ee26b714954166ead20ab3d623efce4707c06affb7d68238dd0695def0e",
+    "retrieved": "2026-11-21"
+  },
+  "migr_emi1ctz": {
+    "query": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi1ctz?lang=en&sinceTimePeriod=1950&untilTimePeriod=2024&freq=A&sex=T&age=TOTAL&unit=NR&citizen=TOTAL",
+    "sha256": "8d5e21b24f3134198f248c9489607f513859366c9bff958ad7f5e9fa0469c6a1",
+    "retrieved": "2026-11-21"
+  }
+}

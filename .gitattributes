@@ -1,0 +1,2 @@
+# Preserve the original UNECE PX downloads, including their encoding and CRLF bytes.
+reference/official/historical-national/*.px binary

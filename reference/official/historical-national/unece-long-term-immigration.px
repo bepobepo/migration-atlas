@@ -1,0 +1,199 @@
+CHARSET="ANSI";
+AXIS-VERSION="2010";
+CODEPAGE="Windows-1252";
+LANGUAGE="en";
+CREATION-DATE="20261121 07:36";
+DECIMALS=0;
+SHOWDECIMALS=0;
+ROUNDING=0;
+MATRIX="c0000482";
+AGGREGALLOWED=NO;
+COPYRIGHT=NO;
+SUBJECT-CODE="MCH";
+SUBJECT-AREA="";
+DESCRIPTION="Table 5.1: Long-term immigration by citizenship status (flows)";
+TITLE="Long-term immigrants (flow) by Country, Citizenship, Sex and Year";
+CONTENTS="Long-term immigrants (flow)";
+STUB="Country","Citizenship","Sex";
+HEADING="Year";
+VALUES("Country")="Armenia","Azerbaijan","Belarus","Georgia","Kazakhstan","Kyrgyzstan","Russian Federation","Ukraine","Uzbekistan";
+VALUES("Citizenship")="Total inflow","Total citizens","Total non-citizens","Total stateless","Unknown";
+VALUES("Sex")="Both sexes","Men","Women";
+VALUES("Year")="2001","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018";
+CODES("Country")="051","031","112","268","398","417","643","804","860";
+CODES("Citizenship")="5","6","4","9","12";
+CODES("Sex")="1","2","3";
+DOMAIN("Country")="Country";
+DOMAIN("Citizenship")="M_BirtPlceCitizen";
+DOMAIN("Sex")="M_Sex";
+ELIMINATION("Citizenship")=YES;
+LAST-UPDATED="20190613 23:42";
+STOCKFA="F";
+UNITS="Persons";
+CONTACT="Gender Statistics, UNECE/STAT#Tel: -#Fax: -#E-mail: gender.stats@un.org";
+SOURCE="UNECE Statistical Division Database";
+INFOFILE="MCH_LT_Imm2443";
+NOTEX="<!--Content FN - MCH Table 3-6, 8--><br><b>Definition: </b>Unless noted otherwise, an international migrant is defined as any person who changes his or her country of usual residence. A long-term migrant is a person who moves to a country other than that"
+" of his or her usual residence for a period of at least a year. A short-term migrant is a person who moves to a country other than that of his or her usual residence for a period of at least 3 months but less than a year.<br>#The UNECE Clearing House on "
+"Migration Statistics is a platform for data exchange on migration statistics for countries of Eastern Europe, Caucasus and Central Asia (EECCA), established with the purpose of improving the understanding of migration processes and the systems of measuri"
+"ng migration in the region. The data are presented as submitted by national statistical offices.<br> <br> For more information about the methodology of producing statistics on international migration in EECCA region, please refer to the <a href='http://w"
+"ww.unece.org/index.php?id=44114'>UNECE Handbook on the Use of Administrative Sources and Sample Surveys to Measure International Migration in CIS Countries</a> and the <a href='http://www.unece.org/statistics/meetings-and-events.html?id=3214#/0/0/0/17739"
+"/'>documentation of UNECE Workshops on Migration Statistics.</a>";
+CELLNOTEX("Armenia","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Armenia:--->Data source: population register.";
+CELLNOTEX("Azerbaijan","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Azerbaijan:--->Data indicate the number of persons who obtained a permanent residence permit in Azerbaijan. Azer citizens returning from abroad are not included in the total number.<br>Data source: residence permits.";
+CELLNOTEX("Belarus","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Belarus:--->Data source: residence permits.";
+CELLNOTEX("Georgia","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Georgia:--->Data from 2009 to 2013 have been retro-projected based on the 2014 Census. More information is available on the <a href='http://geostat.ge/index.php?action=wnews&amp;npid=619--&amp;lang=eng'>GEOSTAT website</a>."
+"<br>From 2013, long-term migration refers to those who have left or moved to Georgia for at least 6 months.<br>Data source: 2009-2011 - retro-projected data; 2012 and onwards - border crossing data.";
+CELLNOTEX("Kazakhstan","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Kazakhstan:--->Data source: residence permits.";
+CELLNOTEX("Kyrgyzstan","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Kyrgyzstan:--->Data source: administrative data from the State Registration Service.";
+CELLNOTEX("Russian Federation","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Russian Federation:--->2011 break in series: the Russian Federation introduced a new methodology for estimating immigration. From 2011 onwards, the source of data on international migration (long-term immigration) is regist"
+"ration at the place of residence and at the place of stay for a period of 9 months or more in the bodies of the Ministry of Internal Affairs of Russia. <br>Data source: administrative source.";
+CELLNOTEX("Ukraine","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Ukraine:--->From 2014, data cover the territories under government control.<br>2001 data include all those who have ever moved.<br>Data source: 2001 - population and housing census; 2011, 2012 - residence permits; 2017 and "
+"onwards - administrative data of the State Migration Service.";
+CELLNOTEX("Uzbekistan","*","*","*")=
+"<!-- Country FN, MCH - Table 5 Uzbekistan:--->Data source: administrative source.";
+DATA=
+".." ".." ".." ".." ".." ".." ".." 2167 2427 9384 ".." 
+".." ".." ".." ".." ".." ".." ".." 915 1018 4490 ".." 
+".." ".." ".." ".." ".." ".." ".." 1252 1409 4894 ".." 
+".." ".." ".." ".." ".." ".." ".." 1115 1366 7044 ".." 
+".." ".." ".." ".." ".." ".." ".." 445 544 3394 ".." 
+".." ".." ".." ".." ".." ".." ".." 670 822 3650 ".." 
+".." ".." ".." ".." ".." ".." ".." 1052 1061 2312 ".." 
+".." ".." ".." ".." ".." ".." ".." 470 474 1080 ".." 
+".." ".." ".." ".." ".." ".." ".." 582 587 1232 ".." 
+".." ".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." ".." 0 0 28 ".." 
+".." ".." ".." ".." ".." ".." ".." 0 0 16 ".." 
+".." ".." ".." ".." ".." ".." ".." 0 0 12 ".." 
+".." 3474 3030 ".." 2950 3125 1859 2649 3233 3073 3220 
+".." 2120 1852 ".." 1475 1580 891 1135 1403 1241 1389 
+".." 1354 1178 ".." 1475 1545 968 1514 1830 1832 1831 
+".." 2077 2105 ".." ".." ".." ".." 0 0 ".." ".." 
+".." 1325 1343 ".." ".." ".." ".." 0 0 ".." ".." 
+".." 752 762 ".." ".." ".." ".." 0 0 ".." ".." 
+".." 1222 720 ".." 2859 3061 1804 2542 3117 3016 3204 
+".." 729 430 ".." 1440 1544 862 1098 1366 1222 1382 
+".." 493 290 ".." 1419 1517 942 1444 1751 1794 1822 
+".." 175 197 ".." 83 60 52 102 116 57 16 
+".." 66 75 ".." 30 33 26 34 37 19 7 
+".." 109 122 ".." 53 27 26 68 79 38 9 
+".." ".." 8 ".." 8 4 3 5 0 ".." ".." 
+".." ".." 4 ".." 5 3 3 3 0 ".." ".." 
+".." ".." 4 ".." 3 1 ".." 2 0 ".." ".." 
+".." ".." ".." ".." 18040 19435 24941 28349 21038 18961 24601 
+".." ".." ".." ".." 9413 10350 13409 15449 11809 10639 14575 
+".." ".." ".." ".." 8627 9085 11532 12900 9229 8322 10026 
+".." ".." ".." ".." 6773 5198 5386 5440 4505 4142 4222 
+".." ".." ".." ".." 3418 2614 2748 2773 2334 2131 2217 
+".." ".." ".." ".." 3355 2584 2638 2667 2171 2011 2005 
+".." ".." ".." ".." 11171 14089 19420 22814 16464 14748 20296 
+".." ".." ".." ".." 5934 7663 10578 12620 9434 8464 12313 
+".." ".." ".." ".." 5237 6426 8842 10194 7030 6284 7983 
+".." ".." ".." ".." 96 147 135 95 69 71 83 
+".." ".." ".." ".." 61 73 83 56 41 44 45 
+".." ".." ".." ".." 35 74 52 39 28 27 38 
+".." ".." ".." ".." ".." 1 0 0 0 0 0 
+".." ".." ".." ".." ".." 0 0 0 0 0 0 
+".." ".." ".." ".." ".." 1 0 0 0 0 0 
+".." 63632 72776 71220 69063 92458 82161 92557 90228 83239 88152 
+".." 39432 45152 44234 42754 55576 48938 56692 54355 50488 52754 
+".." 24200 27624 26986 26309 36882 33223 35865 35873 32751 35398 
+".." ".." ".." ".." 29173 46079 49706 50924 47086 48343 47883 
+".." ".." ".." ".." 16714 25848 29047 30411 28263 28989 28607 
+".." ".." ".." ".." 12459 20231 20659 20513 18823 19354 19276 
+".." ".." ".." ".." 39615 46211 32340 41488 42925 34815 40174 
+".." ".." ".." ".." 25888 29626 19820 26190 25962 21446 24077 
+".." ".." ".." ".." 13727 16585 12520 15298 16963 13369 16097 
+".." ".." ".." ".." 250 168 115 145 217 81 94 
+".." ".." ".." ".." 140 102 71 91 130 53 69 
+".." ".." ".." ".." 110 66 44 54 87 28 25 
+".." ".." ".." ".." 25 0 0 0 0 0 1 
+".." ".." ".." ".." 12 0 0 0 0 0 1 
+".." ".." ".." ".." 13 0 0 0 0 0 0 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 15595 12747 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 7469 6057 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 8126 6690 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 7543 4733 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 3747 2242 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 3796 2491 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 8043 7996 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 3717 3805 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 4326 4191 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 9 18 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 5 10 
+".." ".." ".." ".." ".." ".." ".." ".." ".." 4 8 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." 3829 3903 6337 5532 4349 3928 3559 3160 1974 1687 
+".." 1901 1929 3162 2760 2215 1958 1736 1489 955 851 
+".." 1928 1974 3175 2772 2134 1970 1823 1671 1019 836 
+".." 3671 3774 6177 5389 3997 3545 3070 2937 1852 1556 
+".." 1814 1864 3076 2684 2006 1718 1448 1352 880 785 
+".." 1857 1910 3101 2705 1991 1827 1622 1585 972 771 
+".." 155 128 160 143 352 383 489 220 121 107 
+".." 86 65 86 76 209 240 288 137 75 53 
+".." 69 63 74 67 143 143 201 83 46 54 
+".." ".." ".." 0 0 0 0 0 0 ".." ".." 
+".." ".." ".." 0 0 0 0 0 0 ".." ".." 
+".." ".." ".." 0 0 0 0 0 0 ".." ".." 
+".." 3 1 0 0 0 0 0 3 1 24 
+".." 1 ".." 0 0 0 0 0 0 0 13 
+".." 2 1 0 0 0 0 0 3 1 11 
+".." 279907 191656 356535 417681 482241 ".." ".." ".." ".." ".." 
+".." 150051 105638 ".." ".." 307378 ".." ".." ".." ".." ".." 
+".." 129856 86018 ".." ".." 174863 ".." ".." ".." ".." ".." 
+".." 218988 145705 141590 127097 131516 ".." ".." ".." ".." ".." 
+".." 113300 77226 ".." ".." 68701 ".." ".." ".." ".." ".." 
+".." 105688 68479 ".." ".." 62815 ".." ".." ".." ".." ".." 
+".." 54887 42085 206207 283274 345869 ".." ".." ".." ".." ".." 
+".." 33374 26189 ".." ".." 235919 ".." ".." ".." ".." ".." 
+".." 21513 15896 ".." ".." 109950 ".." ".." ".." ".." ".." 
+".." 3008 2372 5103 4988 2773 ".." ".." ".." ".." ".." 
+".." 1689 1368 ".." ".." 1556 ".." ".." ".." ".." ".." 
+".." 1319 1004 ".." ".." 1217 ".." ".." ".." ".." ".." 
+".." 3024 1494 3635 2322 2083 ".." ".." ".." ".." ".." 
+".." 1688 855 ".." ".." 1202 ".." ".." ".." ".." ".." 
+".." 1336 639 ".." ".." 881 ".." ".." ".." ".." ".." 
+5256923 ".." ".." 31684 76361 ".." ".." ".." ".." 28360 ".." 
+2291595 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+2965328 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+5047851 ".." ".." 12425 11188 ".." ".." ".." ".." 2012 ".." 
+2186103 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+2861748 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+143336 ".." ".." 18992 64629 ".." ".." ".." ".." 26203 ".." 
+73472 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+69864 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+64494 ".." ".." 267 544 ".." ".." ".." ".." 145 ".." 
+31444 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+33050 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+1242 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+576 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+666 ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." 4023 3666 2466 1821 2173 2850 
+".." ".." ".." ".." ".." 0 0 0 0 ".." ".." 
+".." ".." ".." ".." ".." 0 0 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+;

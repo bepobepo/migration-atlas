@@ -445,7 +445,7 @@ async function officialDataReady(options = {}) {
     const fetcher = options.fetcher || globalThis.fetch;
     const url = options.url || "data/official/flows.compact.json";
     officialReadyPromise = Promise.resolve()
-      .then(() => fetcher(url))
+      .then(() => fetcher(url, { cache: "no-cache" }))
       .then((response) => {
         if (!response.ok)
           throw Error("Official migration data could not be loaded");

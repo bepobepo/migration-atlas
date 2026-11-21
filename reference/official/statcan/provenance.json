@@ -1,0 +1,31 @@
+{
+  "releaseDate": "2026-09-23",
+  "retrieved": "2026-11-21",
+  "licence": "Statistics Canada Open Licence",
+  "licenceUrl": "https://www.statcan.gc.ca/en/reference/licence",
+  "methodologyUrl": "https://www150.statcan.gc.ca/n1/pub/91-528-x/2026001/gloss-eng.htm",
+  "files": {
+    "17100040": {
+      "title": "Estimates of the components of international migration, quarterly",
+      "filename": "17100040-eng.zip",
+      "tableUrl": "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710004001",
+      "downloadUrl": "https://www150.statcan.gc.ca/n1/tbl/csv/17100040-eng.zip",
+      "sha256": "93393fbed83d3b89851e2c67057937c7bf524c5ba0575f649cb21cc140be76b3"
+    },
+    "17100009": {
+      "title": "Population estimates, quarterly",
+      "filename": "17100009-eng.zip",
+      "tableUrl": "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901",
+      "downloadUrl": "https://www150.statcan.gc.ca/n1/tbl/csv/17100009-eng.zip",
+      "sha256": "b50bf05150e42edf3771ceb1d6868581fb6747b5886e0d1450b8b3437958bd0b"
+    },
+    "17100059": {
+      "title": "Estimates of the components of natural increase, quarterly",
+      "filename": "17100059-eng.zip",
+      "tableUrl": "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710005901",
+      "downloadUrl": "https://www150.statcan.gc.ca/n1/tbl/csv/17100059-eng.zip",
+      "sha256": "439dcad9e850ae1d555d8fb8b7944ffd821b439a2cce83a1372387c8ae36b717"
+    }
+  },
+  "revisionNotes": "Table 17-10-0040-01 notes 4\u201314 label the inputs. Immigrants final through 2025, net non-permanent residents final through June 2023, emigrants and returning emigrants final through June 2024. Later components within the atlas timeline are updated estimates. Net emigration incorporates net temporary emigration from July 1991 through June 2016. The estimation method changed in July 2016."
+}

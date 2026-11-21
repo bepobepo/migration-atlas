@@ -8,11 +8,35 @@
     "unit": "persons",
     "classification": "official_statistic",
     "methodology": "Annual changes of usual residence, generally actual or intended residence of at least 12 months. Country definitions, breaks and official estimation methods can differ; inspect source metadata and flags.",
-    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm5prv?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=2008&untilTimePeriod=2024",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm5prv?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=1960&untilTimePeriod=2024",
     "metadataUrl": "https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm",
-    "updated": "2026-07-02T11:00:00+0200",
-    "retrievedAt": "2026-11-06T00:05:50.547039+00:00",
-    "sha256": "510475e8c4f5fac6eaf47ffa31c821e35013c090612678681c2d7018a40bd615",
+    "updated": "2026-11-13T23:00:00+0100",
+    "retrievedAt": "2026-11-21T10:21:46.707906+00:00",
+    "sha256": "2bdce36b3a592d8b0ee1d1e599fa401c56fc1ab0240e9ecd070123a4980ad20b",
+    "snapshots": [
+      {
+        "file": "migr_imm5prv_1960_2007.json.gz",
+        "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm5prv?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=1960&untilTimePeriod=2007",
+        "yearsRequested": [
+          1960,
+          2007
+        ],
+        "sha256": "680c89196eacac7ac1cbe731ad6814d1ef3c3efc3893052625cd1dc7eb9f55e7",
+        "updated": "2026-11-13T23:00:00+0100",
+        "retrievedAt": "2026-11-21T10:21:46.707906+00:00"
+      },
+      {
+        "file": "migr_imm5prv_2008_2024.json.gz",
+        "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_imm5prv?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=2008&untilTimePeriod=2024",
+        "yearsRequested": [
+          2008,
+          2024
+        ],
+        "sha256": "510475e8c4f5fac6eaf47ffa31c821e35013c090612678681c2d7018a40bd615",
+        "updated": "2026-07-02T11:00:00+0200",
+        "retrievedAt": "2026-11-06T00:05:50.547039+00:00"
+      }
+    ],
     "datasetVersion": "1.0",
     "dataStructureVersion": "55.0",
     "flags": {
@@ -35,7 +59,7 @@
       "ageDefinition": "COMPLET preferred; REACH only when COMPLET unavailable"
     },
     "yearsRequested": [
-      2008,
+      1960,
       2024
     ],
     "missingPolicy": "Absent/confidential/not-for-publication observations are not zero. Broad-region totals are never allocated to country pairs."
@@ -49,11 +73,35 @@
     "unit": "persons",
     "classification": "official_statistic",
     "methodology": "Annual changes of usual residence, generally actual or intended residence of at least 12 months. Country definitions, breaks and official estimation methods can differ; inspect source metadata and flags.",
-    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi3nxt?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=2008&untilTimePeriod=2024",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi3nxt?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=1960&untilTimePeriod=2024",
     "metadataUrl": "https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm",
-    "updated": "2026-09-22T23:00:00+0200",
-    "retrievedAt": "2026-11-06T00:05:50.547039+00:00",
-    "sha256": "7bab7836960bc7db87f8950b50fe30550fdb292f9a2d39ca405da90d88c21645",
+    "updated": "2026-11-13T23:00:00+0100",
+    "retrievedAt": "2026-11-21T10:21:46.707906+00:00",
+    "sha256": "00c008fc552a212ac63911dccac8af1ec611da3b4737ba8369c65d902a00139d",
+    "snapshots": [
+      {
+        "file": "migr_emi3nxt_1960_2007.json.gz",
+        "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi3nxt?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=1960&untilTimePeriod=2007",
+        "yearsRequested": [
+          1960,
+          2007
+        ],
+        "sha256": "aaa585ef6a0eb74ff36d08053dc5e7f65961ad076a0e7a1b90f06bb44e072047",
+        "updated": "2026-11-13T23:00:00+0100",
+        "retrievedAt": "2026-11-21T10:21:46.707906+00:00"
+      },
+      {
+        "file": "migr_emi3nxt_2008_2024.json.gz",
+        "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/migr_emi3nxt?lang=en&sex=T&age=TOTAL&unit=NR&sinceTimePeriod=2008&untilTimePeriod=2024",
+        "yearsRequested": [
+          2008,
+          2024
+        ],
+        "sha256": "7bab7836960bc7db87f8950b50fe30550fdb292f9a2d39ca405da90d88c21645",
+        "updated": "2026-09-22T23:00:00+0200",
+        "retrievedAt": "2026-11-06T00:05:50.547039+00:00"
+      }
+    ],
     "datasetVersion": "1.0",
     "dataStructureVersion": "55.0",
     "flags": {
@@ -75,7 +123,7 @@
       "ageDefinition": "COMPLET preferred; REACH only when COMPLET unavailable"
     },
     "yearsRequested": [
-      2008,
+      1960,
       2024
     ],
     "missingPolicy": "Absent/confidential/not-for-publication observations are not zero. Broad-region totals are never allocated to country pairs."

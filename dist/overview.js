@@ -21,24 +21,35 @@
     </div>
     <p id="overview-prompt" role="status" hidden></p>
     <div id="overview-summary" hidden>
-      <section id="overview-national" aria-labelledby="uk-heading" hidden>
-        <h2 id="uk-heading">UK national migration</h2>
-        <p id="uk-status" role="status"></p>
-        <button id="uk-retry" type="button" hidden>Retry national estimates</button>
-        <div id="uk-figures" hidden>
-          <dl class="uk-totals">
-            <div><dt>Net migration</dt><dd id="uk-net"></dd></div>
-            <div><dt>Immigration</dt><dd id="uk-immigration"></dd></div>
-            <div><dt>Emigration</dt><dd id="uk-emigration"></dd></div>
+      <section id="overview-national" aria-labelledby="national-heading" hidden>
+        <h2 id="national-heading"></h2>
+        <details id="national-dates">
+          <summary>Change national years</summary>
+          <form id="national-range-form">
+            <label>From year<input id="national-start" type="number" step="1" min="1950" max="2024" required></label>
+            <label>To year<input id="national-end" type="number" step="1" min="1950" max="2024" required></label>
+            <button type="submit">Apply national years</button><button id="national-full" type="button">Full history (1950–2024)</button><button id="national-use-map" type="button">Use map years</button>
+            <p id="national-date-error" role="alert" hidden></p>
+          </form>
+        </details>
+        <p id="national-status" role="status"></p>
+        <button id="national-retry" type="button" hidden>Retry national figures</button>
+        <div id="national-figures" hidden>
+          <dl class="national-totals">
+            <div><dt>Net migration</dt><dd><strong id="national-net"></strong><small id="national-net-basis"></small></dd></div>
+            <div><dt>Immigration</dt><dd><strong id="national-immigration"></strong><small id="national-immigration-basis"></small></dd></div>
+            <div><dt>Emigration</dt><dd><strong id="national-emigration"></strong><small id="national-emigration-basis"></small></dd></div>
           </dl>
-          <p>ONS counts long-term moves of at least 12 months, across all countries and citizenships. Net migration is immigration minus emigration. ONS rounds the three estimates separately.</p>
-          <details id="uk-annual"><summary>Annual national estimates</summary>
-            <table id="uk-years"><caption>Calendar years ending in December</caption><thead><tr>
-              <th scope="col">Year</th><th scope="col">Immigration</th><th scope="col">Emigration</th><th scope="col">Net</th>
-            </tr></thead><tbody></tbody></table>
-            <p id="uk-method-break">ONS advises caution when comparing figures across June 2021, when its methods changed.</p>
+          <p id="national-note"></p>
+          <p id="national-attribution"></p>
+          <details id="national-annual"><summary>Annual figures and sources</summary>
+            <div class="national-table-scroll">
+              <table id="national-years"><caption></caption><thead><tr>
+                <th scope="col">Year</th><th scope="col">Immigration</th><th scope="col">Emigration</th><th scope="col">Net</th>
+              </tr></thead><tbody></tbody></table>
+            </div>
+            <div id="national-sources"></div>
           </details>
-          <p class="uk-source"></p>
         </div>
       </section>
       <h2 id="overview-period"></h2>
@@ -70,87 +81,156 @@
   let request = 0;
   let loaded = {};
   let selection;
-  let ukRequest;
 
   function element(tag, text) {
     const node = document.createElement(tag);
     node.textContent = text;
     return node;
   }
-  function loadUKNational() {
-    if (!ukRequest) {
-      ukRequest = fetch("data/official/uk-national.json").then(async response => {
-        if (!response.ok) throw Error("ONS series unavailable");
-        const data = await response.json();
-        if (!data.source?.url || !data.source.releaseDate || !Array.isArray(data.years) || !data.years.length)
-          throw Error("Incomplete ONS series");
-        const seen = new Set();
-        for (const row of data.years) {
-          if (![row.year, row.immigration, row.emigration, row.net].every(Number.isSafeInteger) ||
-              row.immigration < 0 || row.emigration < 0 || seen.has(row.year))
-            throw Error("Invalid ONS observation");
-          seen.add(row.year);
-        }
-        return data;
-      }).catch(error => { ukRequest = null; throw error; });
-    }
-    return ukRequest;
+  const nationalPanel = control("national");
+  const national = id => document.getElementById("national-" + id);
+  const fields = ["immigration", "emigration", "net"];
+  const kindLabels = {
+    published: "Published national figure",
+    derived: "Calculated from national flows",
+    estimate: "Demographic estimate",
+    projection: "Projection",
+  };
+  const annualLabels = { published: "Published", derived: "Calculated", estimate: "Estimate", projection: "Projection" };
+  const signed = new Intl.NumberFormat("en", {signDisplay: "exceptZero", maximumFractionDigits: 1});
+  const unsigned = new Intl.NumberFormat("en", {maximumFractionDigits: 1});
+  let nationalRequest = 0;
+  let nationalMapKey = "";
+
+  function nationalValue(field, value) {
+    return (field === "net" ? signed : unsigned).format(value);
   }
-  async function renderUKNational(country, start, end, token) {
-    const panel = control("national");
-    panel.hidden = country !== "GBR";
-    if (panel.hidden) return;
-    const status = panel.querySelector("#uk-status");
-    const figures = panel.querySelector("#uk-figures");
-    const retry = panel.querySelector("#uk-retry");
-    const range = start === end ? String(start) : `${start}–${end}`;
-    panel.querySelector("h2").textContent = "UK national migration · " + range;
-    figures.hidden = true;
-    retry.hidden = true;
-    status.textContent = "Loading ONS estimates…";
-    try {
-      const {years, source} = await loadUKNational();
-      if (token !== request) return;
-      const rows = years.filter(row => row.year >= start && row.year <= end).sort((a, b) => a.year - b.year);
-      const complete = rows.length === end - start + 1;
-      const first = Math.min(...years.map(row => row.year)), last = Math.max(...years.map(row => row.year));
-      status.textContent = complete ? (start === end ? "Official estimate for the year ending in December." : "Sum of ONS estimates for the selected calendar years.")
-        : `The ONS series in this release covers ${first}–${last}. A total for the full selection is unavailable.`;
-      function display(field, value) {
-        return (field === "net" && value > 0 ? "+" : "") + value.toLocaleString("en-GB");
-      }
-      const fields = ["immigration", "emigration", "net"];
+  function sourceLink(source) {
+    const link = element("a", source.name);
+    link.href = source.url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    return link;
+  }
+  function sourceDate(value) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return new Intl.DateTimeFormat("en-GB", {dateStyle: "long", timeZone: "UTC"}).format(new Date(value));
+    }
+    return value;
+  }
+  function renderNationalFigures({years, sources}, start, end) {
+    const sourceIds = [...new Set(years.flatMap(row => fields.flatMap(field => row[field]?.sourceIds || [])))];
+    for (const field of fields) {
+      const available = years.map(row => row[field]).filter(observation => observation != null);
+      const complete = available.length === end - start + 1;
+      const kinds = [...new Set(available.map(observation => observation.kind))];
+      const series = new Set(available.map(obs => obs.kind + "/" + obs.sourceIds.join("/")));
+      const total = available.reduce((sum, obs) => sum + obs.value, 0);
+      national(field).textContent = complete ? nationalValue(field, total)
+        : available.length ? "Unavailable for full range" : "Unavailable";
+      const notes = kinds.map(kind => kind === "projection" && kinds.length > 1 ? "Includes a projection" : kindLabels[kind]);
+      if (series.size > 1) notes.unshift("Mixed annual series");
+      const flags = new Set(available.flatMap(obs => obs.flags));
+      if (flags.size) notes.push(...flags);
+      if (!complete) notes.unshift(`${available.length} of ${years.length} years available`);
+      national(field + "-basis").textContent = notes.join(" · ");
+    }
+
+    const list = element("ol", "");
+    const attribution = national("attribution");
+    attribution.replaceChildren();
+    attribution.hidden = !sourceIds.length;
+    sourceIds.forEach((id, i) => {
+      const source = sources[id];
+      if (i) attribution.append(" · ");
+      attribution.append(sourceLink(source));
+      if (source.releaseDate) attribution.append(" (" + sourceDate(source.releaseDate) + ")");
+      const item = element("li", "");
+      item.append(sourceLink(source));
+      if (source.definition) item.append(element("div", source.definition));
+      list.append(item);
+    });
+    national("sources").replaceChildren(list);
+    const body = national("years").tBodies[0];
+    body.replaceChildren();
+    for (const row of years) {
+      const tr = body.insertRow();
+      const year = element("th", row.year);
+      year.scope = "row";
+      tr.append(year);
       for (const field of fields) {
-        const total = rows.reduce((sum, row) => sum + row[field], 0);
-        panel.querySelector("#uk-" + field).textContent = complete ? display(field, total) : "Unavailable for full range";
+        const obs = row[field];
+        const td = tr.insertCell();
+        if (!obs) {
+          td.textContent = "Unavailable";
+          continue;
+        }
+        td.append(nationalValue(field, obs.value));
+        const refs = obs.sourceIds.map(id => sourceIds.indexOf(id) + 1).join(", ");
+        td.append(element("small", [annualLabels[obs.kind] + " [" + refs + "]", ...obs.flags].join(" · ")));
       }
-      const body = panel.querySelector("tbody");
-      body.replaceChildren();
-      for (const row of rows) {
-        const tr = body.insertRow();
-        const year = element("th", row.year);
-        year.scope = "row";
-        tr.append(year);
-        for (const field of fields) tr.append(element("td", display(field, row[field])));
-      }
-      panel.querySelector("#uk-annual").hidden = !rows.length;
-      panel.querySelector("#uk-method-break").hidden = !(start <= 2020 && end >= 2021);
-      const sourceLink = element("a", "Office for National Statistics");
-      sourceLink.href = source.url;
-      sourceLink.target = "_blank";
-      sourceLink.rel = "noopener";
-      const release = new Intl.DateTimeFormat("en-GB", {dateStyle: "long", timeZone: "UTC"}).format(new Date(source.releaseDate));
-      const revised = rows.filter(row => row.revised).map(row => row.year);
-      const revision = revised.length ? " · Revised estimates for " + revised.join(", ") : "";
-      panel.querySelector(".uk-source").replaceChildren(sourceLink, " · Released " + release + revision);
-      figures.hidden = false;
-    } catch {
-      if (token !== request) return;
-      status.textContent = "The UK national estimates could not be loaded.";
-      retry.hidden = false;
-      retry.onclick = () => renderUKNational(country, start, end, token);
+    }
+    national("annual").hidden = !sourceIds.length;
+    national("years").caption.textContent = "Annual national figures · sources listed below";
+    const netOnly = years.some(row => row.net) && !years.some(row => row.immigration || row.emigration);
+    national("note").textContent = netOnly
+      ? "This series estimates the net balance of people moving into and out of the country. Separate arrival and departure totals require data for each direction."
+      : "Net migration is immigration minus emigration. Multi-year figures sum annual values with coverage in every selected year.";
+    if (sourceIds.some(id => sources[id].name.includes("Office for National Statistics"))) {
+      national("note").textContent += " ONS publishes separately rounded estimates for years ending in December.";
+      if (start <= 2020 && end >= 2021)
+        national("note").textContent += " Its methods changed in June 2021.";
     }
   }
+
+  async function renderNational(country, start, end) {
+    const token = ++nationalRequest;
+    const range = start === end ? String(start) : `${start}–${end}`;
+    const followsMap = selection.start === start && selection.end === end;
+    nationalPanel.hidden = !country;
+    national("figures").hidden = true;
+    national("retry").hidden = true;
+    national("date-error").hidden = true;
+    if (!country) return;
+    national("heading").textContent = name(country) + " · National migration · " + range;
+    national("start").value = start;
+    national("end").value = end;
+    national("full").disabled = start === 1950 && end === 2024;
+    national("use-map").disabled = followsMap;
+    national("dates").hidden = false;
+    national("status").textContent = "Loading national figures…";
+    try {
+      const data = await window.loadNational(country, start, end);
+      if (token !== nationalRequest) return;
+      if (!Object.keys(data.sources).length) {
+        national("dates").hidden = true;
+        national("status").textContent = "A separate national migration series is unavailable for this area in the selected sources.";
+        return;
+      }
+      renderNationalFigures(data, start, end);
+      const any = data.years.some(row => fields.some(field => row[field] != null));
+      national("status").textContent = any ? (followsMap ? "Using the map’s years." : "Using a separate national date range.")
+        : "National figures are unavailable for the selected years.";
+      national("figures").hidden = false;
+    } catch {
+      if (token !== nationalRequest) return;
+      national("status").textContent = "The national migration figures could not be loaded.";
+      national("retry").hidden = false;
+      national("retry").onclick = () => renderNational(country, start, end);
+    }
+  }
+  national("range-form").onsubmit = event => {
+    event.preventDefault();
+    const start = national("start").valueAsNumber, end = national("end").valueAsNumber;
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1950 || end > 2024 || start > end) {
+      national("date-error").textContent = "Enter whole years from 1950 to 2024, with the start year first.";
+      national("date-error").hidden = false;
+      return;
+    }
+    renderNational(selection.country, start, end);
+  };
+  national("use-map").onclick = () => renderNational(selection.country, selection.start, selection.end);
+  national("full").onclick = () => renderNational(selection.country, 1950, 2024);
   function hint(text) {
     control("prompt").textContent = text;
     control("prompt").hidden = !text;
@@ -300,15 +380,19 @@
     selection = {country, start, end};
     control("summary").hidden = !country;
     control("retry").hidden = true;
-    renderUKNational(country, start, end, token);
+    const mapKey = [country, start, end, !!countries?.[country]?.hasData].join("|");
+    if (mapKey !== nationalMapKey) {
+      nationalMapKey = mapKey;
+      renderNational(country, start, end);
+    }
     if (!country) return;
     const period = start === end ? start : `${start}–${end}`;
     control("period").textContent = `${name(country)} · Partner-country flows · ${period}`;
     const routeNote = control("route-note");
-    routeNote.hidden = country !== "GBR";
+    routeNote.hidden = !countries?.[country]?.hasData;
     routeNote.textContent = dataPolicy === "official"
-      ? "The map adds up the routes with official reports. Gaps in UK partner reporting make these subtotals unsuitable for calculating national net migration."
-      : "The map uses the selected comparison series for individual routes. The national figures above come from ONS.";
+      ? "These subtotals add the available partner-country reports. Country coverage and reporting methods can differ from the national figures."
+      : "Route subtotals use the map’s selected data series. The national figures above use countrywide sources.";
     const available = countries?.[country]?.hasData && start >= 1960 && end <= 2024;
     comparison.hidden = !available;
     for (const d of ["in", "out"]) {

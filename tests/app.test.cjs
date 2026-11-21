@@ -1264,7 +1264,7 @@ test("countries without source coverage are explicitly labelled and never become
   try {
     assert.match(
       a.$('#country option[value="GRL"]').textContent,
-      /no estimates/,
+      /no route estimates/,
     );
     a.change("#country", "GRL");
     a.$('[data-dir="in"]').click();

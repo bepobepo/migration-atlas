@@ -1,5 +1,5 @@
 """Independently verify chosen overlay values, mirror priority and model baselines."""
-import hashlib,json,unittest
+import gzip,hashlib,json,unittest
 from pathlib import Path
 from collections import defaultdict
 ROOT=Path(__file__).resolve().parents[1]
@@ -7,12 +7,12 @@ class OverlayTest(unittest.TestCase):
  @classmethod
  def setUpClass(cls):
   cls.source=json.loads((ROOT/'dist/data/official/eurostat.json').read_text())
-  cls.output=json.loads((ROOT/'dist/data/official/flows.json').read_text())
+  cls.output=json.loads(gzip.decompress((ROOT/'reference/official/flows.json.gz').read_bytes()))
  def test_all_selected_values_and_alternatives(self):
   bykey=defaultdict(list)
   for row in self.source['records']:
    item=dict(zip(self.source['columns'],row));bykey[item['origin'],item['destination'],item['year']].append(item)
-  self.assertEqual(len(bykey),111297)
+  self.assertEqual(len(bykey),167073)
   self.assertEqual(len(self.output['records']),len(bykey))
   seen=set()
   for row in self.output['records']:

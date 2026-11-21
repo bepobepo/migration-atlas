@@ -1,0 +1,17 @@
+{
+  "filename": "CBP06077-data.xlsx",
+  "sha256": "a4e079f33f9dcb89e004ebea8465a1482aa02e78c952bb46fc40a5bb1b11f228",
+  "source": {
+    "name": "ONS historical LTIM \u00b7 House of Commons Library",
+    "url": "https://commonslibrary.parliament.uk/research-briefings/sn06077/",
+    "workbookUrl": "https://researchbriefings.files.parliament.uk/documents/SN06077/CBP06077-data.xlsx",
+    "metadataUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/datasets/longterminternationalmigrationcitizenshiptable201a/current",
+    "releaseDate": "2026-05-27",
+    "retrieved": "2026-11-21",
+    "definition": "UK-wide, all-citizenship long-term international migration for calendar years ending December. Survey-based LTIM adjusts passenger-survey figures for unmeasured flows. The 2011 Census revision applies to published net migration in 2001\u20132011 independently of gross flows. The administrative series begins in 2012.",
+    "flagLabels": {
+      "e": "official estimate",
+      "er": "official estimate, revised net migration"
+    }
+  }
+}

@@ -1,0 +1,215 @@
+CHARSET="ANSI";
+AXIS-VERSION="2010";
+CODEPAGE="Windows-1252";
+LANGUAGE="en";
+CREATION-DATE="20261121 07:36";
+DECIMALS=0;
+SHOWDECIMALS=0;
+ROUNDING=0;
+MATRIX="c0000480";
+AGGREGALLOWED=NO;
+COPYRIGHT=NO;
+SUBJECT-CODE="MCH";
+SUBJECT-AREA="";
+DESCRIPTION="Table 6.1: Long-term emigration by citizenship status (flows)";
+TITLE="Long-term emigrants (flow) by Country, Citizenship, Sex and Year";
+CONTENTS="Long-term emigrants (flow)";
+STUB="Country","Citizenship","Sex";
+HEADING="Year";
+VALUES("Country")="Armenia","Azerbaijan","Belarus","Georgia","Kazakhstan","Kyrgyzstan","Republic of Moldova","Russian Federation","Ukraine","Uzbekistan";
+VALUES("Citizenship")="Total outflow","Total citizens","Total non-citizens","Total stateless","Unknown";
+VALUES("Sex")="Both sexes","Men","Women";
+VALUES("Year")="2009","2010","2011","2012","2013","2014","2015","2016","2017","2018";
+CODES("Country")="051","031","112","268","398","417","498","643","804","860";
+CODES("Citizenship")="8","6","4","9","12";
+CODES("Sex")="1","2","3";
+DOMAIN("Country")="Country";
+DOMAIN("Citizenship")="M_BirtPlceCitizen";
+DOMAIN("Sex")="M_Sex";
+ELIMINATION("Citizenship")=YES;
+LAST-UPDATED="20190613 23:42";
+STOCKFA="F";
+UNITS="Persons";
+CONTACT="Gender Statistics, UNECE/STAT#Tel: -#Fax: -#E-mail: gender.stats@un.org";
+SOURCE="UNECE Statistical Division Database";
+INFOFILE="MCH_LT_Emig257";
+NOTEX="<!--Content FN - MCH Table 3-6, 8--><br><b>Definition: </b>Unless noted otherwise, an international migrant is defined as any person who changes his or her country of usual residence. A long-term migrant is a person who moves to a country other than that"
+" of his or her usual residence for a period of at least a year. A short-term migrant is a person who moves to a country other than that of his or her usual residence for a period of at least 3 months but less than a year.<br>#The UNECE Clearing House on "
+"Migration Statistics is a platform for data exchange on migration statistics for countries of Eastern Europe, Caucasus and Central Asia (EECCA), established with the purpose of improving the understanding of migration processes and the systems of measuri"
+"ng migration in the region. The data are presented as submitted by national statistical offices.<br> <br> For more information about the methodology of producing statistics on international migration in EECCA region, please refer to the <a href='http://w"
+"ww.unece.org/index.php?id=44114'>UNECE Handbook on the Use of Administrative Sources and Sample Surveys to Measure International Migration in CIS Countries</a> and the <a href='http://www.unece.org/statistics/meetings-and-events.html?id=3214#/0/0/0/17739"
+"/'>documentation of UNECE Workshops on Migration Statistics.</a>";
+CELLNOTEX("Armenia","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Armenia:--->Data source: population register.";
+CELLNOTEX("Azerbaijan","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Azerbaijan:--->Data indicate the number of persons who obtained an exit permit in Azerbaijan. Azer citizens are not included in the total number.<br>Data source: exit permits.";
+CELLNOTEX("Belarus","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Belarus:--->Data source: residence permits.";
+CELLNOTEX("Georgia","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Georgia:--->Data from 2009 to 2013 have been retro-projected based on the 2014 Census. More information is available on the <a href='http://geostat.ge/index.php?action=wnews&amp;npid=619--&amp;lang=eng'>GEOSTAT website</a>."
+"<br>From 2013, long-term migration refers to those who have left or moved to Georgia for at least 6 months.<br>Data source: 2009-2011 - retro-projected data; 2012 and onwards - border crossing data.";
+CELLNOTEX("Kazakhstan","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Kazakhstan:--->Data source: exit permits.";
+CELLNOTEX("Kyrgyzstan","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Kyrgyzstan:--->Data source: administrative data from the State Registration Service.";
+CELLNOTEX("Republic of Moldova","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Moldova, Republic of:--->Data source: population register.";
+CELLNOTEX("Russian Federation","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Russian Federation:--->2012 break in series: the Russian Federation introduced a new methodology for estimating emigration. From 2012 onwards, the source of data on international migration (long-term emigration) is registra"
+"tion at the place of residence and at the place of stay for a period of 9 months or more. <br>Data source: administrative source.";
+CELLNOTEX("Ukraine","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Ukraine:--->From 2014, data cover the territories under government control.<br>Data source: administrative data from the State Migration Service.";
+CELLNOTEX("Uzbekistan","*","*","*")=
+"<!-- Country FN, MCH - Table 6 Uzbekistan:--->Data source: administrative source.";
+DATA=
+".." ".." ".." ".." ".." ".." 3041 2520 2847 ".." 
+".." ".." ".." ".." ".." ".." 1285 1167 1342 ".." 
+".." ".." ".." ".." ".." ".." 1756 1353 1505 ".." 
+".." ".." ".." ".." ".." ".." 2921 2363 2577 ".." 
+".." ".." ".." ".." ".." ".." 1230 1067 1174 ".." 
+".." ".." ".." ".." ".." ".." 1691 1296 1403 ".." 
+".." ".." ".." ".." ".." ".." 120 157 270 ".." 
+".." ".." ".." ".." ".." ".." 55 100 168 ".." 
+".." ".." ".." ".." ".." ".." 65 57 102 ".." 
+".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." 0 0 ".." ".." 
+1373 799 ".." 226 781 795 1557 1711 1901 1580 
+617 355 ".." 109 305 308 636 818 579 593 
+756 444 ".." 117 476 487 921 893 1322 987 
+1345 787 ".." 221 695 684 ".." ".." ".." ".." 
+601 348 ".." 106 270 256 ".." ".." ".." ".." 
+744 439 ".." 115 425 428 ".." ".." ".." ".." 
+28 12 ".." 5 86 111 ".." ".." ".." ".." 
+16 7 ".." 3 35 52 ".." ".." ".." ".." 
+12 5 ".." 2 51 59 ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." 8712 7792 9219 9855 13098 15087 15239 
+".." ".." ".." 4949 4431 5425 5439 7464 9070 8774 
+".." ".." ".." 3763 3361 3794 4416 5634 6017 6465 
+".." ".." ".." 6493 5583 5338 5768 6567 7149 8100 
+".." ".." ".." 3410 2943 2745 2925 3333 3762 4379 
+".." ".." ".." 3083 2640 2593 2843 3234 3387 3721 
+".." ".." ".." 2195 2175 3828 4042 6491 7883 7094 
+".." ".." ".." 1521 1468 2646 2484 4101 5271 4367 
+".." ".." ".." 674 707 1182 1558 2390 2612 2727 
+".." ".." ".." 24 34 53 45 40 55 45 
+".." ".." ".." 18 20 34 30 30 37 28 
+".." ".." ".." 6 14 19 15 10 18 17 
+".." ".." ".." ".." 0 0 0 0 0 0 
+".." ".." ".." ".." 0 0 0 0 0 0 
+".." ".." ".." ".." 0 0 0 0 0 0 
+98580 103214 107202 90584 95064 88704 95965 98288 85451 98935 
+57438 60058 62376 52084 55582 51858 55817 55255 47770 56116 
+41142 43156 44826 38500 39482 36846 40148 43033 37681 42819 
+".." ".." ".." 60307 66802 69855 67452 64705 67269 76367 
+".." ".." ".." 31937 37338 40221 37711 34869 36713 41960 
+".." ".." ".." 28370 29464 29634 29741 29836 30556 34407 
+".." ".." ".." 30070 28152 18780 28364 33415 18130 22506 
+".." ".." ".." 20033 18175 11590 18015 20279 11025 14122 
+".." ".." ".." 10037 9977 7190 10349 13136 7105 8384 
+".." ".." ".." 183 110 69 149 168 52 62 
+".." ".." ".." 99 69 47 91 107 32 34 
+".." ".." ".." 84 41 22 58 61 20 28 
+".." ".." ".." 24 0 0 0 0 0 0 
+".." ".." ".." 15 0 0 0 0 0 0 
+".." ".." ".." 9 0 0 0 0 0 0 
+".." ".." ".." ".." ".." ".." ".." ".." 37725 41868 
+".." ".." ".." ".." ".." ".." ".." ".." 17301 19045 
+".." ".." ".." ".." ".." ".." ".." ".." 20424 22823 
+".." ".." ".." ".." ".." ".." ".." ".." 35704 40294 
+".." ".." ".." ".." ".." ".." ".." ".." 16333 18296 
+".." ".." ".." ".." ".." ".." ".." ".." 19371 21998 
+".." ".." ".." ".." ".." ".." ".." ".." 2012 1565 
+".." ".." ".." ".." ".." ".." ".." ".." 965 744 
+".." ".." ".." ".." ".." ".." ".." ".." 1047 821 
+".." ".." ".." ".." ".." ".." ".." ".." 6 6 
+".." ".." ".." ".." ".." ".." ".." ".." 3 4 
+".." ".." ".." ".." ".." ".." ".." ".." 3 2 
+".." ".." ".." ".." ".." ".." ".." ".." 3 3 
+".." ".." ".." ".." ".." ".." ".." ".." 0 1 
+".." ".." ".." ".." ".." ".." ".." ".." 3 2 
+33380 54531 45740 13019 11552 11685 7788 7125 5899 7077 
+15729 27440 22121 5471 4918 5018 3185 2801 2239 2527 
+17651 27091 23619 7548 6634 6667 4603 4324 3660 4550 
+33149 54276 45441 12715 11190 11287 7491 6857 5703 6966 
+15625 27321 21983 5353 4748 4841 3056 2675 2152 2485 
+17524 26955 23458 7362 6442 6446 4435 4182 3551 4481 
+218 245 299 304 362 398 296 268 189 94 
+98 115 138 118 170 177 128 126 83 35 
+120 130 161 186 192 221 168 142 106 59 
+".." ".." 0 0 0 0 0 0 0 ".." 
+".." ".." 0 0 0 0 0 0 0 ".." 
+".." ".." 0 0 0 0 0 0 0 ".." 
+13 10 0 0 0 0 1 0 7 17 
+6 4 0 0 0 0 1 0 4 7 
+7 6 0 0 0 0 0 0 3 10 
+6718 4784 3770 3065 2462 2367 2177 2535 2175 2252 
+3164 2228 1690 1394 1120 1117 1022 1220 1030 1049 
+3554 2556 2080 1671 1342 1250 1155 1315 1145 1203 
+6337 4534 3508 2988 2152 2259 2058 2489 1850 1889 
+3013 2119 1595 1362 1006 1067 971 1203 904 901 
+3324 2415 1913 1626 1146 1192 1087 1286 946 988 
+203 164 82 76 310 108 119 46 13 8 
+87 77 31 31 114 50 51 17 4 4 
+116 87 51 45 196 58 68 29 9 4 
+".." ".." ".." ".." ".." ".." 0 0 312 355 
+".." ".." ".." ".." ".." ".." 0 0 122 144 
+".." ".." ".." ".." ".." ".." 0 0 190 211 
+178 86 180 1 ".." ".." 0 0 ".." ".." 
+64 32 64 1 ".." ".." 0 0 ".." ".." 
+114 54 116 ".." ".." ".." 0 0 ".." ".." 
+32458 33578 36774 122751 186382 ".." ".." ".." ".." ".." 
+15125 15650 ".." ".." 133930 ".." ".." ".." ".." ".." 
+17333 17928 ".." ".." 52452 ".." ".." ".." ".." ".." 
+30869 31734 29467 46687 47439 ".." ".." ".." ".." ".." 
+14125 14560 ".." ".." 24074 ".." ".." ".." ".." ".." 
+16744 17174 ".." ".." 23365 ".." ".." ".." ".." ".." 
+1056 1477 6755 74582 137329 ".." ".." ".." ".." ".." 
+721 907 ".." ".." 108849 ".." ".." ".." ".." ".." 
+335 570 ".." ".." 28480 ".." ".." ".." ".." ".." 
+269 112 95 388 810 ".." ".." ".." ".." ".." 
+147 68 ".." ".." 512 ".." ".." ".." ".." ".." 
+122 44 ".." ".." 298 ".." ".." ".." ".." ".." 
+264 255 457 1094 804 ".." ".." ".." ".." ".." 
+132 115 ".." ".." 495 ".." ".." ".." ".." ".." 
+132 140 ".." ".." 309 ".." ".." ".." ".." ".." 
+".." ".." 14588 14517 ".." ".." ".." ".." 20234 ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." 12272 10561 ".." ".." ".." ".." 6368 ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." 2298 3949 ".." ".." ".." ".." 13792 ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." 18 7 ".." ".." ".." ".." 74 ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." 38589 42228 31765 28069 20772 17579 
+".." ".." ".." ".." 0 0 0 0 ".." ".." 
+".." ".." ".." ".." 0 0 0 0 ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+".." ".." ".." ".." ".." ".." ".." ".." ".." ".." 
+;

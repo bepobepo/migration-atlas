@@ -1,0 +1,15 @@
+{
+  "name": "Stats NZ \u00b7 International migration",
+  "url": "https://www.stats.govt.nz/information-releases/international-migration-september-2026/",
+  "releaseDate": "2026-11-12",
+  "retrieved": "2026-11-21",
+  "definition": "Final outcomes-based estimates for all citizenships, ages and sexes. A migrant spends at least 12 of the next 16 months in New Zealand after arriving, or overseas after departing. Each observation covers a year ending in December.",
+  "pairGroup": "nz_outcomes",
+  "license": "Creative Commons Attribution 4.0 International",
+  "monthlyUrl": "https://www.stats.govt.nz/assets/Uploads/International-migration/International-migration-September-2026/Download-data/international-migration-september-2026-estimated-migration-by-age-and-sex.csv",
+  "releaseFile": "september-2026-release.html.gz",
+  "releaseSha256": "cf64dc8ff5981da55431b5523239c09ac83cdfd3c987f7f410c03cf81356ce85",
+  "monthlyFile": "september-2026-age-sex.csv.gz",
+  "monthlySha256": "f8250b9aa86ea91ffd2c0d09d5dde68dc78dde0261e71309641ebb1e6970bf24",
+  "annualComparisonNote": "Two 2022 totals in the published annual chart differ by one person from the sums of the separately published monthly estimates. Departures are 94,515 in the annual chart and 94,516 in the monthly sum. Net migration is 24,875 in the annual chart and 24,874 in the monthly sum. The export follows the published annual chart."
+}

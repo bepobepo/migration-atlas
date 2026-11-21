@@ -6,7 +6,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "../dist");
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 const json = (file) => JSON.parse(read(file));
-const official = json("data/official/flows.json");
+const official = JSON.parse(require("node:zlib").gunzipSync(fs.readFileSync(path.join(root, "../reference/official/flows.json.gz"))));
 const observations = new Map(
   official.records.map((record) => [
     `${record.origin}:${record.destination}:${record.year}`,
@@ -162,7 +162,7 @@ async function boot() {
     );
     assert.match(
       $("#coverage-results").textContent,
-      /mirror observations only/,
+      /own report observations available/,
     );
     assert.ok(
       [...app.w.document.querySelectorAll("#coverage-results a")].every((a) =>
@@ -198,6 +198,8 @@ async function boot() {
 
     // Published receipt counts win; official zeros and estimates remain distinct.
     const fixtures = [
+      ["AFG", "AUT", 1998, 183, "Official statistics"],
+      ["BLR", "POL", 2006, 248, "Official statistics"],
       ["AFG", "AUT", 2008, 808, "Official statistics"],
       ["AFG", "LIE", 2020, 0, "Official statistics"],
       ["AFG", "DEU", 2020, 7511, "Official estimates"],
@@ -216,8 +218,15 @@ async function boot() {
       "the conflicting departure report is retained, never added or averaged",
     );
 
+    assert.equal(
+      api.getRouteProvenance("BLR", "POL", 2006, 2006).years[0].alternatives[0].value,
+      86,
+      "the historical sender report stays distinct from Poland’s 248 reported arrivals",
+    );
+
     // The annual, five-year and compact-series paths agree in both orientations.
     for (const [start, end] of [
+      [1998, 2000],
       [2008, 2008],
       [2007, 2009],
       [2020, 2024],

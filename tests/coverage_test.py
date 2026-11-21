@@ -1,5 +1,6 @@
 """Independently reconcile public country coverage with chosen official rows."""
 from collections import Counter, defaultdict
+import gzip
 import hashlib
 import importlib.util
 import json
@@ -19,7 +20,7 @@ class CoverageTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.matrix = json.loads((ROOT / 'dist/data/official/coverage.json').read_text())
-        cls.flows = json.loads((ROOT / 'dist/data/official/flows.json').read_text())
+        cls.flows = json.loads(gzip.decompress((ROOT / 'reference/official/flows.json.gz').read_bytes()))
         cls.inventory = json.loads((ROOT / 'reference/official-sources.json').read_text())
         cls.countries = json.loads((ROOT / 'dist/data/countries.json').read_text())
 
@@ -30,7 +31,7 @@ class CoverageTests(unittest.TestCase):
         self.assertEqual(set(self.inventory['countries']), codes)
         self.assertEqual(self.matrix['annualYears'], list(range(1960, 2025)))
         checks = self.matrix['inputChecksums']
-        for key, path in [('chosenFlowsSha256', 'dist/data/official/flows.json'), ('inventorySha256', 'reference/official-sources.json'), ('countriesSha256', 'dist/data/countries.json')]:
+        for key, path in [('chosenFlowsSha256', 'reference/official/flows.json.gz'), ('inventorySha256', 'reference/official-sources.json'), ('countriesSha256', 'dist/data/countries.json')]:
             self.assertEqual(checks[key], hashlib.sha256((ROOT / path).read_bytes()).hexdigest())
 
     def test_every_chosen_observation_counted_once_per_direction(self):

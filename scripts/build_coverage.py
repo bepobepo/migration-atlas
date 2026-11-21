@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -148,7 +149,7 @@ def create_coverage(flows: dict, inventory: dict, country_metadata: dict) -> dic
 
 def build(flows_path: Path, inventory_path: Path, countries_path: Path, output_path: Path) -> dict:
     flow_bytes, inventory_bytes = flows_path.read_bytes(), inventory_path.read_bytes()
-    result = create_coverage(json.loads(flow_bytes), json.loads(inventory_bytes), json.loads(countries_path.read_bytes()))
+    result = create_coverage(json.loads(gzip.decompress(flow_bytes) if flows_path.suffix == ".gz" else flow_bytes), json.loads(inventory_bytes), json.loads(countries_path.read_bytes()))
     result['inputChecksums'] = {
         'chosenFlowsSha256': hashlib.sha256(flow_bytes).hexdigest(),
         'inventorySha256': hashlib.sha256(inventory_bytes).hexdigest(),
@@ -161,7 +162,7 @@ def build(flows_path: Path, inventory_path: Path, countries_path: Path, output_p
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--flows', type=Path, default=ROOT / 'dist/data/official/flows.json')
+    parser.add_argument('--flows', type=Path, default=ROOT / 'reference/official/flows.json.gz')
     parser.add_argument('--inventory', type=Path, default=ROOT / 'reference/official-sources.json')
     parser.add_argument('--countries', type=Path, default=ROOT / 'dist/data/countries.json')
     parser.add_argument('--output', type=Path, default=ROOT / 'dist/data/official/coverage.json')
