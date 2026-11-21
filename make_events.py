@@ -10,7 +10,7 @@ rows=[
 (1981,1981,'Poland → Germany','POL','DEU','Life under martial law','Martial law imposed on 13 December 1981 and political repression accompanied emigration from Poland, including to West Germany.','https://www.bpb.de/themen/migration-integration/dossier-migration/252241/geschichte-der-migration-in-deutschland/'),
 (1989,1995,'Romania → Germany','ROU','DEU','Borders and possibilities','The Romanian revolution and the end of restrictions on mobility changed opportunities to move. Established links with Germany shaped migration opportunities.','https://www.bpb.de/themen/migration-integration/regionalprofile/english-version-country-profiles/58541/immigration-and-emigration-since-1990/'),
 (1992,1995,'Bosnia and Herzegovina → Germany','BIH','DEU','Displaced by war','War in Bosnia and Herzegovina forced people to seek safety across Europe, including in Germany. People sought protection in Germany during the war.','https://www.unhcr.org/sites/default/files/legacy-pdf/3ebf9bb50.pdf'),
-(1998,1999,'Colombia → Spain','COL','ESP','Across a shared language','The economic crisis beginning in Colombia in 1998, Spanish employment opportunities and a shared language contributed to increased emigration to Spain. This was a combination of pressures and opportunities, rather than a single starting point.','https://www.cancilleria.gov.co/en/node/142'),
+(1998,2006,'Colombia → Spain','COL','ESP','Work and security drew Colombians to Spain','Colombia’s 1998–99 recession hit the coffee-growing region especially hard. Colombia’s foreign ministry identifies jobs in Spain and a shared language as reasons people chose that destination.','https://www.cancilleria.gov.co/en/node/142'),
 (2004,2004,'Poland → United Kingdom','POL','GBR','An enlarged Europe','EU enlargement on 1 May 2004 and access to the UK labor market created new opportunities for Polish workers and families.','https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/articles/detailedcountryofbirthandnationalityanalysis/2013-05-16'),
 (2008,2013,'Spain → Germany','ESP','DEU','Looking for opportunity','The financial and employment crisis accompanied renewed migration from Spain to Germany. Work, family ties and individual circumstances influenced decisions.','https://www.bundestag.de/webarchiv/presse/hib/2014_01/01-260896'),
 (2011,2015,'Syria → Germany','SYR','DEU','Seeking safety','War in Syria forced people to leave their homes. Some sought protection in Germany.','https://www.bpb.de/themen/migration-integration/regionalprofile/english-version-country-profiles/262813/refuge-and-asylum-in-germany/'),
@@ -54,7 +54,28 @@ events.extend([
  dict(id=31,scope='route',origin='VNM',destination='USA',route='Vietnam → United States',start=1975,end=1975,title='Evacuation at the end of the war',text='The final days before the fall of Saigon in April 1975 included the evacuation of Vietnamese people associated with the former South Vietnamese government, followed by resettlement in the United States. UNHCR’s historical account distinguishes this evacuation from later refugee departures and other migration.',source='https://www.unhcr.org/africa/sites/afr/files/legacy-pdf/3ebf9bad0.pdf')
 ])
 events[16]['updates'] = [dict(year=2022, text='The Polish Office for Foreigners recorded another increase in applications following the February 2022 invasion of Ukraine.')]
+events[10]['additionalSource'] = 'https://www.ub.edu/geocrit/b3w-755.htm'
+events[10]['updates'] = [dict(year=2000, text='Researchers studying the surge around 2000 also linked departures to the escalation of Colombia’s armed conflict.')]
+events.extend([
+    dict(id=32, scope='route', origin='ESP', destination='COL', route='Spain → Colombia',
+         start=2008, end=2014, title='Returning to Colombia during Spain’s jobs crisis',
+         text='After the 2008 downturn, some Colombians living in Spain chose to return. Interviews with returnees describe job losses, difficulty earning enough to stay, and family ties in Colombia. The departure figures include people of every nationality.',
+         source='https://repository.iom.int/bitstream/handle/20.500.11788/1397/ROBUE-OIM_016.pdf?isAllowed=y&sequence=1',
+         additionalSource='https://revistas.javeriana.edu.co/files-articulos/PaPo/PaPo%2024-2%20%282019%29/77762387005/'),
+    dict(id=33, scope='route', origin='COL', destination='ESP', route='Colombia → Spain',
+         start=2015, end=2023, title='Visa-free short visits to Spain',
+         text='From 3 December 2015, Colombian citizens could visit Spain without a visa for up to 90 days in a 180-day period. Paid employment and long-term residence remained subject to separate rules.',
+         updates=[dict(year=2023, text='In 2023, Spain’s migration ministry and the International Organization for Migration documented that some Colombians used this route to look for work and subsequently struggled to obtain residence authorization.')],
+         source='https://eur-lex.europa.eu/eli/agree_internation/2015/2399/oj',
+         additionalSource='https://www.boe.es/buscar/doc.php?id=BOE-A-2023-26100'),
+    dict(id=34, scope='route', origin='COL', destination='ESP', route='Colombia → Spain',
+         start=2020, end=2024, title='Seeking protection in Spain',
+         text='Colombian human rights defender José Miguel told the Spanish Commission for Refugee Aid that armed groups had threatened him and his family. He sought asylum in Spain in early 2020.',
+         updates=[dict(year=2024, text='Spain’s Interior Ministry recorded 40,152 protection applications from Colombian nationals in 2024. Applications are recorded by nationality and filing date. The migration series counts changes of residence.')],
+         source='https://www.cear.es/sections-post/jose-miguel-defensor-de-derechos-humanos-colombia/',
+         additionalSource='https://www.interior.gob.es/opencms/pdf/archivos-y-documentacion/documentacion-y-publicaciones/publicaciones-descargables/publicaciones-periodicas/asilo-en-cifras/MINISTERIO_INTERIOR_Asilo_En_Cifras_ACC_01.pdf'),
+])
 for event in events:
-    event['catalogReviewedAt'] = '2026-11-06'
+    event['catalogReviewedAt'] = '2026-11-21' if event['id'] in (10, 32, 33, 34) else '2026-11-06'
     event['evidenceType'] = 'sourced_historical_context_not_causal_attribution'
 p=pathlib.Path(__file__).parent/'dist/data/events.json';json.dump(events,open(p,'w'))

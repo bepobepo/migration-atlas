@@ -51,6 +51,12 @@ assert.deepEqual(ids(match([["HTI", "USA"]], 2023, 2023)), []);
 assert.deepEqual(ids(match([["RWA", "TZA"]], 1994, 1994)), [29]);
 assert.deepEqual(ids(match([["CUB", "USA"]], 1980, 1980)), [30]);
 assert.deepEqual(ids(match([["VNM", "USA"]], 1975, 1975)), [31]);
+assert.deepEqual(ids(match([["COL", "ESP"]], 2000, 2024)), [34, 33, 10]);
+assert.deepEqual(ids(match([["ESP", "COL"]], 2000, 2024)), [32]);
+assert.deepEqual(ids(match([["COL", "ESP"]], 2008, 2013)), []);
+assert.deepEqual(ids(match([["COL", "ESP"]], 2024, 2024)), [34]);
+assert.doesNotMatch(context.historyNarrative(data[34], 2023), /40,152/);
+assert.match(context.historyNarrative(data[34], 2024), /40,152/);
 assert.equal(eventScope({}), "route");
 assert.equal(
   data[18].text.includes("2024"),
