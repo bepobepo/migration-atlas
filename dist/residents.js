@@ -55,12 +55,13 @@
   function render(dataset, body) {
     body.innerHTML = `
       <div class="residents-snapshot">
-        <div><p class="residents-total-label">International migrants living here</p>
-          <strong class="residents-total"></strong></div>
+        <div><p class="residents-total-label"></p>
+          <strong class="residents-total"></strong>
+          <p class="residents-date"></p></div>
         <label>Snapshot year<select class="residents-year"></select></label>
+        <p class="residents-population" hidden></p>
       </div>
       <p class="residents-definition"></p>
-      <p class="residents-date"></p>
       <div class="residents-filters">
         <label>Find an origin<input class="residents-search" type="search" placeholder="Country or area"></label>
       </div>
@@ -73,11 +74,13 @@
       <button type="button" class="residents-more" hidden></button>
       <p class="residents-coverage"></p>
       <p class="residents-source"></p>`;
+    body.querySelector(".residents-total-label").textContent = dataset.label || "International migrant residents";
     body.querySelector(".residents-definition").textContent = dataset.basis;
     body.querySelector(".residents-coverage").textContent = dataset.coverageNote;
     const credits = body.querySelector(".residents-source");
     for (const [label, url] of [[dataset.source.name, dataset.source.url],
-      ["Source workbook", dataset.source.workbookUrl], ["CC BY 3.0 IGO", dataset.source.licenseUrl]]) {
+      ["Source workbook", dataset.source.workbookUrl], [dataset.populationSource?.name, dataset.populationSource?.url],
+      ["CC BY 3.0 IGO", dataset.source.licenseUrl]]) {
       if (!url) continue;
       if (credits.childNodes.length) credits.append(" · ");
       const link = element("a", label + " ↗");
@@ -122,11 +125,21 @@
       more.textContent = `Show ${Math.min(PAGE_SIZE, selected.length - shown.length)} more`;
     }
     function updateYear() {
-      const index = dataset.years.indexOf(Number(yearPicker.value));
+      const year = Number(yearPicker.value);
+      const index = dataset.years.indexOf(year);
       const total = dataset.total[index];
       body.querySelector(".residents-total").textContent = total == null ? "Unavailable" : number.format(total);
-      body.querySelector(".residents-date").textContent =
-        `Estimates at 1 July ${dataset.years[index]}. Each share uses the total international migrant population living in ${dataset.name} that year.`;
+      body.querySelector(".residents-date").textContent = `Estimated residents on 1 July ${year}`;
+      const population = dataset.population?.[index];
+      const comparison = body.querySelector(".residents-population");
+      comparison.hidden = !(total != null && population > 0);
+      if (!comparison.hidden) {
+        const basis = dataset.populationSource.projectionYears.includes(year) ? "projection" : "estimate";
+        comparison.textContent = `${percentage(total, population)} of all residents, using the UN’s midyear population ${basis} of ${number.format(population)}.`;
+      }
+      body.querySelector("caption").textContent = total == null
+        ? "Origins of migrant residents"
+        : `Origins of the ${number.format(total)} migrant residents`;
       sorted = dataset.origins.map(({code, name, values}) => ({code, name, value: values[index]}));
       if (dataset.other?.[index] != null) {
         sorted.push({ code: "", name: "Other origins", value: dataset.other[index] });
@@ -145,7 +158,7 @@
 
   async function loadCountry(code) {
     if (!cache.has(code)) {
-      const pending = fetch(`data/residents/${code}.json`).then(async response => {
+      const pending = fetch(`data/residents/${code}.json`, { cache: "no-cache" }).then(async response => {
         if (response.status === 404) return null;
         if (!response.ok) throw Error("Could not load resident origins");
         const data = await response.json();

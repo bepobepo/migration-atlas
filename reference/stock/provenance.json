@@ -18,5 +18,17 @@
   ],
   "independentUpstreamFingerprint": "https://softon.dev/docs/migration/get-un-stock-meta",
   "isoCodes": "ISO 3166-1 numeric to alpha-3, Debian iso-codes 4.18.0-1, /usr/share/iso-codes/json/iso_3166-1.json",
-  "transform": "Both sexes combined, persons on 1 July, all published snapshots. Extracted for atlas destinations. The original world total and Others category are preserved. Named origin countries and areas are mapped by numeric codes. Omitted regional and development aggregates overlap the named origins."
+  "transform": "Both sexes combined, persons on 1 July, all published snapshots. Extracted for atlas destinations. The original world total and Others category are preserved. Named origin countries and areas are mapped by numeric codes. Omitted regional and development aggregates overlap the named origins.",
+  "population": {
+    "name": "UN DESA World Population Prospects 2024",
+    "url": "https://population.un.org/wpp/",
+    "dataUrl": "https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard)/CSV_FILES/WPP2024_Demographic_Indicators_Medium.csv.gz",
+    "originalSha256": "286ac36bb1415e2e1ade03acfef0a29f0e4c087e2f78e38c48f50c5df89082bc",
+    "file": "midyear-population.csv",
+    "sha256": "d2dcdd137d8e98ab8412aa9dc133407b367e3670cac972581a09696043f61246",
+    "projectionYears": [
+      2024
+    ],
+    "transform": "Medium variant, Country/Area rows for atlas migrant-stock destinations and snapshot years. Original TPopulation1July in thousands of persons, multiplied by 1,000 for display."
+  }
 }

@@ -44,7 +44,10 @@
 .residents-search { width: min(300px, 100%); }
 .residents-total-label { margin: 0 0 4px; font-size: 13px; }
 .residents-total { font: 32px Georgia, serif; font-variant-numeric: tabular-nums; }
-.residents-definition, .residents-date, .residents-coverage, .residents-source, .residents-results {
+.residents-date { margin: 4px 0 0; font-size: .875rem; }
+.residents-population { flex-basis: 100%; margin: 0; font-size: .9375rem; line-height: 1.45; }
+.residents-definition { font-size: 1rem; line-height: 1.5; margin: 12px 0; }
+.residents-coverage, .residents-source, .residents-results {
   font-size: 13px;
   line-height: 1.5;
   margin: 12px 0;

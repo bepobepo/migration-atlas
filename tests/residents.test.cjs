@@ -29,7 +29,8 @@ const { JSDOM } = require("jsdom");
     if (code === "BEL") return { ok:true, json:async () => data };
     if (code === "USA") return new Promise(resolve => { resolveSlowRequest = resolve; });
     if (code === "FRA" && fail) throw Error("Fetch failed");
-    if (code === "DZA") return {ok: true, json: async () => require("../dist/data/residents/DZA.json")};
+    if (["DZA", "ISR", "JPN", "BEN", "SOM"].includes(code))
+      return {ok: true, json: async () => require("../dist/data/residents/" + code + ".json")};
     return {status:404, ok:false};
   };
   w.eval(fs.readFileSync(path.resolve(__dirname, "../dist/residents.js"), "utf8"));
@@ -41,6 +42,7 @@ const { JSDOM } = require("jsdom");
   assert.equal(pauseCalls, 2);
   assert.match($("#residents-heading").textContent, /Belgium/);
   assert.equal($(".residents-total").textContent, "16,000");
+  assert($(".residents-population").hidden);
   const texts = () => Array.from(w.document.querySelectorAll(".residents-table tbody tr"), e => e.textContent);
   assert.deepEqual(texts(), ["France4,00025%","Other origins1000.6%","Germany1<0.1%","Netherlands00%","PolandUnavailable—"]);
   $(".residents-search").value = "NLD";
@@ -66,6 +68,25 @@ const { JSDOM } = require("jsdom");
   assert.equal($("tbody tr td").textContent, "563");
   assert.match($(".residents-date").textContent, /1 July 2024/);
   assert.match($(".residents-source a").href, /^https:\/\/www.un.org\//);
+  await w.openResidents("ISR");
+  assert.equal($(".residents-total-label").textContent, "Residents born abroad");
+  assert.match($(".residents-definition").textContent, /became a citizen/);
+  assert.match($(".residents-definition").textContent, /refugee/);
+  assert.equal($(".residents-total").textContent, "2,091,569");
+  assert.match($(".residents-population").textContent, /22\.3% of all residents.*projection of 9,387,021/);
+  assert.match($("caption").textContent, /2,091,569 migrant residents/);
+  $(".residents-search").value = "Morocco";
+  $(".residents-search").dispatchEvent(new w.Event("input"));
+  assert.deepEqual(texts(), ["Morocco190,6079.1%"]);
+  $(".residents-year").value = "2020";
+  $(".residents-year").dispatchEvent(new w.Event("change"));
+  assert.match($(".residents-population").textContent, /23\.5% of all residents.*estimate of 8,800,376/);
+  assert.match($("caption").textContent, /2,068,830 migrant residents/);
+  for (const [country, description] of [["JPN", /uses citizenship here/],
+    ["BEN", /both birthplace and citizenship/], ["SOM", /direct data were unavailable/]]) {
+    await w.openResidents(country);
+    assert.match($(".residents-definition").textContent, description);
+  }
   dom.window.close();
   console.log("PASS resident country selection, dated snapshots, fixed share denominator, search, missing/zero handling, retry, stale requests and focus return.");
 })().catch(err => { console.error(err); process.exitCode = 1; });

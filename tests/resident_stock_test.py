@@ -1,6 +1,8 @@
 """Audit every resident stock record against the original UN workbook, offline."""
+import csv
 import hashlib
 import json
+from decimal import Decimal
 from pathlib import Path
 
 from openpyxl import load_workbook
@@ -23,12 +25,20 @@ def test_resident_exports():
     destinations = {code for code, row in atlas.items() if row["hasData"]}
     records = {p.stem: json.loads(p.read_text()) for p in (DATA / "residents").glob("*.json")}
     assert destinations == records.keys() and len(destinations) == 194
+    population_file = REF / source["population"]["file"]
+    assert hashlib.sha256(population_file.read_bytes()).hexdigest() == source["population"]["sha256"]
+    with population_file.open() as stream:
+        populations = {(r["ISO3_code"], int(r["Time"])): Decimal(r["TPopulation1July"]) * 1000
+                       for r in csv.DictReader(stream)}
+    assert len(populations) == len(destinations) * len(YEARS)
 
     actual = {}
     for dest, row in records.items():
         assert row["destination"] == dest and row["name"] == atlas[dest]["name"]
         assert row["source"]["year"] == 2024 and row["source"]["url"] == source["url"]
         assert row["years"] == YEARS and row["basis"] and row["coverageNote"]
+        assert row["label"] and row["populationSource"]["projectionYears"] == [2024]
+        assert row["population"] == [populations[dest, y] for y in YEARS]
         assert len({r["code"] for r in row["origins"]}) == len(row["origins"])
         for origin in row["origins"]:
             assert origin["name"] and origin["code"] != dest
@@ -64,6 +74,8 @@ def test_resident_exports():
     assert actual["DZA", "FRA"][-1] == 563
     assert actual["BEL", "World"][-1] == 2_349_032
     assert actual["BEL", "NLD"][-1] == 136_488
+    assert records["ISR"]["label"] == "Residents born abroad"
+    assert actual["ISR", "World"][-1] == 2_091_569 and populations["ISR", 2024] == 9_387_021
     assert any(0 in vals for vals in actual.values())
     assert "citizenship" in records["JPN"]["basis"]
     assert "East Jerusalem" in records["PSE"]["coverageNote"]

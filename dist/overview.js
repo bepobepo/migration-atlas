@@ -17,7 +17,7 @@
     <div class="overview-actions">
       <button type="button" id="overview-in" aria-pressed="false">Who arrived?<span>Migration into the country</span></button>
       <button type="button" id="overview-out" aria-pressed="false">Where did people go?<span>Migration out of the country</span></button>
-      <button type="button" id="overview-residents" aria-haspopup="dialog">Who lives here?<span>Residents by origin</span></button>
+      <button type="button" id="overview-residents" aria-haspopup="dialog">Who lives here?<span>International migrants by origin</span></button>
     </div>
     <p id="overview-prompt" role="status" hidden></p>
     <div id="overview-summary" hidden>
