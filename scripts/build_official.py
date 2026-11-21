@@ -3,6 +3,61 @@ import json, hashlib
 from collections import defaultdict,Counter
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+
+
+def pack_flows(result):
+    """Store repeated receipt metadata once while preserving both reporters."""
+    countries = sorted(result['coverage'])
+    country_ids = {code: index for index, code in enumerate(countries)}
+    profiles = []
+    profile_ids = {}
+    years = defaultdict(list)
+    alternate_count = 0
+
+    def profile_id(receipt):
+        reporter = receipt['reportingCountry']
+        if reporter == receipt['destination']:
+            endpoint = 'destination'
+        elif reporter == receipt['origin']:
+            endpoint = 'origin'
+        else:
+            raise ValueError('Reporter must be a corridor endpoint')
+        signature = (
+            receipt['sourceId'], receipt['flags'], receipt['ageDefinition'], endpoint,
+        )
+        if signature not in profile_ids:
+            profile_ids[signature] = len(profiles)
+            names = ('sourceId', 'flags', 'ageDefinition', 'reporter')
+            profiles.append(dict(zip(names, signature)))
+        return profile_ids[signature]
+
+    for record in result['records']:
+        origin, destination, year = record['origin'], record['destination'], record['year']
+        row = [
+            country_ids[origin], country_ids[destination], profile_id(record),
+            record['value'], record['modelValue'],
+        ]
+        if record['alternatives']:
+            alternates = []
+            for receipt in record['alternatives']:
+                route_year = (receipt['origin'], receipt['destination'], receipt['year'])
+                if route_year != (origin, destination, year):
+                    raise ValueError('Alternative receipt has a different corridor or year')
+                alternates.append([profile_id(receipt), receipt['value']])
+            row.append(alternates)
+            alternate_count += len(alternates)
+        years[year].append(row)
+
+    return {
+        'schemaVersion': 2,
+        'sources': result['sources'], 'coverage': result['coverage'],
+        'policy': result['policy'], 'sourceChecksum': result['sourceChecksum'],
+        'countries': countries, 'profiles': profiles,
+        'recordCount': len(result['records']), 'alternativeCount': alternate_count,
+        'years': sorted(years.items()),
+    }
+
+
 raw=ROOT/'dist/data/official/eurostat.json'
 payload=json.loads(raw.read_text()); chosen={}; alternatives=defaultdict(list)
 for source in payload['sources'].values(): source['measure']=source['basis']
@@ -34,6 +89,7 @@ for code,country in json.loads((ROOT/'dist/data/countries.json').read_text()).it
  coverage[code]={'incomingRecordYears':len(incoming),'outgoingRecordYears':len(outgoing),'years':sorted({r['year'] for r in incoming+outgoing}),'status':'partial_official_coverage' if incoming or outgoing else 'model_only'}
 result={'schemaVersion':1,'sources':payload['sources'],'records':records,'coverage':coverage,'sourceChecksum':hashlib.sha256(raw.read_bytes()).hexdigest(),'policy':'Receiver-reported immigration by previous residence; sender-reported emigration by next residence; otherwise FLOW model. Residence stocks, citizenship flows, admissions and permit/visa counts are not substituted.'}
 (ROOT/'dist/data/official/flows.json').write_text(json.dumps(result,separators=(',',':')))
+(ROOT/'dist/data/official/flows.compact.json').write_text(json.dumps(pack_flows(result),separators=(',',':')))
 context=json.loads((ROOT/'reference/official/belarus-poland-context.json').read_text())
 (ROOT/'dist/data/official/context.json').write_text(json.dumps(context,separators=(',',':')))
 print('Official selected observations:',len(records),'alternative reports:',sum(map(len,alternatives.values())),'countries:',len(coverage),'source types:',dict(Counter(r['sourceId'] for r in records)))

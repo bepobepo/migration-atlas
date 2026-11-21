@@ -12,7 +12,15 @@ Obtain https://osf.io/download/p58ay/ as `/tmp/flow.csv`, and Natural Earth's `n
 
 Names and schematic map endpoints are pinned in `reference/countries.json`; provenance is in `reference/README.md`. Natural Earth is public domain. D3 v7 uses the ISC license.
 
-Choose an origin under **From** and **Everywhere** under **To** to explore all covered outgoing destinations. The map compares positive reported flows; arrows can show all selected destinations or the largest 30. Missing official observations do not become zeroes. Search and the arrow limit do not change the selected reported subtotal or its coverage label. Click an arrow for its tooltip or a destination for full migration details; the details include a link back to all destinations. Worldwide counterparts are included for every source country.
+## Exploring a country
+
+Choose a country on the main page to see its arrivals and departures for the selected years, including how much of each figure is covered by the sources. Choose **Who arrived?** to rank origins or **Where did people go?** to rank destinations. The comparison shows how the leading partners changed from the preceding period. Open a route to see both directions, yearly evidence and available historical context. Scrubbing the timeline also updates the ranked figures and the dates opened by a route card. **Discover routes** opens selected official comparisons with the countries and dates already set.
+
+**Who lives here?** shows the international migrant population resident in the selected country on 1 July of a published observation year. The UN DESA International Migrant Stock 2024 covers eight snapshots from 1990 to 2024. Origin usually means birthplace, with citizenship or imputed estimates used for some destinations. Each percentage uses the destination’s total international migrant stock on the same date. Changes of residence over a time range use separate flow data. [UN DESA release](https://www.un.org/development/desa/pd/content/International-migrant-stock)
+
+The pinned workbook, checksum and provenance are in `reference/stock/`. Rebuild with `python scripts/import_migrant_stock.py` and verify with `python tests/resident_stock_test.py`. Both commands use openpyxl. The browser fetches a single destination’s stock file on demand.
+
+Advanced selection supports multiple counterparts, Everywhere and either arrows or color. Search and the arrow limit leave the selected range totals and coverage intact.
 
 Use **From year**, **To year**, and **Apply range** on the timeline or in route details for any inclusive range within 1960–2024, including a single year. For total immigration, choose a country and **Incoming**; **Outgoing** shows emigration, while **All movement** combines the two. Counts use integer tenths internally; official figures retain their published precision. Five-year files and annual files are reconciled through one source resolver. Failed loads never produce a partial total. Published official gaps are shown as unavailable, and reported subtotals with incomplete coverage are labelled rather than presented as complete range totals. Country/area selectors explicitly mark the 11 map features without FLOW estimates.
 

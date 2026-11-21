@@ -4,6 +4,53 @@ let dataPolicy = "official";
 let officialResolver = null;
 let officialReadyPromise = null;
 
+function* officialFlowRecords(payload) {
+  if (Array.isArray(payload?.records)) {
+    yield* payload.records;
+    return;
+  }
+  if (payload?.schemaVersion !== 2 || !Array.isArray(payload.countries) ||
+      !Array.isArray(payload.profiles) || !Array.isArray(payload.years))
+    throw Error("Official records are unavailable");
+
+  const { countries, profiles } = payload;
+  for (const profile of profiles) {
+    if (!profile || !Object.hasOwn(payload.sources, profile.sourceId) ||
+        !["origin", "destination"].includes(profile.reporter))
+      throw Error("Invalid compact official source profile");
+  }
+  function receipt(id, value, origin, destination, year) {
+    const profile = profiles[id];
+    if (!profile || !Number.isFinite(value) || value < 0)
+      throw Error("Invalid compact official receipt");
+    return {
+      origin, destination, year, value,
+      sourceId: profile.sourceId, flags: profile.flags,
+      ageDefinition: profile.ageDefinition,
+      reportingCountry: profile.reporter === "origin" ? origin : destination,
+    };
+  }
+
+  let recordCount = 0, alternativeCount = 0;
+  for (const [year, rows] of payload.years) {
+    for (const [from, to, profile, value, baseline, alternatives] of rows) {
+      const origin = countries[from], destination = countries[to];
+      const selected = receipt(profile, value, origin, destination, year);
+      selected.modelValue = baseline;
+      selected.alternatives = [];
+      if (alternatives) {
+        for (const [otherProfile, otherValue] of alternatives)
+          selected.alternatives.push(receipt(otherProfile, otherValue, origin, destination, year));
+        alternativeCount += selected.alternatives.length;
+      }
+      recordCount++;
+      yield selected;
+    }
+  }
+  if (recordCount !== payload.recordCount || alternativeCount !== payload.alternativeCount)
+    throw Error("Incomplete compact official records");
+}
+
 function createProvenanceResolver(payload, initialPolicy = "official") {
   const sources = {
     [MODEL_SOURCE_ID]: {
@@ -53,9 +100,7 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
       ),
     ];
   }
-  if (!payload || !Array.isArray(payload.records))
-    throw Error("Official records are unavailable");
-  for (const input of payload.records) {
+  for (const input of officialFlowRecords(payload)) {
     const { origin, destination, year, sourceId } = input;
     if (
       !/^[A-Z]{3}$/.test(origin || "") ||
@@ -71,12 +116,11 @@ function createProvenanceResolver(payload, initialPolicy = "official") {
     // never normalized into an official zero here.
     if (input.value == null || input.modelValue == null)
       throw Error("Missing official/model baseline value");
-    const record = {
-      ...input,
+    const record = Object.assign({}, input, {
       flags: flagsOf(input.flags),
       valueTenths: tenths(input.value),
       modelTenths: tenths(input.modelValue),
-    };
+    });
     if (
       record.flags.some((flag) => flag === "c" || flag === ":" || flag === "n")
     )
@@ -399,7 +443,7 @@ async function officialDataReady(options = {}) {
   if (officialResolver) return officialResolver;
   if (!officialReadyPromise) {
     const fetcher = options.fetcher || globalThis.fetch;
-    const url = options.url || "data/official/flows.json";
+    const url = options.url || "data/official/flows.compact.json";
     officialReadyPromise = Promise.resolve()
       .then(() => fetcher(url))
       .then((response) => {
@@ -448,6 +492,7 @@ function getRouteProvenance(...args) {
 
 if (typeof module !== "undefined" && module.exports)
   module.exports = {
+    officialFlowRecords,
     createProvenanceResolver,
     officialDataReady,
     setDataPolicy,

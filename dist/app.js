@@ -431,8 +431,12 @@ $("#pair-origin").onchange = $("#pair-destination").onchange = () => {
 };
 $("#show-all-routes").onchange = () => draw();
 function showEverywhere(origin) {
+  if (typeof applyCountryScenario === "function" && countries?.[origin]?.hasData) {
+    if ($("#route-dialog").open) closeRouteDetails();
+    return applyCountryScenario({focus: origin, direction: "out"});
+  }
   if (!countries?.[origin]) return;
-  if (timer) $("#play").click();
+  pauseWorldTimeline();
   if ($("#route-dialog").open) closeRouteDetails();
   state.country = origin;
   state.dir = "out";
@@ -468,7 +472,7 @@ $("#route-dialog").addEventListener("close", () => {
     !routeReturnFocus.closest("[hidden]") &&
     (!parentDialog || parentDialog.open)
       ? routeReturnFocus
-      : $("#pair-open");
+      : document.querySelector("#country") || $("#pair-open");
   target?.focus({ preventScroll: true });
 });
 $("#route-dialog").addEventListener("click", (event) => {
@@ -499,37 +503,52 @@ $("#pair-swap").onclick = () => {
   $("#pair-error").hidden = true;
   syncPairPicker();
 };
-async function openRouteDetails(origin, destination) {
+async function openRouteDetails(origin, destination, inspection = null) {
   if (pairError(origin, destination)) return;
   if (destination === "everywhere") {
     showEverywhere(origin);
     return;
   }
   const id = ++routeViewId;
+  if (inspection) inspection = { ...inspection };
   if (!$("#route-dialog").open) routeReturnFocus = document.activeElement;
-  if (timer) $("#play").click();
-  state.country = origin;
-  state.dir = "out";
-  state.everywhere = false;
-  state.query = "";
-  state.limit = 30;
-  $("#country").value = origin;
-  $("#search").value = "";
-  $("#pair-origin").value = origin;
-  $("#pair-destination").value = destination;
-  $("#pair-error").hidden = true;
-  syncPairPicker();
-  syncDirection();
-  selectRoute([origin, destination]);
+  pauseWorldTimeline();
+  if (!inspection) {
+    state.country = origin;
+    state.dir = "out";
+    state.everywhere = false;
+    state.query = "";
+    state.limit = 30;
+    $("#country").value = origin;
+    $("#search").value = "";
+    $("#pair-origin").value = origin;
+    $("#pair-destination").value = destination;
+    $("#pair-error").hidden = true;
+    syncPairPicker();
+    syncDirection();
+    selectRoute([origin, destination]);
+  }
+  const dialog = $("#route-dialog");
+  dialog.dataset.origin = origin;
+  dialog.dataset.destination = destination;
+  const view = inspection || state;
   $("#route-content").innerHTML =
-    `<span class="eyebrow">COUNTRY-TO-COUNTRY MIGRATION</span><h2 id="route-view-title">${name(origin)} → ${name(destination)}</h2><div class="route-view-controls"><label for="route-period">Five-year shortcuts<select id="route-period"></select></label><button id="route-reverse" type="button">Explore ${name(destination)} → ${name(origin)} ⇄</button></div><div class="route-stats" aria-live="polite"><section><span>${name(origin)} → ${name(destination)}</span><strong id="route-forward-count">Loading…</strong><small class="route-stat-period"></small></section><section><span>${name(destination)} → ${name(origin)}</span><strong id="route-reverse-count">Loading…</strong><small class="route-stat-period"></small></section></div><p class="route-explanation">Estimated migration counts across the selected calendar years (both years included), including possible repeat migrants. These are modelled movements between countries, not the number of people of a particular nationality living abroad.</p><h3>Migration over time</h3><p class="small">Choose a period to update the figures and the map. Figures before 1960 are unavailable.</p><div id="route-history" role="status">Loading the historical estimates…</div><div id="route-context"></div><div class="route-method"><h3>How to read these figures</h3><p>FLOW v1.0 combines annual female and male estimates across every calendar year in your selected range. It is designed for broad patterns; individual-route estimates can differ from official records. Estimated zero does not establish that nobody moved. These data do not identify individual people or prove why they migrated.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW dataset ↗</a> · <a class="source" href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Methodology ↗</a></div>`;
+    `<span class="eyebrow">COUNTRY-TO-COUNTRY MIGRATION</span><h2 id="route-view-title">${name(origin)} → ${name(destination)}</h2><div class="route-view-controls"><label for="route-period">Five-year shortcuts<select id="route-period"></select></label><button id="route-reverse" type="button">Explore ${name(destination)} → ${name(origin)} ⇄</button></div><div class="route-stats" aria-live="polite"><section><span>${name(origin)} → ${name(destination)}</span><strong id="route-forward-count">Loading…</strong><small class="route-stat-period"></small></section><section><span>${name(destination)} → ${name(origin)}</span><strong id="route-reverse-count">Loading…</strong><small class="route-stat-period"></small></section></div><p class="route-explanation">Estimated migration counts across the selected calendar years (both years included), including possible repeat migrants. These are modelled movements between countries, not the number of people of a particular nationality living abroad.</p><h3>Migration over time</h3><p class="small">Choose a period to explore the route. Years from 1960 onward also update the map. Earlier periods have historical context only.</p><div id="route-history" role="status">Loading the historical estimates…</div><div id="route-context"></div><div class="route-method"><h3>How to read these figures</h3><p>FLOW v1.0 combines annual female and male estimates across every calendar year in your selected range. It is designed for broad patterns; individual-route estimates can differ from official records. Estimated zero does not establish that nobody moved. These data do not identify individual people or prove why they migrated.</p><a class="source" href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW dataset ↗</a> · <a class="source" href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Methodology ↗</a></div>`;
   const periods = Array.from({ length: 15 }, (_, i) => 1950 + i * 5);
   const allDestinations = document.createElement("button");
   allDestinations.id = "route-all-destinations";
   allDestinations.type = "button";
   allDestinations.className = "all-destinations-link";
   allDestinations.textContent = `← All destinations from ${name(origin)}`;
-  allDestinations.onclick = () => showEverywhere(origin);
+  if (inspection && view.year < 1960) {
+    allDestinations.disabled = true;
+    allDestinations.title = "Country flow coverage starts in 1960.";
+  }
+  allDestinations.onclick = () => {
+    if (!inspection) return showEverywhere(origin);
+    closeRouteDetails();
+    return applyCountryScenario({ focus: origin, direction: "out", start: view.year, end: view.endYear });
+  };
   $("#route-view-title").before(allDestinations);
   const provenance = document.createElement("div");
   provenance.className = "route-provenance";
@@ -541,8 +560,8 @@ async function openRouteDetails(origin, destination) {
     option.textContent = period(year);
     $("#route-period").append(option);
   });
-  $("#route-period").value = state.year;
-  $("#route-reverse").onclick = () => openRouteDetails(destination, origin);
+  $("#route-period").value = view.year;
+  $("#route-reverse").onclick = () => openRouteDetails(destination, origin, inspection);
   const rangeForm = $("#range-form").cloneNode(true);
   rangeForm.id = "route-range-form";
   for (const field of ["start", "end", "error"]) {
@@ -552,73 +571,96 @@ async function openRouteDetails(origin, destination) {
       .querySelector(`label[for="range-${field}"]`)
       ?.setAttribute("for", el.id);
   }
-  rangeForm.querySelector(".range-start").value = Math.max(1960, state.year);
-  rangeForm.querySelector(".range-end").value = Math.max(1960, state.endYear);
+  rangeForm.querySelector(".range-start").value = Math.max(1960, view.year);
+  rangeForm.querySelector(".range-end").value = Math.max(1960, view.endYear);
   rangeForm.querySelector(".range-error").hidden = true;
   $(".route-view-controls").before(rangeForm);
-  bindRangeForm(rangeForm);
+  async function changePeriod(start, end, custom = true) {
+    if (!inspection) return setRange(start, end, custom);
+    if (start >= 1960) {
+      const applied = await applyCountryScenario({
+        focus: movement.focus, direction: movement.direction, peers: movement.peers,
+        start, end,
+      });
+      if (!applied || id !== routeViewId || !dialog.open) return;
+    }
+    return openRouteDetails(origin, destination, {
+      year: start, endYear: end, customRange: custom,
+    });
+  }
+  bindRangeForm(rangeForm, changePeriod);
   function updateFigures() {
     if (id !== routeViewId || !$("#route-dialog").open) return;
-    const display = (a, b) =>
-      dataStatus === "loading"
-        ? "Loading…"
-        : dataStatus === "error"
-          ? "Could not load"
-          : fullEstimate(rows.find((r) => r[0] === a && r[1] === b)?.[2]);
-    $("#route-forward-count").textContent =
-      dataStatus === "ready"
-        ? formatSourceValue(
-            rows.find((r) => r[0] === origin && r[1] === destination)?.[2],
-            summarizeProvenance(
-              [[origin, destination]],
-              state.year,
-              state.endYear,
-            ),
-          )
-        : display(origin, destination);
-    $("#route-reverse-count").textContent =
-      dataStatus === "ready"
-        ? formatSourceValue(
-            rows.find((r) => r[0] === destination && r[1] === origin)?.[2],
-            summarizeProvenance(
-              [[destination, origin]],
-              state.year,
-              state.endYear,
-            ),
-          )
-        : display(destination, origin);
+    const status = inspection ? inspection.status : dataStatus;
+    const visibleRows = inspection ? inspection.rows : rows;
+    for (const [selector, a, b] of [
+      ["#route-forward-count", origin, destination],
+      ["#route-reverse-count", destination, origin],
+    ]) {
+      $(selector).textContent = status === "ready"
+        ? formatSourceValue(visibleRows.find((r) => r[0] === a && r[1] === b)?.[2],
+            summarizeProvenance([[a, b]], view.year, view.endYear))
+        : status === "loading" ? "Loading…" : "Could not load";
+    }
     document
       .querySelectorAll(".route-stat-period")
-      .forEach((el) => (el.textContent = rangeLabel()));
+      .forEach((el) => (el.textContent = rangeLabel(view.year, view.endYear)));
     $("#route-period option[value='custom']")?.remove();
-    if (state.customRange) {
+    if (view.customRange) {
       const option = document.createElement("option");
       option.value = "custom";
-      option.textContent = `Custom: ${rangeLabel()}`;
+      option.textContent = `Custom: ${rangeLabel(view.year, view.endYear)}`;
       $("#route-period").append(option);
     }
-    $("#route-period").value = state.customRange ? "custom" : state.year;
+    $("#route-period").value = view.customRange ? "custom" : view.year;
     document.querySelectorAll(".history-period").forEach((button) => {
       const current =
-        +button.dataset.year === state.year && state.endYear === state.year + 4;
+        +button.dataset.year === view.year && view.endYear === view.year + 4;
       button.setAttribute("aria-pressed", String(current));
       button.closest("tr").classList.toggle("current-period", current);
     });
-    renderRouteContext($("#route-context"), origin, destination);
-    renderRouteDataPanel(origin, destination);
+    renderRouteContext($("#route-context"), origin, destination, view.year, view.endYear);
+    renderRouteDataPanel(origin, destination, inspection);
   }
   refreshRouteView = updateFigures;
-  const choosePeriod = (year) => setYear(year);
+  const choosePeriod = (year) => changePeriod(year, year + 4, false);
   $("#route-period").onchange = (event) => {
     if (event.target.value !== "custom") choosePeriod(+event.target.value);
   };
   if (!$("#route-dialog").open) $("#route-dialog").showModal();
   $("#route-close").focus({ preventScroll: true });
+  let series;
+  const pairAt = (start, end) => {
+    if (start < 1960) return [];
+    return [[origin, destination], [destination, origin]].flatMap(([a, b], i) => {
+      const values = series[i].peers[b].slice(start - 1960, end - 1959);
+      if (values.every((v) => v === null)) return [];
+      const tenths = values.reduce((sum, value) => sum + (value ?? 0), 0);
+      return [[a, b, tenths / 10]];
+    });
+  };
+  if (inspection) {
+    inspection.status = "loading";
+    inspection.rows = [];
+    updateFigures();
+    try {
+      series = await Promise.all([
+        loadCountrySeries(origin, "out"),
+        loadCountrySeries(destination, "out"),
+      ]);
+      inspection.rows = pairAt(view.year, view.endYear);
+      inspection.status = "ready";
+    } catch {
+      inspection.status = "error";
+    }
+    if (id !== routeViewId || !dialog.open) return;
+  }
   updateFigures();
   const history = await Promise.all(
     periods.map(async (year) => {
       try {
-        const data = await load(year);
+        if (inspection && !series) throw Error("Country series unavailable");
+        const data = inspection ? pairAt(year, year + 4) : await load(year);
         return {
           year,
           forward: data.find(
@@ -686,27 +728,27 @@ async function openRouteDetails(origin, destination) {
   if (history.some((item) => item.error)) {
     const retry = document.createElement("button");
     retry.textContent = "Retry unavailable periods";
-    retry.onclick = () => openRouteDetails(origin, destination);
+    retry.onclick = () => openRouteDetails(origin, destination, inspection);
     $("#route-history").append(retry);
   }
   updateFigures();
 }
-function renderRouteContext(container, origin, destination) {
+function renderRouteContext(container, origin, destination, start = state.year, end = state.endYear) {
   const related = historyMatches(events, {
     corridors: [[origin, destination]],
-    start: state.year,
-    end: state.endYear,
+    start,
+    end,
   });
   container.replaceChildren();
   const heading = document.createElement("h3");
-  heading.textContent = `Historical drivers · ${rangeLabel()}`;
+  heading.textContent = `Historical drivers · ${rangeLabel(start, end)}`;
   const cards = document.createElement("div");
   renderHistoryCards(cards, related, {
-    start: state.year,
-    end: state.endYear,
+    start,
+    end,
     nameForCode: name,
     showRouteGap: true,
-    emptyMessage: `No route-specific historical account or country context has been added for ${name(origin)} → ${name(destination)} in ${rangeLabel()}.`,
+    emptyMessage: `No route-specific historical account or country context has been added for ${name(origin)} → ${name(destination)} in ${rangeLabel(start, end)}.`,
   });
   const note = document.createElement("p");
   note.className = "small";
@@ -790,7 +832,7 @@ function detail() {
   const e = events[state.event];
   if (e) {
     $("#detail").innerHTML =
-      `<span class="story-tag">HISTORICAL CONTEXT · ${e.start}</span><h2 class="story-title">${e.title}</h2><div class="story-route">${eventLabel(e, name)}</div><p class="story-text">${e.text}</p><a class="source" href="${e.source}" target="_blank" rel="noopener">Read the historical source ↗</a>${e.additionalSource ? `<br><a class="source" href="${e.additionalSource}" target="_blank" rel="noopener">Further historical context ↗</a>` : ""}<p class="small">${eventScope(e) === "route" ? "Dashed line shows this story’s connection; its width does not encode a count." : "Country-wide context for the featured years; individual routes and motives differ."}</p>`;
+      `<span class="story-tag">HISTORICAL CONTEXT · ${e.start}</span><h2 class="story-title">${e.title}</h2><div class="story-route">${eventLabel(e, name)}</div><p class="story-text">${historyNarrative(e, state.endYear)}</p><a class="source" href="${e.source}" target="_blank" rel="noopener">Read the historical source ↗</a>${e.additionalSource ? `<br><a class="source" href="${e.additionalSource}" target="_blank" rel="noopener">Further historical context ↗</a>` : ""}<p class="small">${eventScope(e) === "route" ? "Dashed line shows this story’s connection; its width does not encode a count." : "Country-wide context for the featured years; individual routes and motives differ."}</p>`;
     if (state.country || state.route) {
       const back = document.createElement("button");
       back.className = "all-destinations-link";
@@ -1052,7 +1094,7 @@ function validateRange(start, end) {
     ? "The start year must be no later than the end year."
     : "";
 }
-function bindRangeForm(form) {
+function bindRangeForm(form, applyRange = setRange) {
   form.onsubmit = (event) => {
     event.preventDefault();
     const start = Number(form.querySelector(".range-start").value);
@@ -1061,7 +1103,7 @@ function bindRangeForm(form) {
     const message = form.querySelector(".range-error");
     message.hidden = !error;
     message.textContent = error;
-    if (!error) setRange(start, end);
+    if (!error) return applyRange(start, end);
   };
 }
 bindRangeForm($("#range-form"));
@@ -1070,7 +1112,7 @@ function setYear(year) {
 }
 async function setRange(start, end, custom = true) {
   if (custom && validateRange(start, end)) return;
-  if (custom && timer) $("#play").click();
+  if (custom) pauseWorldTimeline();
   state.year = start;
   state.endYear = end;
   state.customRange = custom;
@@ -1129,7 +1171,7 @@ function modal(html) {
 }
 const methodology = () =>
   modal(
-    '<div class="eyebrow">METHODOLOGY & SOURCES</div><h2>Reading the atlas</h2><p>Official statistics is the default: it shows published compatible official flows and keeps missing observations unavailable. Partial figures are reported subtotals, never complete range totals. Residence figures appear separately with their dates and measure; they do not drive migration arrows or shading. Best available comparison is optional and uses compatible Eurostat annual flows for available country pairs during 2008–2024: destination-reported immigration by previous residence first, then origin-reported emigration by next residence. Only the selected comparison modes use FLOW estimates for other route-years. Values are classified as official statistics, official estimates, model estimates or mixed; official does not mean complete observed arrivals. Estimates/imputations, provisional values and definition breaks retain their flags. Reports follow country-specific metadata, including exclusions affecting protected populations in Poland. Receiver and sender reports may disagree and are never summed or averaged. Missing official data does not mean zero. Country coverage &amp; sources shows actual imports and research candidates; most national sources have not been individually verified. Switch to Best available comparison or FLOW model only to inspect model estimates.</p><p><a href="https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm" target="_blank" rel="noopener">Eurostat definitions, flags and national exceptions ↗</a></p><p>FLOW v1.0 supplies annual modelled bilateral migration estimates for 1960–2024. Female and male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. These are estimates of migration, not border crossings or unique individuals across years. No quantitative estimates are supplied for 1950–1959.</p><p>Beyer, Schewe, Abel, Warner and Campo (2026) provide this model for broad patterns. Their usage notes describe individual migration corridors as one of its least suitable uses; official or statistically harmonised records should be preferred when available. Estimated zero does not establish that no migration occurred. Missing observations are never converted to zero.</p><p>Worldwide coverage includes all 194 FLOW countries, including routes with no European endpoint. Modern boundaries provide geographic reference throughout. Historical state changes are not reconstructed or allocated by this app.</p><p>Overview arrows show the 30 largest positive estimates for your filters. Choosing Everywhere shows all positive outgoing estimates by default; you can switch back to the largest 30. The total includes every covered destination, including estimated zeros, regardless of search text or the arrow limit. All destinations covered by the source are included. The list includes all available estimates, including estimated zeros. Line width uses one square-root scale across periods, capped at 2.4 screen pixels. Arrowheads remain 7 screen pixels across zoom levels; line width and arrowhead size never grow with zoom. Incoming/outgoing filters refer to the selected country. Country label points mark schematic connections, not physical travel routes. Small countries omitted from the simplified boundaries are shown as points. Dashed story connections are unweighted and excluded from estimates. Canary Islands stories are regional context within Spain.</p><p>Historical events have individual source links. Event ranges identify featured periods, not necessarily the beginning or end of a migration wave. Residence permits, asylum applications, refugee registrations and population stocks must retain their own meanings; they are not added to map totals. Historical associations do not establish causation from model changes.</p><p><a href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · HDX · CC BY</a><br><a href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Research paper and usage limitations</a><br><a href="https://osf.io/download/p58ay/" target="_blank" rel="noopener">Archived source CSV</a><br><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth · public-domain boundaries</a><br>D3 v7 · ISC license. Data snapshot: November 2026.</p>',
+    '<div class="eyebrow">METHODOLOGY & SOURCES</div><h2>Reading the atlas</h2><p>Official statistics is the default: it shows published compatible official flows and keeps missing observations unavailable. Partial figures are reported subtotals, never complete range totals. Residence figures appear separately with their dates and measure; they do not drive migration arrows or shading. Best available comparison is optional and uses compatible Eurostat annual flows for available country pairs during 2008–2024: destination-reported immigration by previous residence first, then origin-reported emigration by next residence. Only the selected comparison modes use FLOW estimates for other route-years. Values are classified as official statistics, official estimates, model estimates or mixed; official does not mean complete observed arrivals. Estimates/imputations, provisional values and definition breaks retain their flags. Reports follow country-specific metadata, including exclusions affecting protected populations in Poland. Receiver and sender reports may disagree and are never summed or averaged. Missing official data does not mean zero. Country coverage &amp; sources shows actual imports and research candidates; the national-source review verified primary metadata for 192 of 194 countries. Two remain unresolved. Only imported observations contribute to flow totals. Switch to Best available comparison or FLOW model only to inspect model estimates.</p><p><a href="https://ec.europa.eu/eurostat/cache/metadata/en/migr_immi_esms.htm" target="_blank" rel="noopener">Eurostat definitions, flags and national exceptions ↗</a></p><p>FLOW v1.0 supplies annual modelled bilateral migration estimates for 1960–2024. Female and male estimates are summed across every calendar year in the selected range, including both endpoints. Five-year quick steps remain available. These are estimates of migration, not border crossings or unique individuals across years. No quantitative estimates are supplied for 1950–1959.</p><p>Beyer, Schewe, Abel, Warner and Campo (2026) provide this model for broad patterns. Their usage notes describe individual migration corridors as one of its least suitable uses; official or statistically harmonised records should be preferred when available. Estimated zero does not establish that no migration occurred. Missing observations are never converted to zero.</p><p>Worldwide coverage includes all 194 FLOW countries, including routes with no European endpoint. Modern boundaries provide geographic reference throughout. Historical state changes are not reconstructed or allocated by this app.</p><p>Overview arrows show the 30 largest positive estimates for your filters. Choosing Everywhere shows all positive outgoing estimates by default; you can switch back to the largest 30. The total includes every covered destination, including estimated zeros, regardless of search text or the arrow limit. All destinations covered by the source are included. The list includes all available estimates, including estimated zeros. Line width uses one square-root scale across periods, capped at 2.4 screen pixels. Arrowheads remain 7 screen pixels across zoom levels; line width and arrowhead size never grow with zoom. Incoming/outgoing filters refer to the selected country. Country label points mark schematic connections, not physical travel routes. Small countries omitted from the simplified boundaries are shown as points. Dashed story connections are unweighted and excluded from estimates. Canary Islands stories are regional context within Spain.</p><p>Historical events have individual source links. Event ranges identify featured periods, not necessarily the beginning or end of a migration wave. Residence permits, asylum applications, refugee registrations and population stocks must retain their own meanings; they are not added to map totals. Historical associations do not establish causation from model changes.</p><p><a href="https://data.humdata.org/dataset/annual-migration-flow-estimates-by-sex-between-all-countries-since-1960" target="_blank" rel="noopener">FLOW v1.0 · HDX · CC BY</a><br><a href="https://www.nature.com/articles/s41597-026-07983-w" target="_blank" rel="noopener">Research paper and usage limitations</a><br><a href="https://osf.io/download/p58ay/" target="_blank" rel="noopener">Archived source CSV</a><br><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth · public-domain boundaries</a><br>D3 v7 · ISC license. Data snapshot: November 2026.</p>',
   );
 $("#about").onclick = $("#method-open").onclick = methodology;
 $("#close-modal").onclick = () => $("#modal").close();
@@ -1201,22 +1243,23 @@ $("#prev").onclick = () =>
   setYear(Math.max(1950, Math.floor(state.year / 5) * 5 - 5));
 $("#next").onclick = () =>
   setYear(Math.min(2020, Math.floor(state.year / 5) * 5 + 5));
+function pauseWorldTimeline() {
+  if (!timer) return;
+  clearInterval(timer);
+  timer = null;
+  $("#play").textContent = "▶";
+  $("#play").setAttribute("aria-label", "Play timeline");
+}
 $("#play").onclick = () => {
   if (timer) {
-    clearInterval(timer);
-    timer = null;
-    $("#play").textContent = "▶";
-    $("#play").setAttribute("aria-label", "Play timeline");
+    pauseWorldTimeline();
   } else {
     if (state.customRange)
       setYear(Math.min(2020, Math.floor(state.year / 5) * 5));
     if (state.year >= 2020) setYear(1950);
     timer = setInterval(() => {
       if (state.year === 2020) {
-        clearInterval(timer);
-        timer = null;
-        $("#play").textContent = "▶";
-        $("#play").setAttribute("aria-label", "Play timeline");
+        pauseWorldTimeline();
         return;
       }
       setYear(state.year + 5);

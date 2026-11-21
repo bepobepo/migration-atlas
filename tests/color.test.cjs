@@ -254,12 +254,14 @@ const root = path.resolve(__dirname, "../dist");
     null,
   );
   a.pauseMovement();
+  // Request an uncached country to exercise a malformed network response.
+  $("#movement-focus").value = "ARG";
   const originalFetch = w.fetch;
   w.fetch = async (url) =>
     url.includes("series/")
       ? {
           ok: true,
-          json: async () => ({ country: "RUS", peers: { ISR: [0] } }),
+          json: async () => ({ country: "ARG", peers: { ISR: [0] } }),
         }
       : originalFetch(url);
   assert.equal(await a.prepareMovement(), false);

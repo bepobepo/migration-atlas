@@ -1,0 +1,22 @@
+{
+  "name": "UN DESA International Migrant Stock 2024",
+  "citation": "United Nations Department of Economic and Social Affairs, Population Division (2024). International Migrant Stock 2024.",
+  "year": 2024,
+  "url": "https://www.un.org/development/desa/pd/content/International-migrant-stock",
+  "workbookUrl": "https://www.un.org/development/desa/pd/sites/www.un.org.development.desa.pd/files/undesa_pd_2024_ims_stock_by_sex_destination_and_origin.xlsx",
+  "file": "undesa_pd_2024_ims_stock_by_sex_destination_and_origin.xlsx",
+  "document": "POP/DB/MIG/Stock/Rev.2024",
+  "sheet": "Table 1",
+  "retrieved": "2026-11-21",
+  "sha256": "0e10179d05186041a65cf5c6200943b2231701f9c1fd33cbbe21d23b8ea47316",
+  "bytes": 6005287,
+  "license": "CC BY 3.0 IGO",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+  "copiesVerified": [
+    "https://raw.githubusercontent.com/nug1209/datasets/main/undesa_pd_2024_ims_stock_by_sex_destination_and_origin.xlsx",
+    "https://raw.githubusercontent.com/tigi/2026-migrant-stock/main/undesa_pd_2024_ims_stock_by_sex_destination_and_origin.xlsx"
+  ],
+  "independentUpstreamFingerprint": "https://softon.dev/docs/migration/get-un-stock-meta",
+  "isoCodes": "ISO 3166-1 numeric to alpha-3, Debian iso-codes 4.18.0-1, /usr/share/iso-codes/json/iso_3166-1.json",
+  "transform": "Both sexes combined, persons on 1 July, all published snapshots. Extracted for atlas destinations. The original world total and Others category are preserved. Named origin countries and areas are mapped by numeric codes. Omitted regional and development aggregates overlap the named origins."
+}

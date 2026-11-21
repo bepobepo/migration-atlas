@@ -1,0 +1,72 @@
+#residents-dialog {
+  width: min(670px, calc(100vw - 28px));
+  max-height: 88dvh;
+  overflow-y: auto;
+  padding: clamp(16px, 4vw, 30px);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+#residents-dialog [hidden] { display: none; }
+#residents-dialog::backdrop { background: #182b2a80; }
+.residents-heading-row, .residents-snapshot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.residents-heading-row h2 { margin: 0; line-height: 1.15; }
+.residents-close { flex: none; }
+.residents-snapshot {
+  flex-wrap: wrap;
+  margin-top: 22px;
+  padding: 16px;
+  background: #eef4fa;
+  border: 1px solid #c7d6e7;
+  border-radius: 6px;
+}
+.residents-snapshot label, .residents-filters label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+.residents-year, .residents-search {
+  display: block;
+  margin: 4px 0 0;
+  padding: 8px;
+  background: white;
+  border: 1px solid #8d9d9b;
+  color: var(--ink);
+  border-radius: 4px;
+}
+.residents-year { width: 6.5em; min-width: 85px; }
+.residents-search { width: min(300px, 100%); }
+.residents-total-label { margin: 0 0 4px; font-size: 13px; }
+.residents-total { font: 32px Georgia, serif; font-variant-numeric: tabular-nums; }
+.residents-definition, .residents-date, .residents-coverage, .residents-source, .residents-results {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+.residents-filters { margin-top: 20px; }
+.residents-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.residents-table caption { text-align: left; font-weight: 600; margin-bottom: 6px; }
+.residents-table th, .residents-table td {
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+.residents-table th:first-child { text-align: left; }
+.residents-table th[scope=row] { font-weight: 500; }
+.residents-table th[scope=col] { font-size: 12px; }
+.residents-more { margin-top: 12px; }
+.residents-source a { color: #15539b; }
+@media (max-width: 520px) {
+  .residents-search, .residents-year { font-size: 16px; }
+  .residents-total { font-size: 27px; }
+  .residents-heading-row h2 { font-size: 24px; }
+  .residents-table th, .residents-table td { padding-inline: 3px; }
+}

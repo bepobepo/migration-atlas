@@ -1,6 +1,22 @@
 const assert = require("node:assert/strict");
 const provenance = require("../dist/provenance.js");
 
+function verifyPublishedRecords() {
+  const raw = require("../dist/data/official/flows.json");
+  const compact = require("../dist/data/official/flows.compact.json");
+  for (const key of ["sources", "policy", "coverage", "sourceChecksum"])
+    assert.deepEqual(compact[key], raw[key]);
+  let observed = 0;
+  for (const decoded of provenance.officialFlowRecords(compact)) {
+    assert.deepEqual(decoded, raw.records[observed],
+      "selected receipt, flags, model baseline and every alternate must round-trip");
+    observed++;
+  }
+  assert.equal(observed, raw.records.length);
+  assert.throws(() => provenance.createProvenanceResolver({ ...compact, years: [] }),
+    /Incomplete compact official records/);
+}
+
 const payload = {
   sources: {
     immigration: {
@@ -62,6 +78,7 @@ const payload = {
 };
 
 async function main() {
+  verifyPublishedRecords();
   const r = provenance.createProvenanceResolver(payload, "best");
   const annual = [
     ["BLR", "POL", 10],

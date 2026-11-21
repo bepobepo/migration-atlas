@@ -11,7 +11,7 @@ function eventLabel(record, nameForCode = (code) => code) {
     );
   return `Context in ${nameForCode(record.country)} · ${scope === "origin-country" ? "emigration" : "immigration"}`;
 }
-function historyMatches(records, { corridors, start, end }) {
+function historyMatches(records, { corridors, start, end, includeCountryContext }) {
   if (!Number.isFinite(start) || !Number.isFinite(end) || end < start)
     return [];
   const seen = new Set(),
@@ -32,6 +32,9 @@ function historyMatches(records, { corridors, start, end }) {
                 : false,
         );
       if (!matches) return false;
+      if (scope !== "route" && includeCountryContext && !includeCountryContext(record)) {
+        return false;
+      }
       const key =
         record.id ??
         `${scope}:${record.country || record.origin}:${record.destination || ""}:${record.start}:${record.title}`;
@@ -46,6 +49,12 @@ function historyMatches(records, { corridors, start, end }) {
         String(a.id).localeCompare(String(b.id)),
     );
 }
+function historyNarrative(record, through = record.end) {
+  return [
+    record.text,
+    ...(record.updates || []).filter((item) => item.year <= through).map((item) => item.text),
+  ].join(" ");
+}
 function renderHistoryCards(
   container,
   records,
@@ -54,6 +63,7 @@ function renderHistoryCards(
     end,
     nameForCode = (code) => code,
     showRouteGap = false,
+    groupByScope = false,
     emptyMessage = "No sourced historical context is available for these corridors and years.",
   } = {},
 ) {
@@ -76,7 +86,19 @@ function renderHistoryCards(
       "Country context available; no additional account specific to this route.";
     container.append(note);
   }
+  let previousGroup;
   for (const record of records) {
+    const scope = eventScope(record);
+    if (groupByScope && scope !== previousGroup) {
+      const heading = document.createElement("h4");
+      heading.textContent = {
+        route: "Documented routes",
+        "origin-country": "Wider context in origin countries",
+        "destination-country": "Wider context in destination countries",
+      }[scope];
+      container.append(heading);
+      previousGroup = scope;
+    }
     const article = document.createElement("article");
     article.className = "route-context-card";
     article.dataset.eventId = record.id;
@@ -89,7 +111,7 @@ function renderHistoryCards(
     const title = document.createElement("h4");
     title.textContent = record.title;
     const text = document.createElement("p");
-    text.textContent = record.text;
+    text.textContent = historyNarrative(record, last);
     article.append(label, title, text);
     for (const [i, url] of [record.source, record.additionalSource]
       .filter(Boolean)

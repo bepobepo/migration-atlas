@@ -38,11 +38,13 @@ colorTip.addEventListener("keydown", (event) => {
   }
 });
 function pauseMovement() {
+  pauseWorldTimeline();
+  const wasPlaying = movement.clock !== null;
   clearInterval(movement.clock);
   movement.clock = null;
   $("#movement-play").textContent = "Play ▶";
   g.selectAll(".migration-fill path").interrupt();
-  paintMovement();
+  if (wasPlaying) paintMovement();
 }
 function colorRatio(code, count) {
   const p = movement.population?.countries[code]?.[movement.start - 1960];
@@ -248,7 +250,7 @@ function paintMovement(animate = false) {
   document.body.classList.toggle("movement-active", active);
   g.selectAll(".flow-layer,.story-line").style(
     "display",
-    active ? "none" : null,
+    active || movement.focus ? "none" : null,
   );
   g.selectAll(".country").style("fill", "#ffffff");
   g.selectAll(".country-point").style("fill", "#ffffff");
@@ -272,10 +274,14 @@ function paintMovement(animate = false) {
     $("#movement-cursor").value = 0;
     $("#movement-contributions").replaceChildren();
     if (movement.focus) {
+      $("#route-list").replaceChildren();
+      $("#route-count").textContent = "Waiting for the selected countries and years.";
+      $("#more").hidden = true;
       $("#detail").textContent =
         "Migration figures will appear once the complete selected range is loaded.";
       $("#events").textContent =
         "Historical context will follow the applied selection.";
+      $("#event-ticks").replaceChildren();
       $("#event-count").textContent = "";
     }
     return;
@@ -429,11 +435,16 @@ function paintMovement(animate = false) {
   $("#everywhere-controls").hidden = movement.view !== "arrows";
   const list = $("#movement-contributions");
   list.replaceChildren();
-  const ordered = peers.slice().sort((a, b) => finalCount(b) - finalCount(a));
+  const peerQuality = new Map(peers.map((peer) => [peer, peerProvenance(peer)]));
+  const unavailable = (peer) => dataPolicy === "official" && !peerQuality.get(peer).official;
+  const ordered = peers.slice().sort((a, b) =>
+    Number(unavailable(a)) - Number(unavailable(b)) ||
+    counts.get(b) - counts.get(a) || name(a).localeCompare(name(b))
+  );
   for (const peer of ordered) {
     const button = document.createElement("button");
     button.className = "destination-card";
-    const q = peerProvenance(peer);
+    const q = peerQuality.get(peer);
     const missingFlow =
       dataPolicy === "official" &&
       (!q.official || (!cumulative(peer) && q.missing));
@@ -457,11 +468,7 @@ function paintMovement(animate = false) {
   for (const peer of visiblePeers.slice(0, state.limit)) {
     const button = document.createElement("button");
     button.className = "route-card";
-    const q = summarizeProvenance(
-      movementCorridors().filter(([a, b]) => a === peer || b === peer),
-      movement.start,
-      movement.start + movement.cursor - 1,
-    );
+    const q = peerQuality.get(peer);
     button.textContent = `${movement.direction === "in" ? name(peer) + " → " + name(movement.focus) : movement.direction === "both" ? name(movement.focus) + " ↔ " + name(peer) : name(movement.focus) + " → " + name(peer)} · ${formatSourceValue(cumulative(peer), q)} · ${q.label}`;
     button.setAttribute("aria-haspopup", "dialog");
     button.setAttribute("aria-controls", "route-dialog");
@@ -469,6 +476,7 @@ function paintMovement(animate = false) {
       movement.direction === "in"
         ? [peer, movement.focus]
         : [movement.focus, peer];
+    button.disabled = movement.cursor === 0;
     button.onclick = () => openMovementDetails(...routePair);
     $("#route-list").append(button);
   }
@@ -476,18 +484,46 @@ function paintMovement(animate = false) {
   const through = movement.cursor
     ? movement.start + movement.cursor - 1
     : movement.start - 1;
+  const corridors = movementCorridors();
   const relevant = historyMatches(events, {
-    corridors: movementCorridors(),
+    corridors,
     start: movement.start,
     end: through,
+    includeCountryContext(record) {
+      if (record.country === movement.focus || movement.peers?.length === 1) return true;
+      // A counterpart's general circumstances belong in a country overview only
+      // when that directed connection has movement during the event itself.
+      const direction = eventScope(record) === "origin-country" ? "in" : "out";
+      const annual = movement.directionSeries[direction]?.peers[record.country];
+      if (!annual) return false;
+      const first = Math.max(movement.start, record.start) - 1960;
+      const last = Math.min(through, record.end) - 1960;
+      return annual.slice(first, last + 1).some((value) => value > 0);
+    },
   });
   $("#event-count").textContent = relevant.length;
   updateDataDisclosure();
+  const start = movement.start;
+  const ticks = $("#event-ticks");
+  const focusedId = ticks.contains(document.activeElement) ? document.activeElement.dataset.eventId : null;
+  ticks.replaceChildren();
+  for (const event of relevant) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.eventId = event.id;
+    const first = Math.max(start, event.start);
+    const last = Math.min(through, event.end);
+    button.textContent = `${first === last ? first : first + "–" + last} · ${event.title}`;
+    button.onclick = () => selectEvent(event, { start, end: through });
+    ticks.append(button);
+    if (focusedId === button.dataset.eventId) button.focus({ preventScroll: true });
+  }
   renderHistoryCards($("#events"), relevant, {
-    start: movement.start,
+    start,
     end: through,
     nameForCode: name,
-    showRouteGap: movementCorridors().length === 1,
+    showRouteGap: corridors.length === 1,
+    groupByScope: corridors.length > 1,
     emptyMessage:
       "No sourced historical context for the selected corridors through this playback year.",
   });
@@ -506,10 +542,10 @@ async function prepareMovement() {
   closeMovementInspection();
   movement.series = null;
   movement.cursor = 0;
-  paintMovement();
   const id = ++movement.token;
   movement.focus = $("#movement-focus").value;
   movement.direction = $("#movement-direction").value;
+  paintMovement();
   const direction = movement.direction;
   const start = Number($("#range-start").value),
     end = Number($("#range-end").value);
@@ -527,29 +563,18 @@ async function prepareMovement() {
   state.event = null;
   state.route = null;
   $("#country").value = movement.focus;
+  const peer = movement.peers?.length === 1 ? movement.peers[0] : "";
+  $("#pair-origin").value = direction === "out" ? movement.focus : direction === "in" ? peer : "";
+  $("#pair-destination").value = direction === "in" ? movement.focus :
+    direction === "out" ? (movement.peers === null ? "everywhere" : peer) : "";
+  syncPairPicker();
   syncDirection();
   $("#period").textContent = `${start}–${end}`;
   $("#movement-status").textContent = "Loading complete annual series…";
   try {
-    await officialDataReady();
     const directions = direction === "both" ? ["out", "in"] : [direction];
-    const fetchSeries = async (d) => {
-      const response = await fetch(`data/series/${d}/${movement.focus}.json`);
-      if (!response.ok) throw Error("Missing annual series");
-      const series = await response.json();
-      if (
-        series.country !== movement.focus ||
-        Object.keys(series.peers).length !== 193 ||
-        Object.values(series.peers).some(
-          (a) =>
-            a.length !== 65 || a.some((v) => !Number.isSafeInteger(v) || v < 0),
-        )
-      )
-        throw Error("Incomplete annual series");
-      return resolveSeries(series, d);
-    };
     const [parts, pop] = await Promise.all([
-      Promise.all(directions.map(fetchSeries)),
+      Promise.all(directions.map((d) => loadCountrySeries(movement.focus, d))),
       movement.population ||
         fetch("data/population.json").then((r) => {
           if (!r.ok) throw Error();
@@ -607,6 +632,9 @@ async function prepareMovement() {
     state.year = start;
     state.endYear = end;
     state.customRange = true;
+    $("#time-title").textContent = rangeLabel(start, end);
+    $("#year").value = Math.min(2020, Math.floor(start / 5) * 5);
+    $("#year").setAttribute("aria-valuetext", rangeLabel(start, end));
     $("#show-all-routes").checked = false;
     $("#movement-cursor").max = end - start + 1;
     const rangeQuality = summarizeProvenance(
@@ -637,24 +665,84 @@ async function prepareMovement() {
     return false;
   }
 }
-let movementDetailsRequest = 0;
+// Apply a country, its counterparts and a calendar range as one selection.
+async function applyCountryScenario({
+  focus,
+  direction = "out",
+  peers = null,
+  start = Number($("#range-start").value),
+  end = Number($("#range-end").value),
+}) {
+  const error = validateRange(start, end);
+  const validPeers = peers === null || (Array.isArray(peers) &&
+    peers.every((code) => code !== focus && countries?.[code]?.hasData));
+  if (error || (focus && !countries?.[focus]?.hasData) ||
+      !["in", "out", "both"].includes(direction) || !validPeers) {
+    $("#movement-status").textContent =
+      error || "Choose a covered country and different counterparts.";
+    return false;
+  }
+  const samePeers = peers === movement.peers ||
+    (peers && movement.peers && peers.length === movement.peers.length &&
+      peers.every((peer) => movement.peers.includes(peer)));
+  const sameSelection = focus === movement.focus && direction === movement.direction && samePeers;
+  movement.peers = peers === null ? null : [...new Set(peers)];
+  $("#movement-focus").value = focus;
+  $("#movement-direction").value = direction;
+  $("#movement-all").checked = peers === null;
+  $("#range-start").value = start;
+  $("#range-end").value = end;
+  $("#country").value = focus;
+  if (!sameSelection) {
+    $("#movement-search").value = "";
+    $("#search").value = "";
+    state.query = "";
+    state.limit = 30;
+  }
+  populatePeers();
+  if (focus) return prepareMovement();
+  $("#pair-origin").value = "";
+  $("#pair-destination").value = "";
+  syncPairPicker();
+  pauseMovement();
+  closeMovementInspection();
+  movement.token++;
+  movement.focus = "";
+  movement.direction = "both";
+  $("#movement-direction").value = "both";
+  movement.series = null;
+  movement.cursor = 0;
+  Object.assign(state, {
+    country: "", dir: "both", route: null, event: null,
+    everywhere: false, counterparts: null,
+  });
+  syncDirection();
+  await setRange(start, end);
+  $("#movement-status").textContent = "Choose a country to explore migration.";
+  return true;
+}
 async function openMovementDetails(origin, destination) {
-  const request = ++movementDetailsRequest;
-  const start = movement.start,
-    end = movement.end;
+  if (!movement.series || movement.cursor === 0) return;
   closeMovementInspection();
   pauseMovement();
-  await setRange(start, end);
-  if (request !== movementDetailsRequest) return;
-  const saved = { ...state };
-  await openRouteDetails(origin, destination);
-  if (request === movementDetailsRequest) Object.assign(state, saved);
+  return originalMovementRouteDetails(origin, destination, {
+    year: movement.start,
+    endYear: movement.start + movement.cursor - 1,
+    customRange: true,
+  });
 }
-const inspectionModels = new Map();
-function inspectionModelSeries(focus, direction) {
+const countrySeriesCache = new Map();
+async function loadCountrySeries(focus, direction) {
+  const [raw] = await Promise.all([
+    loadRawCountrySeries(focus, direction),
+    officialDataReady(),
+  ]);
+  return resolveSeries(raw, direction);
+}
+function loadRawCountrySeries(focus, direction) {
   const key = focus + ":" + direction;
-  if (!inspectionModels.has(key))
-    inspectionModels.set(
+  if (!countrySeriesCache.has(key)) {
+    countrySeriesCache.set(
       key,
       fetch(`data/series/${direction}/${focus}.json`)
         .then((r) => {
@@ -662,16 +750,26 @@ function inspectionModelSeries(focus, direction) {
           return r.json();
         })
         .then((series) => {
-          if (series.country !== focus || !series.peers)
-            throw Error("Invalid model series");
+          const expected = Object.keys(countries).filter(
+            (code) => code !== focus && countries[code].hasData,
+          );
+          if (series.country !== focus || !series.peers ||
+              Object.keys(series.peers).length !== expected.length ||
+              expected.some((peer) => {
+                const values = series.peers[peer];
+                return !Array.isArray(values) || values.length !== 65 ||
+                  values.some((v) => !Number.isSafeInteger(v) || v < 0);
+              }))
+            throw Error("Incomplete annual series");
           return series;
         })
         .catch((error) => {
-          inspectionModels.delete(key);
+          countrySeriesCache.delete(key);
           throw error;
         }),
     );
-  return inspectionModels.get(key);
+  }
+  return countrySeriesCache.get(key);
 }
 async function renderInspectionEstimate(target, corridors, scope, key) {
   target.textContent = "Loading migration estimate…";
@@ -680,7 +778,7 @@ async function renderInspectionEstimate(target, corridors, scope, key) {
       ...new Set(corridors.map(([a]) => (a === scope.focus ? "out" : "in"))),
     ];
     const parts = await Promise.all(
-      directions.map((d) => inspectionModelSeries(scope.focus, d)),
+      directions.map((d) => loadRawCountrySeries(scope.focus, d)),
     );
     if (!target.isConnected || movementInspection?.key !== key) return;
     const series = Object.fromEntries(directions.map((d, i) => [d, parts[i]]));
@@ -929,7 +1027,7 @@ function renderMovementInspection() {
       colorTip.append(comparison);
     }
   }
-  if (participating && code !== movement.focus) {
+  if (participating && code !== movement.focus && movement.cursor > 0) {
     const details = document.createElement("button");
     details.type = "button";
     details.textContent = "View route details ↗";
@@ -1032,12 +1130,15 @@ $("#movement-all").onchange = (e) => {
   prepareMovement();
 };
 $("#movement-focus").onchange = () => {
-  movement.peers = null;
-  $("#movement-all").checked = true;
-  populatePeers();
-  prepareMovement();
+  return applyCountryScenario({focus: $("#movement-focus").value, direction: $("#movement-direction").value});
 };
-$("#movement-direction").onchange = prepareMovement;
+$("#movement-direction").onchange = () => {
+  if ($("#movement-focus").value) return prepareMovement();
+  state.dir = $("#movement-direction").value;
+  movement.direction = state.dir;
+  syncDirection();
+  draw();
+};
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) pauseMovement();
 });
@@ -1053,8 +1154,9 @@ const originalRangeSubmit = $("#range-form").onsubmit;
 $("#range-form").onsubmit = (e) => {
   if (movement.focus) {
     e.preventDefault();
-    prepareMovement();
-  } else originalRangeSubmit(e);
+    return prepareMovement();
+  }
+  return originalRangeSubmit(e);
 };
 const originalMovementModal = modal;
 modal = function (html) {
@@ -1066,17 +1168,20 @@ const originalMovementRouteDetails = openRouteDetails;
 openRouteDetails = function (...args) {
   closeMovementInspection();
   pauseMovement();
+  if (args.length === 2 && args[1] !== "everywhere" && movement.series) {
+    return openMovementDetails(...args);
+  }
   return originalMovementRouteDetails(...args);
 };
 const originalMovementSelectEvent = selectEvent;
-selectEvent = function (event) {
+selectEvent = function (event, range) {
   if (!movement.series) return originalMovementSelectEvent(event);
   modal(
     '<div class="eyebrow">HISTORICAL CONTEXT</div><div id="inspected-history"></div>',
   );
   renderHistoryCards($("#inspected-history"), [event], {
-    start: event.start,
-    end: event.end,
+    start: range?.start ?? event.start,
+    end: range?.end ?? event.end,
     nameForCode: name,
   });
 };
@@ -1121,25 +1226,32 @@ const bootMovement = setInterval(() => {
   g.selectAll(".country").on("click", function (event, d) {
     if (movement.series) {
       inspectMovement(d.properties.code);
-    } else originalClick.call(this, event, d);
+    } else if (!movement.focus) originalClick.call(this, event, d);
   });
   const oldCountry = $("#country").onchange;
   $("#country").onchange = (e) => {
-    oldCountry(e);
-    $("#movement-focus").value = e.target.value;
-    movement.peers = null;
-    prepareMovement();
+    if (e.target.value && !countries[e.target.value]?.hasData) {
+      pauseMovement();
+      closeMovementInspection();
+      movement.token++;
+      movement.focus = "";
+      movement.series = null;
+      movement.cursor = 0;
+      $("#movement-focus").value = "";
+      oldCountry(e);
+      return;
+    }
+    return applyCountryScenario({focus: e.target.value, direction: state.dir});
   };
-  const oldPair = $("#pair-form").onsubmit;
   $("#pair-form").onsubmit = (e) => {
     e.preventDefault();
-    $("#movement-focus").value = $("#pair-origin").value;
-    $("#movement-direction").value = "out";
+    const focus = $("#pair-origin").value;
     const dest = $("#pair-destination").value;
-    movement.peers = dest === "everywhere" ? null : [dest];
-    $("#movement-all").checked = dest === "everywhere";
-    populatePeers();
-    prepareMovement();
+    const error = pairError(focus, dest);
+    $("#pair-error").hidden = !error;
+    $("#pair-error").textContent = error;
+    if (error) return;
+    return applyCountryScenario({focus, direction: "out", peers: dest === "everywhere" ? null : [dest]});
   };
   $("#pair-open").textContent = "Show movement ↗";
   const oldPlay = $("#play").onclick;
@@ -1148,12 +1260,12 @@ const bootMovement = setInterval(() => {
   document.querySelectorAll("[data-dir]").forEach((button) => {
     const original = button.onclick;
     button.onclick = () => {
+      $("#movement-direction").value = button.dataset.dir;
       if (!movement.focus) {
         original();
         return;
       }
-      $("#movement-direction").value = button.dataset.dir;
-      prepareMovement();
+      return prepareMovement();
     };
   });
   window.addEventListener("resize", () => paintMovement());
@@ -1161,16 +1273,21 @@ const bootMovement = setInterval(() => {
     .attr("tabindex", 0)
     .attr("role", "button")
     .on("keydown.color", async function (e, d) {
-      if (movement.series && (e.key === "Enter" || e.key === " ")) {
-        e.preventDefault();
-        await inspectMovement(d.properties?.code || d.code);
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      const code = d.properties?.code || d.code;
+      if (movement.series) {
+        await inspectMovement(code);
         colorTip.querySelector("button")?.focus();
+      } else if (!movement.focus) {
+        $("#country").value = code;
+        $("#country").dispatchEvent(new Event("change"));
       }
     });
   const pointClick = g.select(".country-point").on("click");
   g.selectAll(".country-point").on("click", function (e, d) {
     if (movement.series) inspectMovement(d.code);
-    else pointClick.call(this, e, d);
+    else if (!movement.focus) pointClick.call(this, e, d);
   });
   const oldDraw = draw;
   draw = function () {

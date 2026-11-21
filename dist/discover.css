@@ -1,0 +1,21 @@
+.discover-nav { color: var(--ink); font-size: .9rem; font-weight: 600; text-underline-offset: .2em; }
+.discover-routes { margin: 2rem 0; scroll-margin-top: 1.5rem; }
+.discover-routes h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.25rem); }
+.discover-routes > p { color: #455b56; line-height: 1.5; }
+.discover-routes > p:empty { display: none; }
+.discover-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: .85rem; }
+.discover-grid article { display: flex; flex-direction: column; gap: .75rem; padding: 1.2rem; background: #fcfcf7; border: 1px solid var(--line); border-radius: 8px; }
+.discover-grid h3 { margin: 0; font: 1.45rem Georgia, serif; }
+.discover-grid p { margin: 0; line-height: 1.5; }
+.discover-grid p:first-child { color: #48625b; font-size: .85rem; }
+.discover-grid dl { display: grid; grid-template-columns: repeat(2,1fr); margin: 0; gap: .5rem; }
+.discover-grid dt { color: #455b56; font-size: .85rem; }
+.discover-grid dd { margin: .15rem 0 0; color: #164e85; font-weight: 600; font-variant-numeric: tabular-nums; }
+.discover-grid button { margin-top: auto; align-self: flex-start; min-height: 42px; }
+#section-routes .routes { display: grid; grid-template-columns: minmax(0,1fr) minmax(200px, 30%); align-items: end; gap: .85rem; }
+#section-routes .search-label { position: static; margin: 0; }
+#section-routes #route-list, #section-routes #more { grid-column: 1 / -1; }
+@media (max-width: 760px) {
+  #section-routes .routes { grid-template-columns: minmax(0,1fr); }
+  .discover-nav { font-size: .8rem; }
+}

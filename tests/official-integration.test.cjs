@@ -131,7 +131,8 @@ async function boot() {
       "best available comparison is explicitly selected in this suite",
     );
     assert.equal($("#data-policy").value, "best");
-    assert.equal(app.requests.get("data/official/flows.json"), 1);
+    assert.equal(app.requests.get("data/official/flows.compact.json"), 1);
+    assert.equal(app.requests.has("data/official/flows.json"), false);
     assert.ok(
       $("#playback-dock").contains($("#data-quality")),
       "source disclosure stays in visible playback dock",
@@ -352,7 +353,8 @@ async function boot() {
       19476.5,
       "residence stocks never patch flows",
     );
-    assert.equal(app.requests.get("data/official/flows.json"), 1);
+    assert.equal(app.requests.get("data/official/flows.compact.json"), 1);
+    assert.equal(app.requests.has("data/official/flows.json"), false);
 
     console.log(
       "PASS official integration: real official/estimated/zero/secondary receipts, annual and compact-series parity, global mixed totals, count/source UI, model switching, and Belarus–Poland model warning with separate official stocks.",

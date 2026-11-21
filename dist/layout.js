@@ -166,8 +166,8 @@
           : direction === "both"
             ? `Movement involving ${focal} ↔ ${peers}`
             : `${focal} → ${peers}`;
-    const start = select("#range-start")?.value;
-    const end = select("#range-end")?.value;
+    const start = hasMovement ? movement.start : state.year;
+    const end = hasMovement ? movement.end : state.endYear;
     label += ` · ${start || "…"}–${end || "…"}`;
     label += ` · ${selectedText("#movement-metric") || "Migration volume"}`;
     if (description.textContent !== label) description.textContent = label;

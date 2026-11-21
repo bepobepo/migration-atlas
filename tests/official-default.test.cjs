@@ -331,6 +331,37 @@ async function boot() {
     );
     api.pauseMovement();
     assert.doesNotMatch($("#movement-count").textContent, /19,500/);
+    // The bilateral historical account is available independently of the
+    // missing official flow. Its 2022 update only appears from 2022 onward.
+    api.movement.cursor = 1;
+    api.paintMovement();
+    const initialMarker = $("#event-ticks [data-event-id='16']");
+    assert.ok(initialMarker);
+    assert.doesNotMatch($("#events").textContent, /February 2022/);
+    initialMarker.click();
+    assert.equal($("#modal").open, true);
+    assert.doesNotMatch($("#modal-content").textContent, /February 2022/);
+    assert.equal(api.movement.cursor, 1);
+    assert.equal(api.movement.focus, "BLR");
+    $("#modal").close();
+    api.movement.cursor = 3;
+    api.paintMovement();
+    assert.match($("#events").textContent, /February 2022/);
+    // Follow the normal form handler directly, without an intervening
+    // setRange/draw that would mask stale global timeline buttons.
+    $("#movement-focus").value = "KIR";
+    $("#movement-direction").value = "in";
+    $("#range-start").value = $("#range-end").value = 2024;
+    api.movement.peers = null;
+    await api.prepareMovement();
+    assert.equal($("#event-ticks").children.length, 0);
+    assert.equal($("#events").querySelectorAll("article").length, 0);
+    assert.match($("#events").textContent, /No sourced historical context/);
+    $("#movement-focus").value = "DEU";
+    await api.prepareMovement();
+    assert.ok($("#event-ticks [data-event-id='23']"));
+    assert.ok($("#events").querySelector("[data-event-id='23']"));
+    assert.match($("#events").textContent, /Wider context in origin countries/);
     console.log(
       "PASS official default: exact official values and zeroes, explicit incomplete/missing coverage, incoming/global known-only totals, both-direction gaps, main residence stocks and playback dates, and opt-in model comparison.",
     );

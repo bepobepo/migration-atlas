@@ -1,0 +1,92 @@
+.overview-ready .intro { padding: 24px 0 18px; }
+.overview-ready .intro h1 { font-size: clamp(34px, 4.3vw, 58px); margin: 0; }
+.overview-ready .intro .eyebrow, .overview-ready .intro-note { display: none; }
+.overview-ready .intro p { margin: 6px 0 0; line-height: 1.45; }
+#country-overview {
+  border-bottom: 1px solid var(--line);
+  background: #fbfbf5;
+  padding: 16px 20px;
+}
+#country-overview [hidden] { display: none; }
+.overview-header {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+#overview-country { flex: 1 1 160px; max-width: 390px; }
+#overview-country label { font-size: 12px; color: #354a44; font-weight: 600; }
+#overview-country select {
+  width: 100%;
+  min-height: 42px;
+  margin: 4px 0 0;
+  padding: 8px;
+  background: white;
+  border: 1px solid #9faea7;
+  border-radius: 5px;
+  font-size: 15px;
+  color: var(--ink);
+}
+.overview-date-block small { display: block; font-size: 12px; color: #4e655f; }
+#overview-dates {
+  font-size: 12px;
+  padding: 4px 0;
+  min-height: 36px;
+  border-color: transparent;
+  color: #245d72;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.overview-actions, .overview-totals, .overview-rank-grid { display: grid; gap: 9px; }
+.overview-actions { grid-template-columns: repeat(3, minmax(0,1fr)); margin-top: 12px; }
+.overview-actions > button {
+  padding: 10px 12px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  background: white;
+  border-color: #b8c7bd;
+}
+.overview-actions > button span { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; color: #50635d; }
+.overview-actions > button:hover, .overview-actions > button:focus-visible { background: #edf6fa; }
+.overview-actions > button[aria-pressed=true] { color: #123a5c; background: #e3f0f8; border-color: #537d98; }
+#overview-prompt { font-size: 12px; color: #214e67; margin: 10px 0 0; }
+#overview-summary { margin-top: 14px; }
+#overview-period { font-family: inherit; line-height: 1.4; font-weight: 600; font-size: 13px; margin: 0 0 6px; }
+.overview-totals, .overview-rank-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.overview-totals > div { padding-left: 10px; border-left: 2px solid #628eae; }
+.overview-totals > div + div { border-color: #789388; }
+.overview-totals h3, .overview-rank-grid h4 { margin: 0; font-size: 12px; font-weight: 600; }
+.overview-totals strong { display: block; font: 18px/1.33 Georgia, serif; margin: 3px 0; }
+.overview-totals small, .overview-rank-grid small { display: block; font-size: 12px; line-height: 1.45; color: #52635d; }
+#overview-compare { margin-top: 8px; }
+#overview-compare > summary { cursor: pointer; padding: 6px 0 2px; color: #245d72; font-size: 12px; }
+#overview-rankings p { color: #4f605a; font-size: 12px; line-height: 1.45; }
+#overview-rankings h3 { font: 20px Georgia, serif; margin: 12px 0 8px; }
+#overview-rankings ol { margin: 5px 0; padding-left: 18px; }
+#overview-rankings li { color: #455952; font-size: 12px; }
+#overview-rankings button {
+  text-align: left; color: #175372; padding: 5px 2px; font-size: 12px; border: 0; text-decoration: underline; text-underline-offset: 2px;
+}
+#overview-retry { margin-top: 8px; font-size: 12px; }
+.overview-ready #section-selection .toolbar,
+.overview-ready #section-selection #pair-form,
+.overview-ready #section-selection .movement-pickers label:first-child { display: none; }
+.overview-ready #section-selection > summary { padding-block: 10px; }
+.overview-ready #section-routes .search-label { display: block; position: static; margin: 8px 0 14px; }
+@media (max-width: 580px) {
+  .overview-ready header { height: 54px; }
+  .overview-ready .intro { padding: 13px 0; }
+  .overview-ready .intro h1 { letter-spacing: -1px; }
+  .overview-ready .intro p { margin-top: 3px; font-size: 12px; }
+  #country-overview { padding: 12px; }
+  #overview-country { flex-basis: 137px; }
+  #overview-country select { font-size: 16px; }
+  .overview-header { gap: 4px; }
+  #overview-dates { font-size: 12px; padding-inline: 4px; }
+  .overview-actions { gap: 5px; margin-top: 8px; }
+  .overview-actions > button { font-size: 14px; padding: 8px 6px; }
+  .overview-totals strong { font-size: 16px; }
+}

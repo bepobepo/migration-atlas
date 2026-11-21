@@ -333,6 +333,7 @@ async function renderOfficialResidence(target, corridors, start, through) {
   }
 }
 async function rawRouteSeries(code) {
+  if (typeof loadRawCountrySeries === "function") return loadRawCountrySeries(code, "out");
   if (!dataUI.raw.has(code))
     dataUI.raw.set(
       code,
@@ -361,15 +362,16 @@ async function contextData() {
       });
   return dataUI.context;
 }
-async function renderRouteDataPanel(origin, destination) {
+async function renderRouteDataPanel(origin, destination, inspection = null) {
   const box = document.querySelector(".route-provenance");
   if (!box || !officialResolver) return;
-  if (dataStatus !== "ready") {
+  const status = inspection?.status ?? dataStatus;
+  if (status !== "ready") {
     dataUI.routeToken++;
     dataUI.routeKey = "";
     delete box.dataset.key;
     box.textContent =
-      dataStatus === "loading"
+      status === "loading"
         ? "Loading source coverage…"
         : "Source coverage unavailable. Reapply the range to retry.";
     document
@@ -377,8 +379,8 @@ async function renderRouteDataPanel(origin, destination) {
       .forEach((el) => el.remove());
     return;
   }
-  const start = state.year,
-    end = state.endYear,
+  const start = inspection?.year ?? state.year,
+    end = inspection?.endYear ?? state.endYear,
     key = [origin, destination, start, end, dataPolicy].join(":");
   if (dataUI.routeKey === key && box.dataset.key === key) return;
   dataUI.routeKey = key;
@@ -706,8 +708,8 @@ function mountDataUI() {
     const routeOpen = document.querySelector("#route-dialog").open;
     const pair = routeOpen
       ? [
-          document.querySelector("#pair-origin").value,
-          document.querySelector("#pair-destination").value,
+          document.querySelector("#route-dialog").dataset.origin,
+          document.querySelector("#route-dialog").dataset.destination,
         ]
       : null;
     if (typeof pauseMovement === "function") pauseMovement();
