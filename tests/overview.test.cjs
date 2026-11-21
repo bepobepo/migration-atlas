@@ -49,6 +49,8 @@ async function test() {
     await until(() => api.movement.series && get("overview-out-basis").textContent.includes("route-years"));
     assert.equal(api.movement.direction, "in");
     assert.match(get("overview-period").textContent, /Germany.*2020–2024/);
+    assert.equal(get("overview-research").hidden, false);
+    assert.equal(get("overview-research").querySelector("a").hash, "#DEU");
     assert.match(get("overview-in-total").textContent, /5,564,742/);
     await until(() => get("national-immigration").textContent.includes("5,826,876"));
     assert.match(get("national-emigration").textContent, /2,480,042/);

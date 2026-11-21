@@ -485,7 +485,7 @@ test("Italy to Poland opens full migration details with both directions and ever
     assert.equal(a.w.document.querySelectorAll(".history-period").length, 15);
     assert.match(
       a.$("#route-context").textContent,
-      /No route-specific historical account/,
+      /Country context available.*Context in Poland/,
     );
     assert.ok(
       [...a.w.document.querySelectorAll(".arc")].some(
@@ -622,9 +622,10 @@ test("route-specific historical context excludes stories about other corridors",
     );
     await flush();
     assert.equal(
-      a.w.document.querySelectorAll(".route-context-card").length,
+      a.w.document.querySelectorAll('#route-context [data-scope="route"]').length,
       1,
     );
+    assert.match(a.$("#route-context").textContent, /Context in Poland/);
     assert.match(a.$("#route-context").textContent, /August 2020/);
     assert.doesNotMatch(a.$("#route-context").textContent, /Syrian|Venezuela/);
     assert.match(a.$("#route-context a").href, /gov.pl/);
@@ -1138,7 +1139,7 @@ test("incoming totals include only immigration and historical drivers overlap th
     assert.doesNotMatch(a.$("#route-context").textContent, /Forced to leave/);
     assert.match(
       a.$("#route-context").textContent,
-      /does not attribute a number/,
+      /route total combines moves made for many reasons/,
     );
     await a.api.setRange(2018, 2019);
     assert.equal(

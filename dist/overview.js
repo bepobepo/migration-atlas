@@ -21,6 +21,7 @@
     </div>
     <p id="overview-prompt" role="status" hidden></p>
     <div id="overview-summary" hidden>
+      <p id="overview-research" hidden><a></a></p>
       <section id="overview-national" aria-labelledby="national-heading" hidden>
         <h2 id="national-heading"></h2>
         <details id="national-dates">
@@ -81,6 +82,24 @@
   let request = 0;
   let loaded = {};
   let selection;
+  let researchCountries;
+  function updateResearchLink() {
+    const code = picker.value;
+    const container = control("research");
+    const country = researchCountries?.[code];
+    container.hidden = !country;
+    if (country) {
+      const link = container.querySelector("a");
+      link.href = "research.html#" + code;
+      link.textContent = "Migration drivers in " + country.name;
+    }
+  }
+  fetch("data/driver-guide.json", {cache: "no-cache"}).then(response => {
+    if (response.ok) return response.json();
+  }).then(guide => {
+    researchCountries = guide?.countries;
+    updateResearchLink();
+  }).catch(() => {});
 
   function element(tag, text) {
     const node = document.createElement(tag);
@@ -375,6 +394,7 @@
     const key = [country, start, end, dataPolicy, !!countries?.[country]?.hasData].join("|");
     if (key === currentKey) return;
     currentKey = key;
+    updateResearchLink();
     const token = ++request;
     loaded = {};
     selection = {country, start, end};

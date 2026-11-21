@@ -53,6 +53,14 @@ Playback controls, year scrubbing, cumulative counts and the quantitative legend
 
 History has explicit route, origin-country and destination-country scopes, matched by one shared date/direction filter. Venezuela → USA now shows Venezuelan country context from 2014 and a separate 2024 election/mobility record. The Spain-specific story stays confined to Venezuela → Spain. These accounts identify relevant historical circumstances rather than attributing the full migration total to a cause. Sources: [UNHCR, May 2018](https://data.unhcr.org/en/documents/download/63883) and [R4V, 2024 end-year report](https://rmrp.r4v.info/eyr2024/).
 
+## Country research and net migration rankings
+
+Open **Migration drivers by country** in Discover routes or go to [the country research guide](https://migration-atlas-history.bepsibep.chatgpt.site/research.html). Each country has dated evidence for the directions covered and links to the underlying publications. The map and route views use the same event records.
+
+The guide ranks 194 atlas countries by cumulative net migration in people for 2020–2024 and 2000–2024. It uses the same UN World Population Prospects 2024 release for all countries and both periods. Calendar 2024 is a medium-variant projection. The country overviews can show newer national statistics. The guide includes both top 40s, all atlas European countries with a projected midyear population of at least five million in 2024, Türkiye, Belarus and Israel. This gives 57 distinct profiles. Surveys, permit decisions, refugee registrations and bilateral movements retain the definitions and dates of their respective sources.
+
+Edit the sourced episodes in `reference/migration-drivers.json` and regenerate the event catalogue with `python make_events.py`. Rebuild the rankings from the pinned WPP extracts with `python scripts/build_driver_guide.py`. The guide tests compare the rankings with the atlas’s annual UN series and check coverage, country links and source dates.
+
 ## Official statistics and country inventory — 6 November 2026
 
 The default **Official statistics** view uses destination-reported annual immigration by previous residence, then origin-reported emigration by next residence. It never fills missing official observations with model values. **Best available comparison** uses the same official priority and fills gaps with FLOW; **FLOW model only** supplies a consistent model comparison. Every count surface and playback series uses `dist/provenance.js`; raw FLOW exports stay intact for independent reconciliation. Published numeric zero is retained; missing/confidential observations stay unavailable. Official-only aggregates distinguish complete figures from reported subtotals with partial coverage.

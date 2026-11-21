@@ -54,6 +54,8 @@ events.extend([
  dict(id=31,scope='route',origin='VNM',destination='USA',route='Vietnam → United States',start=1975,end=1975,title='Evacuation at the end of the war',text='The final days before the fall of Saigon in April 1975 included the evacuation of Vietnamese people associated with the former South Vietnamese government, followed by resettlement in the United States. UNHCR’s historical account distinguishes this evacuation from later refugee departures and other migration.',source='https://www.unhcr.org/africa/sites/afr/files/legacy-pdf/3ebf9bad0.pdf')
 ])
 events[16]['updates'] = [dict(year=2022, text='The Polish Office for Foreigners recorded another increase in applications following the February 2022 invasion of Ukraine.')]
+events[16]['additionalSource'] = 'https://nbp.pl/wp-content/uploads/2025/01/Sytuacja-uchodzcow-z-Bialorusi-2024-ANG-DS.pdf'
+events[16]['updates'].append(dict(year=2024, text='In a National Bank of Poland survey, 56% of respondents who arrived in 2020–21 and 59% of those who arrived between 2022 and June 2024 cited the political situation in Belarus. Respondents could give several reasons.'))
 events[10]['additionalSource'] = 'https://www.ub.edu/geocrit/b3w-755.htm'
 events[10]['updates'] = [dict(year=2000, text='Researchers studying the surge around 2000 also linked departures to the escalation of Colombia’s armed conflict.')]
 events.extend([
@@ -76,6 +78,10 @@ events.extend([
          additionalSource='https://www.interior.gob.es/opencms/pdf/archivos-y-documentacion/documentacion-y-publicaciones/publicaciones-descargables/publicaciones-periodicas/asilo-en-cifras/MINISTERIO_INTERIOR_Asilo_En_Cifras_ACC_01.pdf'),
 ])
 for event in events:
-    event['catalogReviewedAt'] = '2026-11-21' if event['id'] in (10, 32, 33, 34) else '2026-11-06'
+    event['catalogReviewedAt'] = '2026-11-21' if event['id'] in (10, 16, 32, 33, 34) else '2026-11-06'
     event['evidenceType'] = 'sourced_historical_context_not_causal_attribution'
-p=pathlib.Path(__file__).parent/'dist/data/events.json';json.dump(events,open(p,'w'))
+root = pathlib.Path(__file__).resolve().parent
+for entry in json.loads((root / 'reference/migration-drivers.json').read_text()):
+    events.append(dict(entry, id=len(events), catalogReviewedAt='2026-11-21',
+                       evidenceType='sourced_historical_context_not_causal_attribution'))
+(root / 'dist/data/events.json').write_text(json.dumps(events))

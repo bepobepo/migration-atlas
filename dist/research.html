@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Migration drivers by country · Migration Atlas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="research.css">
+</head>
+<body>
+  <header><a class="brand" href="./">Migration Atlas</a><a href="./">Explore the map</a></header>
+  <main>
+    <h1>Migration drivers by country</h1>
+    <p>Explore documented reasons people moved, from job recruitment and family reunion to displacement and return. <a href="#research-country">Find a country</a></p>
+    <p id="guide-status" role="status">Loading country research…</p>
+    <div id="guide" hidden>
+      <section aria-labelledby="rank-heading">
+        <h2 id="rank-heading">Where was net immigration highest?</h2>
+        <p>The rankings compare the total number of people moving in minus those moving out across 194 countries. They use one UN series for all countries. Figures through 2023 are estimates. The UN published its 2024 projection in July of that year. National statistical offices can publish different or revised balances. <a href="https://population.un.org/wpp/">UN World Population Prospects 2024</a></p>
+        <label for="period">Ranking period</label>
+        <select id="period"><option value="2020">2020–2024</option><option value="2000">2000–2024</option></select>
+        <details id="ranking" open><summary>Worldwide top 40</summary>
+          <table><caption id="rank-caption"></caption><thead><tr><th scope="col">Rank</th><th scope="col">Country</th><th scope="col">Net migration</th></tr></thead><tbody></tbody></table>
+        </details>
+      </section>
+      <section id="country-research" aria-labelledby="country-heading">
+        <h2 id="country-heading">Country research</h2>
+        <p>Choose a country from either top 40, the atlas’s European countries with at least five million residents in 2024, Türkiye, Belarus or Israel.</p>
+        <label for="research-country">Country</label><select id="research-country"><option value="">Choose a country</option></select>
+        <article id="profile" hidden>
+          <h3 id="profile-name" tabindex="-1"></h3>
+          <p id="profile-total"></p>
+          <p>These accounts cover documented episodes during 2000–2024. Each source describes a particular movement, policy or group. The national balance combines all arrivals and departures.</p>
+          <div id="profile-history"></div>
+        </article>
+      </section>
+    </div>
+    <noscript>Enable JavaScript to explore the country rankings and historical sources.</noscript>
+  </main>
+  <script src="history.js"></script><script src="research.js"></script>
+</body>
+</html>

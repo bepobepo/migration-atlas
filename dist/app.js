@@ -748,12 +748,13 @@ function renderRouteContext(container, origin, destination, start = state.year, 
     end,
     nameForCode: name,
     showRouteGap: true,
+    groupByScope: related.some(record => eventScope(record) !== "route"),
     emptyMessage: `No route-specific historical account or country context has been added for ${name(origin)} → ${name(destination)} in ${rangeLabel(start, end)}.`,
   });
   const note = document.createElement("p");
   note.className = "small";
   note.textContent =
-    "Context applies to the years shown; the model does not attribute a number of migrations to each cause.";
+    "The sources describe particular groups and events. The route total combines moves made for many reasons.";
   container.append(heading, cards, note);
 }
 function selectedHistoryCorridors() {
@@ -1273,7 +1274,7 @@ $("#zout").onclick = () => svg.call(zoom.scaleBy, 1 / 1.5);
 $("#reset").onclick = () => svg.call(zoom.transform, d3.zoomIdentity);
 Promise.all([
   ...["countries", "world", "events"].map((f) =>
-    fetch(`data/${f}.json`).then((r) => {
+    fetch(`data/${f}.json`, f === "events" ? { cache: "no-cache" } : undefined).then((r) => {
       if (!r.ok) throw Error(f);
       return r.json();
     }),

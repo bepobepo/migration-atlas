@@ -15,8 +15,8 @@ const { historyMatches, eventScope } = context.api;
 const match = (corridors, start = 1985, end = 2024) =>
   historyMatches(data, { corridors, start, end });
 const ids = (records) => Array.from(records, (r) => r.id);
-assert.deepEqual(ids(match([["VEN", "USA"]])), [19, 18]);
-assert.deepEqual(ids(match([["VEN", "USA"]], 1985, 2013)), []);
+assert.deepEqual(ids(match([["VEN", "USA"]])), [19, 18, 142]);
+assert.deepEqual(ids(match([["VEN", "USA"]], 1985, 2013)), [142]);
 assert.deepEqual(ids(match([["USA", "VEN"]])), []);
 assert.deepEqual(
   ids(
@@ -26,19 +26,19 @@ assert.deepEqual(
       ["VEN", "COL"],
     ]),
   ),
-  [19, 18],
+  [56, 19, 18, 142],
 );
-assert.deepEqual(ids(match([["RUS", "USA"]])), []);
-assert.deepEqual(ids(match([["VEN", "ESP"]])), [15, 19, 18]);
-assert.deepEqual(ids(match([["VEN", "USA"]], 2014, 2023)), [18]);
+assert.deepEqual(ids(match([["RUS", "USA"]])), [142]);
+assert.deepEqual(ids(match([["VEN", "ESP"]])), [15, 19, 18, 69]);
+assert.deepEqual(ids(match([["VEN", "USA"]], 2014, 2023)), [18, 142]);
 assert.deepEqual(ids(match([["VEN", "USA"]], 2014, 2013)), []);
-assert.deepEqual(ids(match([["BLR", "POL"]], 2020, 2024)), [16]);
-assert.deepEqual(ids(match([["SDN", "TCD"]], 2023, 2024)), [20]);
+assert.deepEqual(ids(match([["BLR", "POL"]], 2020, 2024)), [16, 114]);
+assert.deepEqual(ids(match([["SDN", "TCD"]], 2023, 2024)), [137, 20]);
 assert.deepEqual(ids(match([["SDN", "TCD"]], 2020, 2022)), []);
 assert.deepEqual(ids(match([["TCD", "SDN"]], 2023, 2024)), []);
 assert.deepEqual(ids(match([["AFG", "PAK"]], 2021, 2024)), [21]);
 assert.deepEqual(ids(match([["SYR", "TUR"]], 2011, 2016)), [22]);
-assert.deepEqual(ids(match([["UKR", "DEU"]], 2022, 2024)), [23]);
+assert.deepEqual(ids(match([["UKR", "DEU"]], 2022, 2024)), [23, 61]);
 assert.deepEqual(ids(match([["MMR", "BGD"]], 2017, 2017)), [24]);
 assert.deepEqual(ids(match([["BGD", "MMR"]], 2017, 2017)), []);
 assert.deepEqual(ids(match([["MMR", "BGD"]], 2016, 2016)), []);
@@ -47,14 +47,14 @@ assert.deepEqual(ids(match([["ETH", "SDN"]], 2020, 2020)), [26]);
 assert.deepEqual(ids(match([["NIC", "CRI"]], 2018, 2018)), [27]);
 assert.deepEqual(ids(match([["CRI", "NIC"]], 2018, 2018)), []);
 assert.deepEqual(ids(match([["HTI", "USA"]], 2024, 2024)), [28]);
-assert.deepEqual(ids(match([["HTI", "USA"]], 2023, 2023)), []);
+assert.deepEqual(ids(match([["HTI", "USA"]], 2023, 2023)), [142]);
 assert.deepEqual(ids(match([["RWA", "TZA"]], 1994, 1994)), [29]);
 assert.deepEqual(ids(match([["CUB", "USA"]], 1980, 1980)), [30]);
 assert.deepEqual(ids(match([["VNM", "USA"]], 1975, 1975)), [31]);
-assert.deepEqual(ids(match([["COL", "ESP"]], 2000, 2024)), [34, 33, 10]);
+assert.deepEqual(ids(match([["COL", "ESP"]], 2000, 2024)), [34, 33, 10, 69]);
 assert.deepEqual(ids(match([["ESP", "COL"]], 2000, 2024)), [32]);
 assert.deepEqual(ids(match([["COL", "ESP"]], 2008, 2013)), []);
-assert.deepEqual(ids(match([["COL", "ESP"]], 2024, 2024)), [34]);
+assert.deepEqual(ids(match([["COL", "ESP"]], 2024, 2024)), [34, 69]);
 assert.doesNotMatch(context.historyNarrative(data[34], 2023), /40,152/);
 assert.match(context.historyNarrative(data[34], 2024), /40,152/);
 assert.equal(eventScope({}), "route");
@@ -64,7 +64,7 @@ assert.equal(
   "generic card must not leak 2024 developments into earlier playback",
 );
 const destinationContext = {
-  id: 100,
+  id: 1000,
   scope: "destination-country",
   country: "USA",
   start: 2020,
@@ -79,7 +79,7 @@ assert.deepEqual(
       end: 2024,
     }),
   ),
-  [19, 18, 100],
+  [19, 18, 1000, 142],
 );
 assert.deepEqual(
   ids(
@@ -128,7 +128,7 @@ assert.deepEqual(
   await a.setRange(1985, 2024);
   const box = w.document.createElement("div");
   a.renderRouteContext(box, "VEN", "USA");
-  assert.equal(box.querySelectorAll(".route-context-card").length, 2);
+  assert.equal(box.querySelectorAll(".route-context-card").length, 3);
   assert.match(box.textContent, /Country context available/);
   assert.match(box.textContent, /Context in Venezuela/);
   assert.doesNotMatch(
@@ -136,7 +136,7 @@ assert.deepEqual(
     /Spain|No route-specific historical account/,
   );
   assert.match(box.textContent, /2014–2024/);
-  await a.setRange(1985, 2013);
+  await a.setRange(1985, 2012);
   a.renderRouteContext(box, "VEN", "USA");
   assert.equal(box.querySelectorAll(".route-context-card").length, 0);
   assert.match(
@@ -145,7 +145,7 @@ assert.deepEqual(
   );
   await a.setRange(1985, 2023);
   a.renderRouteContext(box, "VEN", "USA");
-  assert.equal(box.querySelectorAll(".route-context-card").length, 1);
+  assert.equal(box.querySelectorAll(".route-context-card").length, 2);
   assert.doesNotMatch(box.textContent, /Election uncertainty/);
   const before = JSON.stringify(a.state);
   a.selectEvent(a.events[18]);

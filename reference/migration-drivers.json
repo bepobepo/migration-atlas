@@ -1,0 +1,1882 @@
+[
+  {
+    "start": 2002,
+    "end": 2005,
+    "title": "An assisted route home for Afghan refugees",
+    "text": "After the Taliban government fell in 2001, Iran, Afghanistan and UNHCR agreed in April 2002 to assist Afghan refugees who chose to go home. The agreement organised voluntary returns across the border.",
+    "source": "https://www.unhcr.org/sites/default/files/legacy-pdf/415963d84.pdf",
+    "scope": "route",
+    "origin": "IRN",
+    "destination": "AFG",
+    "updates": [
+      {
+        "year": 2003,
+        "text": "The parties renewed the agreement in 2003 through March 2005."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "COD",
+    "destination": "AGO",
+    "start": 2003,
+    "end": 2015,
+    "title": "Return to Angola after the civil war",
+    "text": "With the civil war over, Angolan refugees began organized returns, including from the Democratic Republic of the Congo.",
+    "updates": [
+      {
+        "year": 2015,
+        "text": "Over 523,000 Angolan refugees returned from all host countries during the repatriation period. More than half came from the DRC, according to UNHCR."
+      }
+    ],
+    "source": "https://data.unhcr.org/en/documents/download/99935"
+  },
+  {
+    "start": 2023,
+    "end": 2023,
+    "title": "Tourism and construction drew workers to the Emirates",
+    "text": "The IMF reported that tourism, construction and real estate were expanding and that business reforms were attracting foreign workers. An ADBI, OECD and ILO compilation estimated 783,000 worker entries from covered Asian origins in 2023, including large recruitment flows from Pakistan and the Philippines.",
+    "source": "https://www.imf.org/en/News/Articles/2023/10/13/pr23351-uae-imf-staff-concludes-visit",
+    "scope": "destination-country",
+    "country": "ARE",
+    "additionalSource": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2024/05/labor-migration-in-asia_519732dd/9b45c5c4-en.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "AUS",
+    "start": 2004,
+    "end": 2005,
+    "title": "Australia gives skilled workers a larger share of permanent visas",
+    "text": "Australia’s Migration Program prioritised skilled applicants. The Productivity Commission reported that around 65% of visas granted through the program in the 2004–05 financial year were in its skilled stream. That share describes permanent visas granted under the program.",
+    "source": "https://www.pc.gov.au/inquiries/completed/migration-population/report/migrationandpopulation.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "AUS",
+    "start": 2020,
+    "end": 2024,
+    "title": "Border restrictions interrupt study and work migration",
+    "text": "In March 2020, Australia restricted entry during the pandemic. Fewer students and other temporary visa holders could arrive.",
+    "source": "https://population.gov.au/data-and-forecasts/key-data-releases/overseas-migration-2020-21",
+    "additionalSource": "https://www.abs.gov.au/statistics/people/population/overseas-migration/2023-24",
+    "updates": [
+      {
+        "year": 2022,
+        "text": "Australia reopened its borders to most travellers in February 2022. People who had delayed their move began arriving."
+      },
+      {
+        "year": 2024,
+        "text": "The Australian Bureau of Statistics recorded 207,000 migrant arrivals on student visas in the year to June 2024, the largest temporary visa group."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "NZL",
+    "destination": "AUS",
+    "start": 2023,
+    "end": 2024,
+    "title": "Work and settlement across the Tasman",
+    "text": "A long-standing agreement lets New Zealand citizens live and work in Australia. In July 2023 Australia introduced a direct citizenship application route for eligible New Zealanders already living there.",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "Stats NZ estimated that 47,300 people moved from New Zealand to Australia in calendar 2024 and 17,300 moved from Australia to New Zealand. The flows include people of all citizenships."
+      }
+    ],
+    "source": "https://www.dfat.gov.au/geo/new-zealand/new-zealand-country-brief",
+    "additionalSource": "https://www.stats.govt.nz/news/net-migration-loss-to-australia-in-2024/"
+  },
+  {
+    "scope": "destination-country",
+    "country": "AUT",
+    "start": 2011,
+    "end": 2011,
+    "title": "Austria opens a route for skilled workers",
+    "text": "In July 2011 Austria introduced the Red-White-Red Card to recruit workers from outside the EU. The new route assessed applicants’ qualifications, work experience and other criteria for access to the labour market.",
+    "source": "https://www.eurofound.europa.eu/en/publications/all/new-criteria-based-immigration-system-attract-skilled-workers"
+  },
+  {
+    "scope": "route",
+    "origin": "HUN",
+    "destination": "AUT",
+    "start": 2011,
+    "end": 2012,
+    "title": "Austria opens its labour market to Hungarian workers",
+    "text": "In May 2011 Austria lifted transitional restrictions on Hungarian workers. Researchers at the Hungarian Demographic Research Institute found that new registrations of Hungarians in Austria increased by about half in 2011 compared with 2010.",
+    "source": "https://demografia.hu/en/downloads/Working_Papers/HDRI-WP19-2014-Godri-etal.pdf",
+    "updates": [
+      {
+        "year": 2012,
+        "text": "By 2012 annual new registrations were roughly double the 2010 figure."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "AUT",
+    "start": 2022,
+    "end": 2022,
+    "title": "People fleeing the invasion seek refuge in Austria",
+    "text": "Statistics Austria identified displacement after Russia’s full-scale invasion as a major part of immigration in 2022. Its national figures recorded 67,353 more Ukrainian citizens arriving than leaving. That balance measures people by citizenship across all origins and destinations.",
+    "source": "https://www.statistik.at/fileadmin/announcement/2023/05/20230601Demographie2022EN.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "POL",
+    "destination": "BEL",
+    "start": 2009,
+    "end": 2009,
+    "title": "Belgium opens its labour market to Polish workers",
+    "text": "In spring 2009 Belgium lifted its remaining employment restrictions for nationals of eight countries that joined the EU in 2004, including Poland. Polish citizens could seek and take jobs without the transitional work restrictions.",
+    "source": "https://emnbelgium.be/sites/default/files/publications/02._belgium_national_report_for_annual_policy_report_2008_final_version_june091.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "BEL",
+    "start": 2023,
+    "end": 2023,
+    "title": "Joining family in Belgium",
+    "text": "Belgium’s Federal Migration Centre counted 40,382 first residence permits issued for family reasons to foreign nationals born abroad in 2023. This represented 29% of first permits issued to immigrants that year. The figures describe the reason for the permit.",
+    "source": "https://www.myria.be/files/2025_MYRIA_Recht_op_een_gezinsleven.pdf"
+  },
+  {
+    "scope": "origin-country",
+    "country": "BGR",
+    "start": 2007,
+    "end": 2014,
+    "title": "EU membership changes where Bulgarians can work",
+    "text": "Bulgaria joined the European Union in January 2007. Many Bulgarians sought work in Spain, Italy and Greece during the first years after accession. Access to jobs differed across EU countries during the transition.",
+    "updates": [
+      {
+        "year": 2014,
+        "text": "By January 2014, Bulgarian citizens could work in all EU member states without a work permit."
+      }
+    ],
+    "source": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2008/09/international-migration-outlook-2008_g1gh90b6/migr_outlook-2008-en.pdf",
+    "additionalSource": "https://www.mlsp.government.bg/eng/free-movement-of-persons"
+  },
+  {
+    "scope": "destination-country",
+    "country": "BGR",
+    "start": 2020,
+    "end": 2020,
+    "title": "Bulgarian emigrants return during the pandemic",
+    "text": "About 24,000 Bulgarian emigrants returned in 2020, according to the OECD. It links the increase to job losses in sectors that depended on face-to-face work abroad and to the spread of remote working, which let some people return while keeping their jobs.",
+    "source": "https://www.oecd.org/en/publications/oecd-economic-surveys-bulgaria-2023_5ca812a4-en/full-report/component-5.html"
+  },
+  {
+    "scope": "destination-country",
+    "country": "BHR",
+    "start": 2023,
+    "end": 2023,
+    "title": "Overseas recruitment for construction and services",
+    "text": "Employers sponsored foreign workers for work and residence permits. In April–June 2023, construction accounted for the largest share of new work permits, followed by wholesale and retail trade, then accommodation and food services.",
+    "source": "https://lmra.gov.bh/files/cms/shared/lmra-quarterly-newsletter-q2-2023-eng.pdf",
+    "additionalSource": "https://2021-2025.state.gov/reports/2024-investment-climate-statements/bahrain/"
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "BLR",
+    "start": 2023,
+    "end": 2024,
+    "title": "Refugees from Ukraine chose Belarus for personal ties and housing",
+    "text": "In interviews in late 2023, refugees from Ukraine told UNHCR that personal ties, available accommodation, cultural familiarity and job opportunities influenced their choice of Belarus.",
+    "source": "https://www.ecoi.net/en/file/local/2105693/bi-annual-fact-sheet-2024-02-belarus.pdf",
+    "additionalSource": "https://www.unhcr.org/europe/sites/europe/files/2024-10/bi-annual-fact-sheet-2024-09-belarus.pdf",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "In a further round of 200 interviews in summer 2024, 76.5% cited the absence of a language barrier and 36% said they had family or friends in Belarus. Respondents could give more than one reason."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "CAN",
+    "start": 2015,
+    "end": 2015,
+    "title": "Canada changes how it selects skilled immigrants",
+    "text": "Canada introduced Express Entry in January. It ranked candidates and invited selected workers to apply for permanent residence under federal skilled-worker, trades and Canadian experience programs.",
+    "source": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/express-entry-year-end-report-2015.html"
+  },
+  {
+    "scope": "route",
+    "origin": "IND",
+    "destination": "CAN",
+    "start": 2018,
+    "end": 2024,
+    "title": "A faster route to Canadian study permits",
+    "text": "Canada introduced the Student Direct Stream in June 2018. Students applying from India were among those who could qualify for faster processing by showing sufficient funds and language skills in advance.",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "Canada closed the expedited stream in November 2024. Students could still apply through the regular study permit process."
+      }
+    ],
+    "source": "https://www.canada.ca/en/immigration-refugees-citizenship/news/2018/06/ircc-improves-the-processing-of-student-applications-from-china-india-vietnam-and-the-philippines.html",
+    "additionalSource": "https://www.canada.ca/en/immigration-refugees-citizenship/news/notices/end-student-direct-stream-nigeria-student-express.html"
+  },
+  {
+    "scope": "destination-country",
+    "country": "CAN",
+    "start": 2023,
+    "end": 2023,
+    "title": "Work and study permits fuel population growth",
+    "text": "Statistics Canada attributed most of the year’s population growth to temporary immigration. The increase in non-permanent residents chiefly involved work permit holders. Students and accompanying family members also formed part of the temporary resident population.",
+    "source": "https://www150.statcan.gc.ca/n1/daily-quotidien/240327/dq240327c-eng.htm"
+  },
+  {
+    "scope": "route",
+    "origin": "DEU",
+    "destination": "CHE",
+    "start": 2002,
+    "end": 2006,
+    "title": "Working across the German–Swiss border",
+    "text": "The EU–Swiss free movement agreement began in June 2002 and eased access to employment in Switzerland. The OECD linked moves from Germany to unemployment there, closer ties between the two economies and some cross-border workers moving their homes to Switzerland.",
+    "source": "https://www.newsd.admin.ch/newsd/message/attachments/1455.pdf",
+    "additionalSource": "https://www.sem.admin.ch/en/free-movement-of-persons-switzerland-eu-efta"
+  },
+  {
+    "scope": "destination-country",
+    "country": "CHE",
+    "start": 2024,
+    "end": 2024,
+    "title": "Jobs and family reunification in Switzerland",
+    "text": "The Swiss State Secretariat for Migration counted 89,410 foreign nationals entering the permanent resident population for work in 2024. Of these, 95% came from the EU or EFTA. Another 42,433 entered through family reunification.",
+    "source": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/monitor/2024/statistik-zuwanderung-2024-jahr.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "VEN",
+    "destination": "CHL",
+    "start": 2016,
+    "end": 2020,
+    "title": "Economic stability and family ties drew people to Chile",
+    "text": "Venezuelans who settled in Chile described economic crisis at home and the appeal of Chile’s economic stability. Some came to join family already there. Chile’s migration service and its research partners interviewed arrivals from this period who had begun a residence application.",
+    "source": "https://www-pre.serviciomigraciones.cl/wp-content/uploads/2023/06/Resultados-Encuesta-Migrantes-2022.pdf",
+    "additionalSource": "https://www-pre.serviciomigraciones.cl/wp-content/uploads/2023/06/Encuesta-Migrantes-2022-Presentacion-de-Resultados-Evento.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "VEN",
+    "destination": "COL",
+    "start": 2018,
+    "end": 2024,
+    "title": "Finding food, medicine and family across Colombia’s border",
+    "text": "In 2018, Human Rights Watch interviewed a mother who crossed at the Colombian border on her way to Medellín. Food and medicine had become unaffordable in Venezuela, and her daughter’s father was waiting for them in Colombia.",
+    "source": "https://www.hrw.org/report/2018/09/03/venezuelan-exodus/need-regional-response-unprecedented-migration-crisis",
+    "additionalSource": "https://www.acnur.org/sites/default/files/2024-02/venezolanos-en-chile-colombia-ecuador-peru-una-oportunidad-para-el-desarrollo-feb-2024.pdf",
+    "updates": [
+      {
+        "year": 2021,
+        "text": "Colombia introduced a ten-year temporary protection programme that allowed eligible Venezuelans to live and work legally, including people already living in Colombia."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "CZE",
+    "start": 2016,
+    "end": 2019,
+    "title": "Czech employers recruit workers in Ukraine",
+    "text": "In August 2016 Czechia opened an employee-card application route for Ukrainian workers recruited for mid- and lower-skilled jobs. Czech companies could nominate candidates through the programme.",
+    "source": "https://home-affairs.ec.europa.eu/system/files/2022-08/EMN_Annual_Report_2019_CZ.pdf",
+    "updates": [
+      {
+        "year": 2019,
+        "text": "By August 2019 more than 51,500 candidates and 2,630 Czech companies had participated. These are programme participation figures."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "CZE",
+    "start": 2022,
+    "end": 2024,
+    "title": "Wartime displacement from Ukraine to Czechia",
+    "text": "Russia’s full-scale invasion in February 2022 forced people to seek safety in Czechia. The Czech Statistical Office identifies refugee arrivals from Ukraine as the main reason the country’s migration balance rose sharply in 2022.",
+    "source": "https://csu.gov.cz/aktualni-populacni-vyvoj-v-kostce",
+    "additionalSource": "https://csu.gov.cz/docs/107508/8cc166ca-5add-50a6-c7e9-e4ea025e87f0/1300692406.pdf?version=1.0"
+  },
+  {
+    "scope": "route",
+    "origin": "BGR",
+    "destination": "DEU",
+    "start": 2014,
+    "end": 2022,
+    "title": "Germany opens its labour market to Bulgarian workers",
+    "text": "On 1 January 2014 Germany lifted its remaining restrictions on employment for Bulgarian and Romanian citizens. Germany’s migration office documented an increase in moves and in registered employment from these two countries. Some people entering registered work already lived in Germany.",
+    "updates": [
+      {
+        "year": 2022,
+        "text": "Germany remained a leading destination in 2022. The OECD estimated that 45% of Bulgarian citizens migrating to OECD countries went to Germany."
+      }
+    ],
+    "source": "https://www.bamf.de/SharedDocs/Anlagen/EN/Forschung/Forschungsberichte/Kurzberichte/fb24-bulgarien-rumaenien-kurzfassung.pdf?__blob=publicationFile&v=9",
+    "additionalSource": "https://www.oecd.org/en/publications/international-migration-outlook-2024_50b0353e-en/full-report/bulgaria_d4bb2941.html"
+  },
+  {
+    "scope": "route",
+    "origin": "SRB",
+    "destination": "DEU",
+    "start": 2016,
+    "end": 2024,
+    "title": "A job offer opened a work-visa route",
+    "text": "Germany’s Western Balkans regulation gave Serbian citizens and nationals of five other Western Balkan countries a way to apply for a work visa from 2016. An offer from a German employer was required, and eligibility generally did not depend on a formal qualification.",
+    "source": "https://www.arbeitsagentur.de/vor-ort/zav/amz/westbalkan-regelung/leben-arbeiten-in-deutschland"
+  },
+  {
+    "scope": "destination-country",
+    "country": "DEU",
+    "start": 2023,
+    "end": 2024,
+    "title": "Germany widens recruitment of skilled workers",
+    "text": "In November 2023, Germany lowered EU Blue Card salary thresholds and expanded the list of shortage occupations. The changes opened jobs to a wider pool of applicants from outside the EU.",
+    "source": "https://www.make-it-in-germany.com/en/visa-recognition/skilled-immigration-act",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "From June 2024, qualified applicants could use an opportunity card to come to Germany to look for a job."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "DNK",
+    "start": 2004,
+    "end": 2008,
+    "title": "Workers from new EU member states take jobs in Denmark",
+    "text": "After the EU enlargement of 2004, workers from the new member states found employment in Denmark under transitional rules. Construction and farming were important employers, and Polish workers were particularly prominent in construction.",
+    "source": "https://doku.iab.de/grauepap/2009/LM_DK.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "DNK",
+    "start": 2022,
+    "end": 2022,
+    "title": "Denmark offers temporary residence to people displaced from Ukraine",
+    "text": "Denmark introduced a special residence scheme for people displaced from Ukraine after Russia’s invasion. Statistics Denmark counted 30,200 people from Ukraine who immigrated under that law in 2022.",
+    "source": "https://www.dst.dk/da/Statistik/udgivelser/NytHtml?cid=45516"
+  },
+  {
+    "scope": "destination-country",
+    "country": "DNK",
+    "start": 2022,
+    "end": 2024,
+    "title": "Jobs and study draw people to Denmark",
+    "text": "Statistics Denmark counted approximately 6,000 Romanian citizens and 3,700 Polish citizens who immigrated for work in 2022. It identifies nationality and the basis of residence in this series.",
+    "source": "https://www.dst.dk/da/Statistik/udgivelser/NytHtml?cid=45516",
+    "additionalSource": "https://www.dst.dk/da/Statistik/udgivelser/NytHtml?cid=50951",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "Study was another route. In 2024 the agency counted 3,451 US citizens who immigrated to Denmark to study."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "SYR",
+    "destination": "EGY",
+    "start": 2011,
+    "end": 2013,
+    "title": "Egypt offered refuge from the war in Syria",
+    "text": "As war spread in Syria, families sought safety in Egypt. UNHCR identifies established ties between the countries and the ability to enter without a visa at the start of the conflict as reasons some Syrians chose Egypt.",
+    "source": "https://www.unhcr.org/eg/sites/eg/files/legacy-pdf/UNHCR-7-Decades-In-Egypt.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "SDN",
+    "destination": "EGY",
+    "start": 2023,
+    "end": 2024,
+    "title": "People fleeing the war in Sudan crossed into Egypt",
+    "text": "Fighting in Sudan from April 2023 forced civilians to seek safety across the northern border. Those arriving in Egypt included Sudanese families and people of other nationalities who had already taken refuge in Sudan.",
+    "source": "https://dataviz.unhcr.org/product-gallery/2024/04/sudan-one-year-of-spiralling-conflict-and-displacement/",
+    "additionalSource": "https://www.unhcr.org/sites/default/files/2025-06/Sudan%20GR2024%20Situation%20Summary%20FINAL%20v3.pdf",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "UNHCR’s year-end report estimated that Egypt hosted 1.3 million Sudanese refugees, including people displaced before April 2023."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "ROU",
+    "destination": "ESP",
+    "start": 2002,
+    "end": 2011,
+    "title": "Recruitment, community ties and the construction downturn",
+    "text": "The end of short-stay visa requirements in 2002 and recruitment agreements with Spain made it easier for Romanians to travel and find work there.",
+    "source": "https://www.oecd.org/en/publications/talent-abroad-a-review-of-romanian-emigrants_bac53150-en/full-report/component-5.html",
+    "updates": [
+      {
+        "year": 2007,
+        "text": "After Romania joined the EU, an established Romanian community helped new arrivals settle. The OECD notes that some of the 2007 increase in registrations covered people already living in Spain."
+      },
+      {
+        "year": 2008,
+        "text": "Spain’s construction downturn cost many Romanian workers their jobs. Migration from Romania to Spain fell sharply."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "MAR",
+    "destination": "ESP",
+    "start": 2022,
+    "end": 2024,
+    "title": "Moroccan workers come for Huelva’s berry harvest",
+    "text": "Spanish growers recruited Moroccan women for seasonal berry picking in Huelva through the GECCO circular migration programme. The Spanish ministry planned for 12,300 workers in the 2022 season. These short stays can fall outside long-term migration statistics.",
+    "source": "https://www.inclusion.gob.es/ca/w/las-primeras-800-trabajadoras-marroquies-llegaran-a-huelva-este-miercoles",
+    "additionalSource": "https://www.inclusion.gob.es/en/w/la-ministra-elma-saiz-conoce-a-las-mujeres-marroquies-que-trabajan-en-la-recogida-de-frutos-rojos-y-reciben-formacion-en-emprendimiento",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "In 2024 the ministry documented returning seasonal workers using enterprise training in Huelva to set up businesses in Morocco."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "ESP",
+    "start": 2024,
+    "end": 2024,
+    "title": "Family migration and European free movement",
+    "text": "Family members, including accompanying relatives, made up 39% of Spain’s 2024 long-term or permanent immigration in the OECD’s standardized series. Another 32% moved under free-movement rights. This measure includes changes of residence status after arrival.",
+    "source": "https://www.oecd.org/en/publications/international-migration-outlook-2025_ae26c893-en/full-report/spain_563fbddc.html"
+  },
+  {
+    "scope": "route",
+    "origin": "SDN",
+    "destination": "ETH",
+    "start": 2023,
+    "end": 2024,
+    "title": "People cross into Ethiopia to escape the war in Sudan",
+    "text": "After fighting broke out in Sudan in April 2023, people crossed into Ethiopia for safety. Those arriving included Sudanese refugees and Ethiopians returning home.",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "Between May and August, Ethiopia’s Refugees and Returnees Service and UNHCR also recorded arrivals of refugees of other nationalities who had been living in Sudan."
+      }
+    ],
+    "source": "https://data.unhcr.org/en/documents/download/112148"
+  },
+  {
+    "scope": "destination-country",
+    "country": "FIN",
+    "start": 2015,
+    "end": 2015,
+    "title": "Asylum seekers arrive in Finland",
+    "text": "Finland received more than 32,000 asylum seekers in 2015. Many were Iraqi nationals. The immigration service opened reception centres to house people while their protection claims were assessed.",
+    "source": "https://migri.fi/en/-/maahanmuuttoviraston-vuosi-2015-oli-poikkeuksellinen",
+    "additionalSource": "https://migri.fi/en/-/irakilaisten-turvapaikkapaatokset-kielteisten-osuus-kasvanut"
+  },
+  {
+    "scope": "destination-country",
+    "country": "FIN",
+    "start": 2022,
+    "end": 2024,
+    "title": "International students and their families move to Finland",
+    "text": "Finland changed its student residence rules in 2022. The Finnish Immigration Service links the reform to growing demand to study in Finland.",
+    "source": "https://migri.fi/en/-/immigration-to-finland-continues-to-be-high-interest-in-studying-in-finland-is-growing",
+    "additionalSource": "https://migri.fi/en/-/immigration-statistics-2024-sharp-drop-in-applications-for-international-protection-record-number-of-students-applied-for-residence-permit",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "In 2024 the number of applications for a first student residence permit reached a record. Workers, students and the family members who joined them used separate permit categories."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "FRA",
+    "start": 2011,
+    "end": 2024,
+    "title": "Joining family and studying in France",
+    "text": "In 2011, family migration accounted for about 86,000 first residence permits for non-EU nationals in France, the largest category. Study accounted for around 65,000.",
+    "source": "https://www.immigration.interieur.gouv.fr/documentation/etudes-et-statistiques/titres-de-sejour-en-2024.html",
+    "updates": [
+      {
+        "year": 2022,
+        "text": "By 2022, students received more first permits than family members."
+      },
+      {
+        "year": 2024,
+        "text": "In the ministry’s initial 2024 figures, study accounted for nearly one in three first permits. Humanitarian permits also rose compared with 2023."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "DZA",
+    "destination": "FRA",
+    "start": 2020,
+    "end": 2020,
+    "title": "Joining family in France",
+    "text": "In a 2019–2020 INED–Insee survey, 53% of Algeria-born respondents in metropolitan France said they came to accompany or join family. Respondents were aged 18–59, lived in ordinary households and had arrived aged 16 or older. They could give several reasons and could have arrived long before the survey.",
+    "source": "https://www.insee.fr/fr/statistiques/8237722"
+  },
+  {
+    "scope": "route",
+    "origin": "LTU",
+    "destination": "GBR",
+    "start": 2004,
+    "end": 2011,
+    "title": "Lithuanians gain access to jobs in Britain",
+    "text": "The UK opened its labour market to Lithuanian citizens when Lithuania joined the EU in May 2004. Britain became a leading destination for Lithuanian emigrants. Research published by the OECD describes how relatives and friends helped workers find jobs abroad.",
+    "source": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2013/12/coping-with-emigration-in-baltic-and-east-european-countries_g1g3718a/9789264204928-en.pdf",
+    "additionalSource": "https://home-affairs.ec.europa.eu/system/files/2020-09/14._lithuania_national_report_2006_version_7jan09_en.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "GBR",
+    "start": 2021,
+    "end": 2024,
+    "title": "A route to settle in the UK for Hong Kong families",
+    "text": "After China imposed the national security law on Hong Kong, the UK opened a visa in January 2021 for British National (Overseas) status holders and eligible family members. It allowed them to live, work and study in the UK and apply for settlement after five years.",
+    "source": "https://www.gov.uk/government/publications/nationality-and-borders-bill-british-national-overseas-factsheet/british-national-overseas"
+  },
+  {
+    "scope": "destination-country",
+    "country": "GBR",
+    "start": 2021,
+    "end": 2024,
+    "title": "Students and workers arrive as travel resumes",
+    "text": "After pandemic travel restrictions eased in 2021, more international students came to the UK, including people who had begun their courses remotely.",
+    "source": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/bulletins/longterminternationalmigrationprovisional/yearendingdecember2022",
+    "additionalSource": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/bulletins/longterminternationalmigrationprovisional/yearendingdecember2024",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "Recruitment on Health and Care Worker visas also brought workers and their dependants to the UK."
+      },
+      {
+        "year": 2024,
+        "text": "The Office for National Statistics recorded fewer arrivals on work and study visas in 2024 and more departures by people who had originally come to study."
+      }
+    ]
+  },
+  {
+    "scope": "origin-country",
+    "country": "GRC",
+    "start": 2008,
+    "end": 2014,
+    "title": "Recession and the search for work abroad",
+    "text": "As Greece entered a prolonged recession, workers including young graduates looked abroad for employment. The Bank of Greece identified high unemployment and limited demand for skilled workers as pressures behind departures.",
+    "source": "https://www.bankofgreece.gr/Publications/4320160703_en.pdf",
+    "updates": [
+      {
+        "year": 2013,
+        "text": "The bank estimated that 427,000 residents of all nationalities left Greece from 2008 through 2013."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "TUR",
+    "destination": "GRC",
+    "start": 2015,
+    "end": 2015,
+    "title": "Refugees cross the Aegean to the Greek islands",
+    "text": "UNHCR documented people travelling by sea from Türkiye to Greece in 2015, among them Syrians, Afghans and Iraqis fleeing conflict. The agency recorded arrivals on the Greek islands, including people who subsequently travelled onward.",
+    "source": "https://www.unhcr.org/559fa5da6.html"
+  },
+  {
+    "scope": "route",
+    "origin": "EGY",
+    "destination": "GRC",
+    "start": 2022,
+    "end": 2024,
+    "title": "Recruiting seasonal farm workers from Egypt",
+    "text": "Greece and Egypt signed an agreement in November 2022 to recruit Egyptian workers for seasonal farm jobs in Greece.",
+    "source": "https://treaties.un.org/Pages/showDetails.aspx?objid=080000028060c238",
+    "additionalSource": "https://migration.gov.gr/en/stis-10-ioynioy-xekina-ti-leitoyrgia-tis-i-ilektroniki-platforma-gia-tin-efarmogi-tis-symfonias-elladas-aigyptoy/",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "In June 2024 Greece opened applications to employers for an initial pool of 5,000 places. That figure describes recruitment capacity."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "GRC",
+    "start": 2024,
+    "end": 2024,
+    "title": "Work and family residence in Greece",
+    "text": "In 2024, about 88,000 new immigrants from outside the EU obtained Greek residence permits lasting more than a year. Work accounted for 25.3% of these permits, and family migration for 18.3%. These percentages describe this permit group.",
+    "source": "https://www.oecd.org/en/publications/international-migration-outlook-2025_ae26c893-en/full-report/greece_a71060bd.html"
+  },
+  {
+    "scope": "destination-country",
+    "country": "HUN",
+    "start": 2022,
+    "end": 2024,
+    "title": "Employment is the main route for long-stay non-EU permit holders",
+    "text": "In 2022, around 55,000 new immigrants from outside the EU obtained Hungarian residence permits lasting more than a year. Employment accounted for 73% of that group. Other permits covered study and family migration.",
+    "source": "https://www.oecd.org/en/publications/2024/11/international-migration-outlook-2024_c6f3e803/full-report/hungary_0e7718bc.html",
+    "additionalSource": "https://www.oecd.org/en/publications/international-migration-outlook-2025_ae26c893-en/full-report/hungary_0717facf.html",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "The corresponding 2024 total was around 67,000, with 72.2% classified as labour migrants."
+      }
+    ]
+  },
+  {
+    "scope": "origin-country",
+    "country": "IRL",
+    "start": 2008,
+    "end": 2013,
+    "title": "Seeking work abroad during Ireland’s recession",
+    "text": "As Ireland’s economy contracted, Irish emigrants described looking abroad for jobs and career experience. University College Cork’s survey also found other reasons for leaving, including travel.",
+    "source": "https://www.ucc.ie/en/media/research/emigre/Emigration_in_an_Age_of_Austerity_Final.pdf",
+    "additionalSource": "https://www.cso.ie/en/releasesandpublications/ep/p-macip/macip17/irelandseconomiccrisis-10yearson/"
+  },
+  {
+    "scope": "destination-country",
+    "country": "IRL",
+    "start": 2021,
+    "end": 2024,
+    "title": "Ireland expands recruitment through employment permits",
+    "text": "Ireland widened the occupations eligible for employment permits in a series of changes beginning in 2021. Employers used the permits to recruit workers from outside the European Economic Area.",
+    "source": "https://www.esri.ie/system/files/publications/Annual%20Report%20on%20Migration%20and%20Asylum%202023%20Ireland_0.pdf",
+    "additionalSource": "https://www.esri.ie/system/files/publications/SUSTAT137.pdf",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "In 2024, 13,566 permits went to Indian citizens, the largest nationality group. The figures count permits issued."
+      }
+    ]
+  },
+  {
+    "start": 2021,
+    "end": 2024,
+    "title": "Afghans sought protection in Iran",
+    "text": "As the security and humanitarian situation worsened in Afghanistan in 2021, more Afghans crossed into Iran seeking protection. UNHCR recorded people arriving through unofficial crossings as well as families approaching its reception centres.",
+    "source": "https://reporting.unhcr.org/sites/default/files/RRP%20Afghanistan%20Situation-09%20September%202021.pdf",
+    "scope": "route",
+    "origin": "AFG",
+    "destination": "IRN",
+    "additionalSource": "https://data.unhcr.org/en/documents/download/108780",
+    "updates": [
+      {
+        "year": 2022,
+        "text": "Iran included some people who had arrived after August 2021 in its headcount of undocumented Afghans. Participants received a slip giving them temporary protection. The headcount also included earlier residents."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "RUS",
+    "destination": "ISR",
+    "start": 2022,
+    "end": 2023,
+    "title": "A surge in immigration from Russia to Israel",
+    "text": "After Russia invaded Ukraine, immigration under Israel’s Law of Return rose sharply. Russia was the largest source of newcomers recorded by the OECD in 2022. Eligibility under this law provides a route to settle in Israel.",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "The OECD reports that immigration from Russia fell 26% in 2023 compared with 2022."
+      }
+    ],
+    "source": "https://www.oecd.org/en/publications/international-migration-outlook-2024_50b0353e-en/full-report/israel_846cf927.html"
+  },
+  {
+    "start": 2022,
+    "end": 2023,
+    "title": "Immigration under Israel’s Law of Return after the invasion",
+    "text": "Following Russia’s invasion of Ukraine, Israel facilitated immigration for eligible people from Ukraine under its Law of Return. OECD records show Russia was the largest source of new immigrants in 2022, followed by Ukraine. The long-term immigration series includes some people who changed status while already in Israel.",
+    "source": "https://www.oecd.org/en/publications/international-migration-outlook-2024_50b0353e-en/full-report/israel_846cf927.html",
+    "scope": "destination-country",
+    "country": "ISR",
+    "additionalSource": "https://www.cbs.gov.il/he/mediarelease/DocLib/2022/426/11_22_426e.pdf",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "The OECD reports that immigration from both countries fell in 2023, particularly from Ukraine."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "ROU",
+    "destination": "ITA",
+    "start": 2007,
+    "end": 2012,
+    "title": "Romania’s EU accession opens jobs in Italy",
+    "text": "When Romania joined the EU in 2007, Italy allowed Romanian citizens to work without permits in sectors including construction, agriculture and domestic care. The OECD identified those openings as one reason Italy attracted Romanian workers.",
+    "source": "https://www.oecd.org/en/publications/talent-abroad-a-review-of-romanian-emigrants_bac53150-en/full-report/component-5.html",
+    "additionalSource": "https://www.oecd.org/en/publications/talent-abroad-a-review-of-romanian-emigrants_bac53150-en/full-report/component-8.html",
+    "updates": [
+      {
+        "year": 2012,
+        "text": "Italy lifted its remaining transitional restrictions on Romanian workers in 2012."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "ITA",
+    "start": 2023,
+    "end": 2024,
+    "title": "Recruiting overseas for seasonal and year-round jobs",
+    "text": "In 2023 Italy adopted a three-year plan for hiring workers from abroad. Employers could apply for seasonal workers in agriculture and tourism, and for workers in designated year-round occupations.",
+    "source": "https://integrazionemigranti.gov.it/it-it/Altre-info/e/2/o/54/id/128/Decreto-flussi-2023-25-Le-quote-in-dettaglio-",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "For 2024 the government allocated 89,050 places for seasonal work within a total quota of 151,000. A quota measures authorized places. Actual arrivals can differ."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "SYR",
+    "destination": "JOR",
+    "start": 2012,
+    "end": 2024,
+    "title": "Syrian families seek safety in Jordan",
+    "text": "As families fled the war in Syria, Jordan opened Za’atari camp in July 2012 to relieve pressure on border facilities and families hosting refugees.",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "UNHCR continued renewing refugee documents and assisting people in camps and host communities. The numbers registered include people who arrived in earlier years."
+      }
+    ],
+    "source": "https://www.unhcr.org/news/stories/jordan-opens-new-camp-syrian-refugees-amid-funding-gaps",
+    "additionalSource": "https://www.unhcr.org/sites/default/files/2024-03/Jordan%20Factsheet%20-%20January%202024.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "JPN",
+    "start": 2000,
+    "end": 2018,
+    "title": "Overseas trainees fill trades jobs",
+    "text": "Japan’s Technical Intern Training Programme brought people from abroad to learn skills at Japanese workplaces. For employers seeking overseas workers for many trades, it was an important recruitment channel. The stated aim of the program was to transfer skills to trainees’ home countries.",
+    "source": "https://www.oecd.org/en/publications/recruiting-immigrant-workers-japan-2024_0e5a10e3-en/full-report/component-10.html"
+  },
+  {
+    "scope": "route",
+    "origin": "VNM",
+    "destination": "JPN",
+    "start": 2011,
+    "end": 2019,
+    "title": "Growing recruitment from Vietnam",
+    "text": "Japan was recruiting workers from Vietnam as part of its Asian labour migration. In 2011, Vietnamese migrants accounted for 3% of new labour migrants entering Japan.",
+    "updates": [
+      {
+        "year": 2019,
+        "text": "By 2019, their share of Japan’s new labour migrants had risen to 20%, according to the OECD."
+      }
+    ],
+    "source": "https://www.oecd.org/en/publications/recruiting-immigrant-workers-japan-2024_0e5a10e3-en/full-report/component-5.html"
+  },
+  {
+    "scope": "destination-country",
+    "country": "JPN",
+    "start": 2019,
+    "end": 2024,
+    "title": "Japan recruits workers for shortage occupations",
+    "text": "Japan introduced the Specified Skilled Worker residence status in April 2019. It let employers recruit workers with relevant skills from abroad in industries struggling to hire locally, including nursing care, construction and agriculture.",
+    "source": "https://www.mofa.go.jp/mofaj/ca/fna/ssw/us/",
+    "additionalSource": "https://www.mofa.go.jp/policy/other/bluebook/2024/en_html/chapter4/c040101.html"
+  },
+  {
+    "scope": "route",
+    "origin": "RUS",
+    "destination": "KAZ",
+    "start": 2022,
+    "end": 2022,
+    "title": "Russian mobilisation accelerated departures to Kazakhstan",
+    "text": "After Russia invaded Ukraine, some Russians moved to Central Asia. Arrivals in Kazakhstan rose sharply after Russia announced partial mobilisation in September. Some travellers subsequently moved on or returned to Russia.",
+    "source": "https://www.oecd.org/en/publications/weathering-economic-storms-in-central-asia_83348924-en/full-report/component-5.html",
+    "additionalSource": "https://www.icmpd.org/file/download/60848/file/ICMPD%20Migration%20Outlook%20EECA%202024.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "KOR",
+    "start": 2004,
+    "end": 2024,
+    "title": "Recruiting workers for businesses with vacancies",
+    "text": "South Korea introduced the Employment Permit System in August 2004. It allowed small and medium-sized employers unable to fill jobs locally to recruit workers abroad through agreements with sending countries.",
+    "source": "https://www.moel.go.kr/english/news/moelNewsDetail.do?idx=3145",
+    "additionalSource": "https://www.oecd.org/en/publications/oecd-economic-surveys-korea-2024_c243e16a-en/full-report/responding-to-population-decline_7f6620e6.html",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "The 2024 E-9 quota rose to 165,000 places. The quota measures the number of places authorised for the year."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "NPL",
+    "destination": "KOR",
+    "start": 2007,
+    "end": 2014,
+    "title": "Nepal and South Korea organise labour recruitment",
+    "text": "Nepal and South Korea signed a July 2007 agreement to recruit Nepali workers under Korea’s Employment Permit System. The governments set up a process for sending and supervising workers.",
+    "updates": [
+      {
+        "year": 2008,
+        "text": "Nepal issued an implementing directive the following year."
+      }
+    ],
+    "source": "https://www.ilo.org/resource/memorandum-understanding-between-ministry-labor-and-transport-management",
+    "additionalSource": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40asia/%40ro-bangkok/%40ilo-kathmandu/documents/publication/wcms_312137.pdf"
+  },
+  {
+    "start": 2018,
+    "end": 2018,
+    "title": "A domestic-work agreement reopened recruitment",
+    "text": "The Philippines lifted its deployment ban after Kuwait and the Philippines signed an agreement on employing domestic workers. Philippine authorities began setting new conditions for sending household workers to Kuwait.",
+    "source": "https://www.pna.gov.ph/articles/1035740",
+    "scope": "route",
+    "origin": "PHL",
+    "destination": "KWT",
+    "additionalSource": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40arabstates/%40ro-beirut/documents/publication/wcms_886063.pdf"
+  },
+  {
+    "start": 2023,
+    "end": 2023,
+    "title": "Overseas recruitment supplied Kuwait’s workforce",
+    "text": "Sending-country records compiled by ADBI, OECD and ILO show about 273,000 workers deployed from covered Asian countries to Kuwait in 2023. Recruitment from Bangladesh and Nepal increased while deployments from India fell. The figures count workers sent on assignment.",
+    "source": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2024/05/labor-migration-in-asia_519732dd/9b45c5c4-en.pdf",
+    "scope": "destination-country",
+    "country": "KWT"
+  },
+  {
+    "start": 2024,
+    "end": 2024,
+    "title": "Kuwait and the Philippines reopened a work route",
+    "text": "In June 2024 the two governments agreed to resume Filipino recruitment. Kuwait lifted restrictions on entry and work visas and allowed employers to recruit Filipino domestic workers with previous overseas work experience.",
+    "source": "https://www.moi.gov.kw/main/News/Index/111070",
+    "scope": "route",
+    "origin": "PHL",
+    "destination": "KWT",
+    "additionalSource": "https://www.pna.gov.ph/articles/1227687"
+  },
+  {
+    "scope": "origin-country",
+    "country": "LTU",
+    "start": 2004,
+    "end": 2008,
+    "title": "EU labour markets opened to Lithuanian workers",
+    "text": "Lithuania’s accession to the EU in 2004 made it easier for its citizens to take jobs abroad. Research linked departures to wage differences, unemployment at home and employers seeking workers in Western Europe. Friends and relatives already abroad helped later migrants find their way.",
+    "source": "https://onlinelibrary.wiley.com/doi/10.1111/j.1468-2435.2008.00501.x"
+  },
+  {
+    "scope": "route",
+    "origin": "BLR",
+    "destination": "LTU",
+    "start": 2020,
+    "end": 2023,
+    "title": "Political repression sent Belarusians into exile in Lithuania",
+    "text": "After the disputed August 2020 presidential election, police repression prompted some Belarusians to leave. Lithuania offered humanitarian entry to people facing persecution and eased procedures for companies relocating employees. Humanitarian and work routes served different groups.",
+    "source": "https://pace.coe.int/en/files/31822/html",
+    "additionalSource": "https://migracija.lrv.lt/en/news/migration-processes-in-lithuania-influenced-by-the-war-in-ukraine-and-labour-migration/",
+    "updates": [
+      {
+        "year": 2021,
+        "text": "Lithuania issued around 4,700 national visas to Belarusian citizens on humanitarian grounds in 2021."
+      },
+      {
+        "year": 2022,
+        "text": "It issued more than 12,000 such visas in 2022. These figures count authorizations."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "LTU",
+    "start": 2022,
+    "end": 2024,
+    "title": "Displacement from Ukraine to Lithuania",
+    "text": "After Russia’s full-scale invasion in February 2022, refugees fled Ukraine for Lithuania. In its separate population statistics, Lithuania counted 43,900 immigrating Ukrainian citizens that year, alongside 20,700 Lithuanian citizens returning from countries around the world.",
+    "source": "https://osp.stat.gov.lt/en/lietuvos-gyventojai-2023/gyventoju-migracija/tarptautine-migracija",
+    "additionalSource": "https://www.unhcr.org/nordic-and-baltic/news/stories/outpouring-solidarity-two-years-nordic-baltic-response-full-scale-war-ukraine"
+  },
+  {
+    "scope": "route",
+    "origin": "IDN",
+    "destination": "MYS",
+    "start": 2019,
+    "end": 2019,
+    "title": "Malaysian plantations employ Indonesian workers",
+    "text": "Plantation jobs were an important link between the two countries. In the World Bank’s analysis of 2019 labour data, around 29% of low-skilled Indonesian migrant workers employed in Malaysia worked in plantations. This share describes people already in work.",
+    "source": "https://documents1.worldbank.org/curated/en/099110424210537110/pdf/P181093-12d584c7-c173-4a45-b60a-2134739d28b3.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "MYS",
+    "start": 2022,
+    "end": 2023,
+    "title": "Employers recruit abroad for plantation, factory and construction work",
+    "text": "IOM documented migrant workers filling jobs in plantations, manufacturing, construction and services. The demand for labour varied by industry.",
+    "source": "https://www.iom.int/sites/g/files/tmzbdl2616/files/documents/2023-08/english_undocumented-migrant-workers-report.pdf",
+    "additionalSource": "https://www.ilo.org/sites/default/files/2024-07/QBN%20Q3-Q4%202023_MALAYSIA%20final.pdf",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "In 2023, Malaysia relaxed entry rules. The ILO reported continued shortages in construction, plantations and agriculture, even as some other sectors received more workers than employers needed."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "POL",
+    "destination": "NLD",
+    "start": 2007,
+    "end": 2016,
+    "title": "Dutch employers recruit Polish workers",
+    "text": "In May 2007 the Netherlands removed its work-permit requirement for Polish citizens. Dutch employers needed workers in horticulture, construction, logistics and other sectors. Statistics Netherlands also records partners and families joining migrant workers.",
+    "source": "https://www.cbs.nl/nl-nl/longread/diversen/2025/tijdlijn-migratie-1849-2025?onepage=true"
+  },
+  {
+    "scope": "route",
+    "origin": "IND",
+    "destination": "NLD",
+    "start": 2013,
+    "end": 2023,
+    "title": "Skilled jobs and family ties bring Indian migrants to the Netherlands",
+    "text": "Statistics Netherlands found that work was the main reason for 49% of migrants from India who arrived in 2013. Many Indian labour migrants worked in information technology.",
+    "source": "https://www.cbs.nl/en-gb/news/2025/10/migrants-from-india-are-staying-longer-in-the-netherlands",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "Among the 2023 arrivals studied, 45% came for family, 40% for work and 15% for study."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "NLD",
+    "start": 2023,
+    "end": 2024,
+    "title": "Work, family and protection in Dutch migration records",
+    "text": "Statistics Netherlands inferred that around 44,000 arrivals of other EU or EFTA nationalities came for work in 2023, based on their activities after arrival.",
+    "source": "https://www.cbs.nl/en-gb/dossier/asylum-migration-and-integration/how-many-people-come-to-live-in-the-netherlands-",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "Among immigrants of non-EU/EFTA nationalities in 2024, family was the largest recorded category at around 40,000. Another 30,000 came under temporary protection from Ukraine."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "POL",
+    "destination": "NOR",
+    "start": 2004,
+    "end": 2014,
+    "title": "Polish workers gain access to Norwegian jobs",
+    "text": "Poland’s entry into the European Economic Area in 2004 opened access to Norwegian jobs as demand for labour was strong.",
+    "source": "https://www.ssb.no/en/befolkning/artikler-og-publikasjoner/immigrants-what-we-know-and-dont-know",
+    "updates": [
+      {
+        "year": 2014,
+        "text": "Looking back over the following decade, Statistics Norway documented growing labour migration from the new member states and family members following workers to Norway."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "NOR",
+    "start": 2022,
+    "end": 2024,
+    "title": "People displaced from Ukraine settle in Norway",
+    "text": "Russia’s invasion displaced people to Norway. Statistics Norway counted about 31,000 Ukrainian refugees settling there in 2022.",
+    "source": "https://www.ssb.no/befolkning/innvandrere/statistikk/innvandrere-etter-innvandringsgrunn/artikler/32-400-ukrainske-flyktninger--ble-bosatt-i-fjor",
+    "additionalSource": "https://www.ssb.no/befolkning/innvandrere/statistikk/innvandrere-etter-innvandringsgrunn/artikler/lavere-innvandring-i-fjor",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "About 32,400 more Ukrainian refugees settled in Norway in 2023."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "NZL",
+    "start": 2023,
+    "end": 2024,
+    "title": "Work visas and the changing pace of arrivals",
+    "text": "New Zealand recorded a large net gain of non-citizens in 2023. Work visas were an important route into the country.",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "Stats NZ attributed more than half of the drop in migrant arrivals in 2024 to fewer arrivals on work visas. Separately, Indian, Filipino and Chinese citizens accounted for about two-thirds of the decrease in the net gain of non-citizens."
+      }
+    ],
+    "source": "https://www.stats.govt.nz/news/net-migration-falls-in-2024/"
+  },
+  {
+    "start": 2022,
+    "end": 2022,
+    "title": "Economic reopening brought migrant workers back to Oman",
+    "text": "As Oman’s economy recovered, employment among foreign workers returned to its pre-pandemic level in 2022. Sending-country records show about 180,000 workers went to Oman from Bangladesh that year and more than 82,000 from Pakistan.",
+    "source": "https://www.imf.org/-/media/files/publications/cr/2024/english/1omnea2024001.pdf",
+    "scope": "destination-country",
+    "country": "OMN",
+    "additionalSource": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/06/labor-migration-in-asia_10704339/bf823868-en.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "VEN",
+    "destination": "PER",
+    "start": 2018,
+    "end": 2022,
+    "title": "Venezuelan migrants described shortages and insecurity",
+    "text": "In an IOM survey at two Peruvian border points and in Lima, Venezuelan respondents cited economic difficulties, unemployment, violence, and shortages of food and medicine as reasons for leaving.",
+    "source": "https://www.r4v.info/sites/g/files/tmzbdl2426/files/2021-06/DTM_VENEZUELA_R2OIM_VF%20EN%20recent%20version.pdf",
+    "additionalSource": "https://peru.iom.int/sites/g/files/tmzbdl951/files/documents/2024-01/oimfinalreport_en.pdf",
+    "updates": [
+      {
+        "year": 2022,
+        "text": "In a separate 2021–22 survey of 6,200 Venezuelan residents in Lima/Callao and Trujillo, difficulty obtaining food and insecure work were the two leading reasons given for migrating."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "PNG",
+    "start": 2017,
+    "end": 2021,
+    "title": "Mining, natural gas and related jobs",
+    "text": "The UN human rights office describes people moving to Papua New Guinea for work in mining, natural gas, construction and retail. The national statistics office also identified arrivals for study and family reunion.",
+    "source": "https://bangkok.ohchr.org/sites/default/files/documents/2024-06/pathways-to-migrant-protection.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "POL",
+    "start": 2023,
+    "end": 2023,
+    "title": "Employment was the main reason for first residence permits",
+    "text": "Poland issued 642,789 first residence permits to non-EU citizens in 2023. The European Migration Network and Eurostat classify 66.5% of those permits as employment-related. Permit statistics record the grounds for residence and have a different coverage from migration flows.",
+    "source": "https://home-affairs.ec.europa.eu/document/download/fad4f09b-6e48-42bf-a968-9481c687e055_en?filename=2024_EMN-ESTAT_PL_countryfactsheet.pdf&prefLang=pt"
+  },
+  {
+    "scope": "origin-country",
+    "country": "PRT",
+    "start": 2009,
+    "end": 2014,
+    "title": "Portuguese workers look abroad after the recession",
+    "text": "The OECD linked the recession to a rise in labour emigration from Portugal after 2008. Other EU countries and Switzerland were established destinations, and Angola also attracted Portuguese emigrants.",
+    "source": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2016/09/international-migration-outlook-2016_g1g6960e/migr_outlook-2016-en.pdf",
+    "additionalSource": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2014/12/international-migration-outlook-2014_g1g49b0e/migr_outlook-2014-en.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "BRA",
+    "destination": "PRT",
+    "start": 2021,
+    "end": 2021,
+    "title": "Brazilian migrants describe why they chose Portugal",
+    "text": "Researchers interviewed 25 Brazilian immigrants in northern Portugal between December 2020 and April 2021. Participants described feeling safer in Portugal and concerns about the political climate in Brazil. These accounts reflect the people interviewed.",
+    "source": "https://amerm.ong/wp-content/uploads/pdf/TMC-2021-AMERM.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "PRT",
+    "start": 2023,
+    "end": 2023,
+    "title": "Portugal expands residence permits for Portuguese-speaking countries",
+    "text": "Portugal began issuing residence permits under the Community of Portuguese Language Countries mobility agreement. Its migration agency recorded 149,174 such permits in 2023, including 108,232 for Brazilian citizens. The process converted existing applications, so many recipients had already arrived.",
+    "source": "https://aima.gov.pt/media/pages/documents/a109224112-1726562672/rma-2023.pdf",
+    "additionalSource": "https://aima.gov.pt/media/pages/documents/fec4d6a712-1760603125/relatorio-migracoes-e-asilo-2024.pdf"
+  },
+  {
+    "start": 2010,
+    "end": 2022,
+    "title": "World Cup infrastructure created construction jobs",
+    "text": "Winning the bid to host the 2022 World Cup set off a building programme in Qatar. Employers recruited migrant workers for stadiums, roads, hotels and public transport. Many worked for subcontractors.",
+    "source": "https://webapps.ilo.org/infostories/en-GB/Stories/Country-Focus/world-cup-qatar.html",
+    "scope": "destination-country",
+    "country": "QAT",
+    "additionalSource": "https://www.ilo.org/publications/fair-recruitment-matters-business-lessons-pilot-study-qatars-construction"
+  },
+  {
+    "start": 2018,
+    "end": 2021,
+    "title": "Recruitment from Bangladesh for Qatari construction sites",
+    "text": "In 2018 the ILO and a Qatari construction company began a project with a subcontractor that recruited workers in Bangladesh. The project followed the hiring process for jobs on infrastructure sites and tested ways to protect workers from recruitment fees.",
+    "source": "https://www.ilo.org/publications/fair-recruitment-matters-business-lessons-pilot-study-qatars-construction",
+    "scope": "route",
+    "origin": "BGD",
+    "destination": "QAT"
+  },
+  {
+    "scope": "route",
+    "origin": "ESP",
+    "destination": "ROU",
+    "start": 2021,
+    "end": 2021,
+    "title": "Families returning to Romania with children born in Spain",
+    "text": "Romania’s 2021 census recorded a Spain-born population that included children of Romanians who had returned home. This helps explain why a move from Spain to Romania can be a family return. The census describes residents on the census date and gives no headcount of return moves in 2021.",
+    "source": "https://www.oecd.org/en/publications/oecd-reviews-of-labour-market-and-social-policies-romania-2025_f0532908-en/full-report/increasing-return-and-improving-management-of-labour-migration_3d6201e2.html"
+  },
+  {
+    "scope": "destination-country",
+    "country": "ROU",
+    "start": 2023,
+    "end": 2024,
+    "title": "Romanian employers recruit workers in South Asia",
+    "text": "In 2023, nationals of Nepal, Sri Lanka and Bangladesh together received more than half of Romania’s roughly 45,000 initial work permits. The OECD documents recruitment from these countries as Romania became a destination for foreign workers.",
+    "source": "https://www.oecd.org/en/publications/oecd-reviews-of-labour-market-and-social-policies-romania-2025_f0532908-en/full-report/increasing-return-and-improving-management-of-labour-migration_3d6201e2.html",
+    "additionalSource": "https://igi.mai.gov.ro/aproximativ-106-000-de-avize-de-angajare-in-munca-emise-de-politistii-de-imigrari-in-anul-2024/",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "Romania’s immigration inspectorate reported 105,986 employment authorizations in 2024. These included job or employer changes by people already in the country."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "BLR",
+    "destination": "RUS",
+    "start": 2010,
+    "end": 2019,
+    "title": "Pay and access to the Russian labour market",
+    "text": "Higher wages in several Russian industries drew Belarusian workers across the border. Transport links, a shared working language and agreements giving Belarusians access to the Russian labour market made it practical for some workers to move back and forth.",
+    "source": "https://ekonom.sav.sk/dokumenty/projekty/2021_02_case_circmigr_raport_v1-7_web.pdf",
+    "additionalSource": "https://www.ceemr.uw.edu.pl/vol-11-no-1-2022/special-series/belarus-eurasian-migration-system-challenges-last-decade-and-their"
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "RUS",
+    "start": 2014,
+    "end": 2014,
+    "title": "Fighting in eastern Ukraine displaced people across the Russian border",
+    "text": "When fighting escalated in the Donetsk and Luhansk regions, many families fled within Ukraine. Others sought safety across the border in Russia, where people displaced from Ukraine applied for asylum and other forms of legal stay.",
+    "source": "https://www.unhcr.org/news/stories/ukraine-conflict-uproots-hundreds-thousands",
+    "additionalSource": "https://ukraine.ohchr.org/sites/default/files/2024-03/A-HRC-27-75_en.pdf"
+  },
+  {
+    "scope": "destination-country",
+    "country": "RUS",
+    "start": 2021,
+    "end": 2023,
+    "title": "Construction and service jobs drew workers from Central Asia",
+    "text": "Workers from Tajikistan, Uzbekistan and Kyrgyzstan took jobs in Russia, including in construction, delivery and taxi services. Limited job opportunities at home and earnings sent back to families helped sustain this labour migration.",
+    "source": "https://www.oecd.org/en/publications/weathering-economic-storms-in-central-asia_83348924-en/full-report/component-5.html",
+    "additionalSource": "https://www.icmpd.org/file/download/60848/file/ICMPD%20Migration%20Outlook%20EECA%202024.pdf",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "Russia recorded increases in entries by nationals of each of these three countries who gave work as their reason for entering. Entry records can count the same worker more than once."
+      }
+    ]
+  },
+  {
+    "start": 2023,
+    "end": 2024,
+    "title": "Employers recruited abroad as the Saudi labour market grew",
+    "text": "Asian sending countries recorded more than 1.6 million worker deployments to jobs in Saudi Arabia in 2023. Bangladesh and Pakistan were the two leading origins in that compilation.",
+    "source": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2024/05/labor-migration-in-asia_519732dd/9b45c5c4-en.pdf",
+    "scope": "destination-country",
+    "country": "SAU",
+    "additionalSource": "https://www.imf.org/en/-/media/files/publications/cr/2025/english/1sauea2025001-source-pdf.pdf",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "The IMF found that Saudi construction employment grew by 24% in 2024, largely through employment of non-Saudi workers."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "SGP",
+    "start": 2022,
+    "end": 2022,
+    "title": "Employers refill vacancies after borders reopen",
+    "text": "Singapore eased border restrictions in April. Its Ministry of Manpower found that employers hired work permit holders to refill vacancies left during the pandemic, especially in construction and manufacturing.",
+    "source": "https://www.mom.gov.sg/newsroom/press-releases/2023/0315-labour-market-report-2022"
+  },
+  {
+    "scope": "destination-country",
+    "country": "SRB",
+    "start": 2022,
+    "end": 2024,
+    "title": "Employers recruit through Serbia’s work-permit system",
+    "text": "Serbia issued 35,173 work permits in 2022. Workers from outside the EU accounted for most of the permits.",
+    "source": "https://www.oecd.org/en/publications/western-balkans-competitiveness-outlook-2024-serbia_3699c0d5-en/full-report/component-13.html",
+    "additionalSource": "https://www.srbija.gov.rs/vest/en/238405/34146-residence-work-permits-issued-to-foreign-citizens-in-serbia-so-far.php",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "In July 2023 Serbia amended its laws to combine the residence and work application procedures."
+      },
+      {
+        "year": 2024,
+        "text": "Between 1 February and 30 November 2024, Serbia approved 34,146 applications for the combined permit. These are administrative decisions."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "SDN",
+    "destination": "SSD",
+    "start": 2023,
+    "end": 2024,
+    "title": "War forced South Sudanese living in Sudan to return",
+    "text": "When war broke out in Sudan in April 2023, both South Sudanese residents of Sudan and Sudanese refugees crossed into South Sudan. Many entered near Renk.",
+    "source": "https://dataviz.unhcr.org/product-gallery/2024/04/sudan-one-year-of-spiralling-conflict-and-displacement/",
+    "additionalSource": "https://rrc.gov.ss/storage/95/66c5bb6a41a31_The-Return-by-RRC-South-Sudan-July2024_compressed.pdf",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "By 14 July 2024, the South Sudan Relief and Rehabilitation Commission classified 78% of recorded arrivals since the war began as South Sudanese returnees and 21% as Sudanese refugees."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "SVK",
+    "start": 2022,
+    "end": 2024,
+    "title": "Families flee Ukraine for Slovakia",
+    "text": "Slovakia offered temporary protection to people displaced by Russia’s full-scale invasion of neighbouring Ukraine. UNHCR re-opened its office in Slovakia in 2022 to support the response.",
+    "source": "https://data.unhcr.org/fr/documents/download/100386",
+    "additionalSource": "https://www.unhcr.org/europe/sites/europe/files/2024-10/bi-annual-fact-sheet-2024-09-slovakia.pdf",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "On 24 February 2023, 97,745 people held valid temporary protection in Slovakia. The figure counts holders on that date."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "SYR",
+    "destination": "SWE",
+    "start": 2015,
+    "end": 2015,
+    "title": "Families fleeing Syria seek protection in Sweden",
+    "text": "As the Syrian war displaced families, about 50,900 Syrian citizens sought asylum in Sweden in 2015, the largest nationality group applying that year. The Swedish Migration Agency reports that about half of these applicants were children.",
+    "source": "https://www.migrationsverket.se/en/about-the-swedish-migration-agency/the-swedish-migration-agency-answers/2025/2025-10-27-ten-years-since-2015---what-happened.html"
+  },
+  {
+    "scope": "destination-country",
+    "country": "SWE",
+    "start": 2024,
+    "end": 2024,
+    "title": "Jobs, study and family ties among Indian nationals",
+    "text": "Statistics Sweden recorded 1,779 Indian citizens immigrating for work, 1,252 for study and 2,546 as family members in 2024. It identified IT and engineering as common occupations among Indian labour migrants. The breakdown groups people by citizenship.",
+    "source": "https://www.scb.se/hitta-statistik/redaktionellt/ukrainare-och-indier-storsta-invandragrupperna-sedan-pandemin/"
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "SWE",
+    "start": 2024,
+    "end": 2024,
+    "title": "People already sheltering in Sweden enter the register",
+    "text": "From June 2024, more people from Ukraine with temporary protection could apply to join Sweden’s population register after meeting residence requirements. Statistics Sweden attributes the rise in recorded immigration from the Ukraine-born population that year in part to people who had arrived earlier.",
+    "source": "https://www.scb.se/hitta-statistik/redaktionellt/ukrainare-och-indier-storsta-invandragrupperna-sedan-pandemin/"
+  },
+  {
+    "start": 2003,
+    "end": 2007,
+    "title": "Iraqi families sought safety in Syria",
+    "text": "As war began in Iraq in 2003, people reaching Damascus told UNHCR they had left fearing the war and its consequences. Syria offered temporary protection to Iraqis. Some already living there also registered with UNHCR.",
+    "source": "https://www.unhcr.org/au/news/un-humanitarian-briefing-iraq-20",
+    "scope": "route",
+    "origin": "IRQ",
+    "destination": "SYR",
+    "additionalSource": "https://www.unhcr.org/us/news/stories/new-syrian-visa-requirement-halts-most-iraqi-arrivals",
+    "updates": [
+      {
+        "year": 2007,
+        "text": "UNHCR observed a sharp fall in crossings when Syria began requiring visas from most Iraqi travellers in September 2007."
+      }
+    ]
+  },
+  {
+    "start": 2024,
+    "end": 2024,
+    "title": "Families fled the fighting in Lebanon",
+    "text": "Escalating hostilities in Lebanon in September 2024 drove people across the border into Syria. They included Syrian refugees going back under duress and Lebanese people seeking safety. UNHCR counted these crossings separately from subsequent voluntary refugee returns.",
+    "source": "https://www.unhcr.org/sites/default/files/2025-02/UNHCR%20Syria%20Operational%20Update%20-Dec%202024.pdf",
+    "scope": "route",
+    "origin": "LBN",
+    "destination": "SYR",
+    "additionalSource": "https://www.unhcr.org/sites/default/files/2025-06/Syria%20GR2024%20Situation%20Summary%20v3.pdf"
+  },
+  {
+    "start": 2024,
+    "end": 2024,
+    "title": "Refugees returned after the fall of the Assad government",
+    "text": "After the government fell on 8 December 2024, some Syrians returned from neighbouring countries. By 30 December, UNHCR estimated 58,400 returns since 8 December, mainly from Lebanon, Jordan and Türkiye. The UN population projection for 2024 was published in July, before these events.",
+    "source": "https://www.unhcr.org/sites/default/files/2025-01/UNHCR%20Syria_Response%20Factsheet_30%20December%202024.pdf",
+    "scope": "destination-country",
+    "country": "SYR",
+    "additionalSource": "https://population.un.org/wpp/"
+  },
+  {
+    "scope": "route",
+    "origin": "SDN",
+    "destination": "TCD",
+    "start": 2003,
+    "end": 2004,
+    "title": "Families fled Darfur into eastern Chad",
+    "text": "Fighting in western Sudan forced families across the border into Chad. Early arrivals sheltered close to the border.",
+    "source": "https://www.unhcr.org/us/sites/en-us/files/legacy-pdf/4119d9c54.pdf",
+    "updates": [
+      {
+        "year": 2004,
+        "text": "UNHCR began moving refugees from insecure border settlements to camps farther inside Chad."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "SDN",
+    "destination": "TCD",
+    "start": 2023,
+    "end": 2024,
+    "title": "Families escaping attacks in West Darfur",
+    "text": "People who fled to eastern Chad told Médecins Sans Frontières that attacks on Masalit communities in West Darfur had driven them from their homes after war broke out in April 2023.",
+    "source": "https://www.doctorswithoutborders.org/latest/msf-report-exposes-spiraling-ethnic-violence-against-people-darfur",
+    "additionalSource": "https://www.unhcr.org/sites/default/files/2025-06/Sudan%20GR2024%20Situation%20Summary%20FINAL%20v3.pdf",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "UNHCR recorded more than 238,500 Sudanese refugees arriving in Chad during 2024."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "THA",
+    "start": 2018,
+    "end": 2024,
+    "title": "Recruitment from neighbouring countries",
+    "text": "Jobs in Thailand attracted workers from Myanmar, Cambodia and Laos. Employers relied on migrant workers in sectors including agriculture, manufacturing and construction.",
+    "updates": [
+      {
+        "year": 2021,
+        "text": "After the military takeover in Myanmar, armed conflict also displaced people across the Thai border."
+      }
+    ],
+    "source": "https://thailand.iom.int/sites/g/files/tmzbdl1371/files/documents/2024-12/thailand-migration-report-2024.pdf"
+  },
+  {
+    "start": 2023,
+    "end": 2023,
+    "title": "Thai workers evacuated from Israel",
+    "text": "Following the attacks of 7 October 2023, Thailand arranged flights home for its citizens in Israel, including agricultural workers. By 27 October the Thai foreign ministry reported 4,771 evacuees on 23 flights. The flights record emergency departures, and the duration of each person’s stay in Thailand is unknown.",
+    "source": "https://www.mfa.go.th/en/content/presscon271023-2",
+    "scope": "route",
+    "origin": "ISR",
+    "destination": "THA",
+    "additionalSource": "https://www.ilo.org/sites/default/files/2024-12/thailand-migration-report-2024.pdf"
+  },
+  {
+    "start": 2022,
+    "end": 2022,
+    "title": "People fleeing Ukraine found protection in Türkiye",
+    "text": "Following Russia’s full-scale invasion, Ukrainians fled to Türkiye. Some stayed using residence permits and others applied for international protection. UNHCR reported roughly 7,000 Ukrainian applicants for international protection in Türkiye during 2022.",
+    "source": "https://reporting.unhcr.org/files/2023-06/EU%20-%20Tu%CC%88rkiye.pdf",
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "TUR",
+    "additionalSource": "https://data.unhcr.org/en/documents/download/99579"
+  },
+  {
+    "scope": "destination-country",
+    "country": "UKR",
+    "start": 2023,
+    "end": 2024,
+    "title": "Family reunions and caregiving prompted returns to Ukraine",
+    "text": "People interviewed at Ukraine’s borders in 2023 often said they were returning to rejoin family or care for relatives who had stayed behind. Border monitoring covers both short visits and longer stays.",
+    "source": "https://www.unhcr.org/ua/sites/ua/files/legacy-pdf/UNHCR-BCP-Snapshot_April-2024-ENG-Final.pdf",
+    "additionalSource": "https://dtm.iom.int/sites/g/files/tmzbdl1461/files/reports/IOM_UKR_GPS_R17_returns_August%202024.pdf",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "In the second quarter of 2024, 8% of those interviewed by IOM while crossing back from abroad planned to stay for more than a month."
+      }
+    ]
+  },
+  {
+    "scope": "destination-country",
+    "country": "USA",
+    "start": 2013,
+    "end": 2023,
+    "title": "Family reunification and employment-based residence",
+    "text": "US permanent residence statistics document two important ways people settle in the country. Citizens and permanent residents can sponsor eligible relatives, and employment categories admit workers and their dependants. The fiscal-year figures include people already living in the United States who acquire permanent residence.",
+    "source": "https://ohss.dhs.gov/sites/default/files/2024-03/2023_0818_plcy_yearbook_immigration_statistics_fy2022.pdf",
+    "additionalSource": "https://ohss.dhs.gov/sites/default/files/2024-09/2024_0906_plcy_lawful_permanent_residents_fy2023.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "UKR",
+    "destination": "USA",
+    "start": 2022,
+    "end": 2022,
+    "title": "A US sponsor pathway for displaced Ukrainians",
+    "text": "After Russia’s full-scale invasion, the United States opened Uniting for Ukraine in April. Eligible people displaced from Ukraine could seek temporary permission to enter with financial support from a US-based sponsor.",
+    "source": "https://www.uscis.gov/sites/default/files/document/reports/FY2022_Annual_Statistical_Report.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "ZWE",
+    "destination": "ZAF",
+    "start": 2009,
+    "end": 2014,
+    "title": "Zimbabwe’s crisis and permission to stay in South Africa",
+    "text": "South Africa introduced a special permit in 2009 for eligible Zimbabweans already living there. The government linked the scheme to Zimbabwe’s political and economic crisis. The permits documented existing residents.",
+    "source": "https://www.gov.za/news/media-statements/expiry-permits-issued-under-special-dispensation-zimbabweans-project-dzp-20",
+    "additionalSource": "https://www.gov.za/news/cabinet-statements/statement-cabinet-meeting-24-november-2021-25-nov-2021"
+  },
+  {
+    "scope": "destination-country",
+    "country": "ZAF",
+    "start": 2022,
+    "end": 2022,
+    "title": "Foreign-born residents describe why they moved",
+    "text": "In Statistics South Africa’s 2022 labour-market survey, 55.8% of foreign-born respondents reporting their main reason for moving to South Africa said they had come to look for work. A further 34.3% cited coming to work. Respondents described moves they had made over different years.",
+    "source": "https://www.statssa.gov.za/publications/Report-02-11-02/Report-02-11-022022.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "COD",
+    "destination": "AGO",
+    "start": 2017,
+    "end": 2023,
+    "title": "Families fled violence in Kasai for northern Angola",
+    "text": "In 2017, violence in the Democratic Republic of the Congo’s Kasai region forced around 35,000 refugees into Angola’s Lunda Norte province. Angola established the Lóvua settlement to shelter people who had fled.",
+    "source": "https://data.unhcr.org/en/documents/download/71314",
+    "additionalSource": "https://data.unhcr.org/en/documents/download/105864",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "On 31 December 2023, UNHCR counted 8,926 people still registered in Angola in this refugee group. This is the population on the register on that date."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "AGO",
+    "destination": "COD",
+    "start": 2019,
+    "end": 2022,
+    "title": "Congolese refugees chose to return from Lóvua",
+    "text": "In 2019, after visiting Congolese officials described improved security in Kasai, some refugees living at Lóvua in Angola chose to return to the DRC. Some planned to settle in towns because their home villages had been destroyed.",
+    "source": "https://data.unhcr.org/en/documents/download/71314",
+    "additionalSource": "https://angola.un.org/pt/190973-acnur-governos-de-angola-e-da-rep%C3%BAblica-democr%C3%A1tica-do-congo-e-parceiros-retomam",
+    "updates": [
+      {
+        "year": 2022,
+        "text": "Organised returns resumed in July 2022 after a pandemic interruption. The first group leaving Lóvua comprised 88 refugees and dependants."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "TCD",
+    "destination": "SDN",
+    "start": 2018,
+    "end": 2018,
+    "title": "Sudanese refugees returned from Chad to Darfur",
+    "text": "A voluntary return agreement gave Sudanese refugees living in Chad a way to travel home with assistance. By 13 November 2018, UNHCR and Sudan’s refugee commission had helped 353 people return to North and West Darfur. Refugee leaders visited home villages to assess conditions for those still considering a return.",
+    "source": "https://data.unhcr.org/en/documents/download/67692"
+  },
+  {
+    "scope": "route",
+    "origin": "CHL",
+    "destination": "USA",
+    "start": 2023,
+    "end": 2023,
+    "title": "Haitian families moved on from Chile",
+    "text": "In a WBUR interview, a Haitian farmworker who had lived in Chile described discrimination and growing competition for jobs. He moved to Massachusetts in 2023 seeking better prospects for his family. His experience illustrates how a move from Chile can involve someone born elsewhere.",
+    "source": "https://www.wbur.org/news/2024/02/09/migration-haiti-chile-darien-gap-massachusetts",
+    "additionalSource": "https://lac.iom.int/sites/g/files/tmzbdl626/files/documents/oim_migraciones-sur-norte-desde-suramerica.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "PER",
+    "destination": "CHL",
+    "start": 2016,
+    "end": 2020,
+    "title": "Peruvians joined relatives and sought work in Chile",
+    "text": "Among Peruvians surveyed by Chile’s migration service and its research partners, limited job opportunities were a common reason for leaving Peru. Asked why they chose Chile, 36% named family reunification and 30% economic stability. The survey covered people who arrived during this period and began a residence application.",
+    "source": "https://www-pre.serviciomigraciones.cl/wp-content/uploads/2023/06/Resultados-Encuesta-Migrantes-2022.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "ZAF",
+    "destination": "ZWE",
+    "start": 2020,
+    "end": 2020,
+    "title": "Loss of work during lockdown prompted returns to Zimbabwe",
+    "text": "IOM documented the case of a Zimbabwean worker who lost his job in South Africa in June 2020 and returned home because he had no savings to live on. In IOM’s late-2020 survey of 1,014 returnees in 15 Zimbabwean districts, 80% had been living in South Africa before the lockdown.",
+    "source": "https://publications.iom.int/system/files/pdf/IOM-CBI-AR-and-Case-Studies-2021.pdf",
+    "additionalSource": "https://dtm.iom.int/sites/g/files/tmzbdl1461/files/reports/DTM_Zimbabwe_Socioeconomic_Survey_Report_2020.pdf"
+  },
+  {
+    "scope": "origin-country",
+    "country": "GBR",
+    "start": 2015,
+    "end": 2016,
+    "title": "Work and returning home drew people out of the UK",
+    "text": "The Office for National Statistics estimated that 167,000 people left the UK for work in the year ending September 2015. Work was the most common reason for long-term emigration.",
+    "source": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration/bulletins/migrationstatisticsquarterlyreport/feb2017",
+    "updates": [
+      {
+        "year": 2016,
+        "text": "In the year ending September 2016, the estimate for work was again 167,000. An estimated 48,000 emigrants cited returning home to live, up from 25,000 in the preceding year. These survey estimates cover people of all citizenships."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "FRA",
+    "destination": "GBR",
+    "start": 2000,
+    "end": 2009,
+    "title": "London’s financial sector drew professionals from Paris",
+    "text": "Interviews with professionals and their families documented transfers from banks’ Paris offices to London, as well as people who found a job after moving. One banker who moved in 2000 described leaving a rigid workplace hierarchy in Paris and using professional contacts to find work in London. The study describes individual career decisions.",
+    "source": "https://repository.mdx.ac.uk/item/8438q",
+    "additionalSource": "https://highlyskilledmigrantwomen.wordpress.com/wp-content/uploads/2013/06/mulholland_report.pdf"
+  },
+  {
+    "scope": "origin-country",
+    "country": "ITA",
+    "start": 2023,
+    "end": 2023,
+    "title": "Graduates moved abroad for job offers and career opportunities",
+    "text": "AlmaLaurea surveyed Italian citizens who had earned a second-level degree in 2018 and were working abroad five years later. Asked why they moved, 32% cited a job offer abroad and 27.4% cited a lack of suitable opportunities in Italy. Other graduates described staying or returning abroad for work after studying there.",
+    "source": "https://www.almalaurea.it/sites/default/files/2024-12/almalaurea_occupazione_rapporto2024.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "NLD",
+    "destination": "DEU",
+    "start": 2001,
+    "end": 2005,
+    "title": "Homebuyers moved across the Dutch–German border",
+    "text": "Moves from the Netherlands to Germany increased after Dutch tax rules changed in 2001. Researchers found that asking prices for comparable homes were lower on the German side. A study of towns along the border found that most movers had first looked in the Netherlands and could not find a suitable home.",
+    "source": "https://www.rwi-essen.de/publikationen/zitationsansicht/gemischt/detail/border-effects-in-house-prices-935",
+    "additionalSource": "https://www.westfalen-regional.de/de/wohnmigration/"
+  },
+  {
+    "scope": "route",
+    "origin": "BEL",
+    "destination": "TUR",
+    "start": 2024,
+    "end": 2024,
+    "title": "Assisted returns to Turkey increased after unsuccessful asylum claims",
+    "text": "Belgium’s reception agency Fedasil reported that assisted voluntary returns from Belgium to Turkey doubled in 2024 compared with 2023. It linked the increase mainly to many arrivals and a low asylum recognition rate for Turkish applicants. The count covers people who actually returned through the programme.",
+    "source": "https://www.fedasil.be/en/news/volontary-return/3267-voluntary-returns-2024"
+  },
+  {
+    "scope": "origin-country",
+    "country": "AUT",
+    "start": 2022,
+    "end": 2022,
+    "title": "Medical graduates leave Austria for training and family",
+    "text": "In its 2022 graduate survey, Statistics Austria asked medical graduates who had moved abroad why they left. Opportunities for further qualifications and joining a partner or family were prominent reasons. The survey covered people who studied in Austria, including graduates from abroad.",
+    "source": "https://www.statistik.at/fileadmin/pages/2073/EUROGRADUATE_2022_Ergebnisbericht.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "CZE",
+    "destination": "DEU",
+    "start": 2023,
+    "end": 2023,
+    "title": "Czech medical graduates seek work in Germany",
+    "text": "The European Observatory on Health Systems and Policies reported that some graduates of Czech medical schools left for better pay or working conditions, most often in Germany. It found no reliable headcount of those leaving because a doctor could obtain certification to practise abroad and still stay in Czechia.",
+    "source": "https://eurohealthobservatory.who.int/monitors/health-systems-monitor/countries-hspm/hspm/czechia-2023/physical-and-human-resources/human-resources"
+  },
+  {
+    "scope": "route",
+    "origin": "DNK",
+    "destination": "SWE",
+    "start": 2005,
+    "end": 2007,
+    "title": "Cheaper homes across the Øresund",
+    "text": "A 2005 survey found that households leaving Denmark for Scania sought more affordable homes and lower living costs. The Øresund Bridge made it possible to move to southern Sweden while keeping a job in Copenhagen.",
+    "source": "https://data.oresundsbron.com/cms/download/Facts%20Worth%20Knowing%20about%20the%20%C3%98resund%20Bridge.pdf",
+    "additionalSource": "https://www.dst.dk/da/Statistik/udgivelser/bagtal/2010-05-28-Huspriser"
+  },
+  {
+    "scope": "route",
+    "origin": "SWE",
+    "destination": "DNK",
+    "start": 2009,
+    "end": 2009,
+    "title": "Households move back across the Øresund",
+    "text": "As Copenhagen-area house prices fell, the price advantage of living around Malmö narrowed. Statistics Denmark reported that moves from Scania to eastern Denmark rose for a third successive year in 2009, including Danes returning home. These were changes of residence across the strait.",
+    "source": "https://www.dst.dk/da/Statistik/udgivelser/bagtal/2010-05-28-Huspriser"
+  },
+  {
+    "scope": "origin-country",
+    "country": "FIN",
+    "start": 2010,
+    "end": 2010,
+    "title": "Finnish nurses and doctors take jobs abroad",
+    "text": "A European Commission workforce study identified family ties, pay and opportunities to develop language and professional skills among the reasons Finnish health professionals left. In 2010, 190 nurses left Finland, including 43 for Sweden and 30 for Norway. This count covers nurses only.",
+    "source": "https://health.ec.europa.eu/system/files/2016-11/health_workforce_study_2012_appendices_en_0.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "NOR",
+    "destination": "IRQ",
+    "start": 2008,
+    "end": 2011,
+    "title": "Assisted return from Norway to Iraq",
+    "text": "In 2008 Norway established a programme to support Iraqi nationals returning to Iraq. It helped participants arrange travel and resettle after arrival.",
+    "source": "https://www.udi.no/en/statistics-and-analysis/research-and-development-reports/between-two-societies-2011/",
+    "additionalSource": "https://www.cmi.no/publications/4155-between-two-societies-review-of-the-information",
+    "updates": [
+      {
+        "year": 2011,
+        "text": "Reviewers found that many interviewed returnees saw little prospect of staying in Norway. Some who returned to Baghdad also cited family responsibilities in Iraq."
+      }
+    ]
+  },
+  {
+    "scope": "origin-country",
+    "country": "CHE",
+    "start": 2021,
+    "end": 2021,
+    "title": "Swiss retirees seek a lower cost of living abroad",
+    "text": "In a 2020–2021 survey of Swiss nationals who had moved abroad after retirement, more than half of respondents cited high prices at home and the wish to maintain their standard of living. The study distinguished retirees who relocated from people who divided their year between two countries.",
+    "source": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/30905166/master"
+  },
+  {
+    "scope": "route",
+    "start": 2020,
+    "end": 2020,
+    "title": "Repatriation flights brought Nepalis home from Bahrain",
+    "text": "COVID-19 restrictions stranded Nepalis abroad. When Nepal organised special flights, 1,172 people in Bahrain registered to go home. IOM reports that 980 had actually returned by the end of July. The figures track the repatriation operation.",
+    "source": "https://nepal.iom.int/sites/g/files/tmzbdl1116/files/documents/The_Effect_of_COVID-19_Pandemic_onForeign_Employment_and_its_Impact_on_the_Economy_of_Nepal.pdf",
+    "origin": "BHR",
+    "destination": "NPL"
+  },
+  {
+    "scope": "route",
+    "start": 2018,
+    "end": 2018,
+    "title": "Assisted returns for Filipino workers in Kuwait",
+    "text": "An amnesty gave Filipino workers without valid residence papers a way to leave Kuwait. Philippine authorities organised flights home and helped workers resolve documents and travel restrictions. The embassy continued assisting voluntary returns after the amnesty, including a group of 44 in July.",
+    "source": "https://kuwaitpe.dfa.gov.ph/images/2019/PR/May/08/01-August-2018---PHILIPPINE-EMBASSY-KUWAIT-SUCCESSFULLY-REPATRIATED-44-UNDOCUMENTED-OFWS-UNDER-THE-ASSISTED-VOLUNTARY-REPATRIATION-PROGRAM.pdf",
+    "origin": "KWT",
+    "destination": "PHL",
+    "additionalSource": "https://www.pna.gov.ph/articles/1027499"
+  },
+  {
+    "scope": "origin-country",
+    "start": 2020,
+    "end": 2021,
+    "title": "A waiver allowed workers to leave Oman without paying fines",
+    "text": "In November 2020, Oman opened a grace period for foreign workers with irregular employment status. Employers and workers could obtain relief from fees and fines on the condition that the worker left Oman permanently.",
+    "source": "https://www.omanobserver.om/article/5544/11/expatriate-exit-scheme-extended-until-march-31",
+    "country": "OMN",
+    "additionalSource": "https://www.omanobserver.om/article/1100110/oman/labour/exit-scheme-over-46000-expats-leave-oman",
+    "updates": [
+      {
+        "year": 2021,
+        "text": "In March 2021 the labour ministry reported 46,355 actual departures among 65,173 applicants."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "start": 2020,
+    "end": 2020,
+    "title": "Nepalis returned from Qatar as work and wages fell",
+    "text": "Research by Nepal’s Centre for the Study of Labour and Mobility links the return of migrant workers during the pandemic to lost employment and earnings. It records 33,785 Nepalis returning from Qatar on chartered and regular flights between June and December 2020. The flight totals do not establish each passenger’s reason for returning.",
+    "source": "https://www.feb.gov.np/multimedia_upload/6325528cc5265_Impact-of-Covid-19-on-Nepali-Migrant-Workers_final-2022.pdf",
+    "origin": "QAT",
+    "destination": "NPL",
+    "additionalSource": "https://nepal.iom.int/sites/g/files/tmzbdl1116/files/documents/The_Effect_of_COVID-19_Pandemic_onForeign_Employment_and_its_Impact_on_the_Economy_of_Nepal.pdf"
+  },
+  {
+    "scope": "route",
+    "start": 2017,
+    "end": 2024,
+    "title": "Saudi enforcement led to forced returns to Ethiopia",
+    "text": "In 2017 Saudi Arabia began a campaign to return migrants without regular status. Ethiopian returnees arrived at Addis Ababa airport, where IOM registered them and offered travel assistance to vulnerable people.",
+    "source": "https://eastandhornofafrica.iom.int/sites/g/files/tmzbdl701/files/documents/2023-08/iom_rdh_ksa_midyear_overview_2023.pdf",
+    "origin": "SAU",
+    "destination": "ETH",
+    "additionalSource": "https://dtm.iom.int/sites/g/files/tmzbdl1461/files/reports/2024_Yearly_Eastern_Route_Report_0.pdf",
+    "updates": [
+      {
+        "year": 2023,
+        "text": "IOM recorded 39,200 forced returns from Saudi Arabia to Ethiopia in the first half of 2023."
+      },
+      {
+        "year": 2024,
+        "text": "IOM recorded 93,498 forced returns on this route in 2024."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "start": 2020,
+    "end": 2020,
+    "title": "Workers stranded in the Emirates returned to Nepal",
+    "text": "Nepal began bringing people home in June 2020 after pandemic restrictions interrupted travel and employment. A study published by Nepal’s Foreign Employment Board records 49,240 Nepalis returning from the UAE on chartered and regular flights between June and December. Workers interviewed for the study described lost jobs and reduced pay.",
+    "source": "https://www.feb.gov.np/multimedia_upload/6325528cc5265_Impact-of-Covid-19-on-Nepali-Migrant-Workers_final-2022.pdf",
+    "origin": "ARE",
+    "destination": "NPL",
+    "additionalSource": "https://nepal.iom.int/sites/g/files/tmzbdl1116/files/documents/The_Effect_of_COVID-19_Pandemic_onForeign_Employment_and_its_Impact_on_the_Economy_of_Nepal.pdf"
+  },
+  {
+    "scope": "route",
+    "start": 2024,
+    "end": 2024,
+    "title": "Syrian families returned from Jordan in December",
+    "text": "UNHCR recorded about 5,100 registered Syrian refugees returning from Jordan in December 2024, most after the fall of the Assad government on 8 December. They were part of roughly 17,200 recorded returns from Jordan over the full year.",
+    "source": "https://www.unhcr.org/sites/default/files/2025-03/12%20-%20December%202024%20Operational%20Update.pdf",
+    "origin": "JOR",
+    "destination": "SYR"
+  },
+  {
+    "scope": "route",
+    "origin": "SVK",
+    "destination": "CZE",
+    "start": 2021,
+    "end": 2021,
+    "title": "Slovak students choose Czech universities",
+    "text": "Similar languages and historical ties made Czechia the leading destination for Slovaks studying abroad. A 2021 OECD review reported around 22,000 Slovak students enrolled in Czech higher education. This figure counts enrolled students across several entering classes.",
+    "source": "https://www.oecd.org/en/publications/improving-higher-education-in-the-slovak-republic_259e23ba-en/full-report/component-5.html"
+  },
+  {
+    "scope": "route",
+    "origin": "PNG",
+    "destination": "AUS",
+    "start": 2019,
+    "end": 2024,
+    "title": "Regional employers recruit workers from Papua New Guinea",
+    "text": "In March 2019 Papua New Guinea joined Australia’s Pacific Labour Scheme. More than 400 Papua New Guineans had already participated in Australia’s seasonal worker programme, earning income for their families and filling vacancies in regional Australia.",
+    "source": "https://www.foreignminister.gov.au/minister/marise-payne/media-release/papua-new-guinea-joins-pacific-labour-scheme",
+    "additionalSource": "https://ministers.dfat.gov.au/minister/pat-conroy/media-release/papua-new-guinea-aged-care-graduates-boost-regional-services",
+    "updates": [
+      {
+        "year": 2024,
+        "text": "In 2024, 21 Papua New Guinean aged-care workers earned Australian qualifications while filling vacancies on four-year placements in regional Queensland."
+      }
+    ]
+  },
+  {
+    "scope": "origin-country",
+    "country": "SGP",
+    "start": 2020,
+    "end": 2021,
+    "title": "Migrant workers return home during the pandemic",
+    "text": "During the pandemic, some migrant workers in Singapore finished their contracts and chose to return home. The Ministry of Manpower reported that homesickness and concern for families overseas were among the reasons.",
+    "source": "https://www.mom.gov.sg/newsroom/mom-statements/2021/statement-on-net-inflow-of-migrant-workers",
+    "updates": [
+      {
+        "year": 2021,
+        "text": "In May 2021 the ministry reported that migrant-worker departures had exceeded new migrant-worker entries over the preceding year. Border restrictions limited employers’ ability to bring in replacements."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "THA",
+    "destination": "ISR",
+    "start": 2012,
+    "end": 2020,
+    "title": "Thai workers take agricultural jobs in Israel",
+    "text": "Thailand began sending workers to Israeli farms in June 2012 through a bilateral recruitment programme for temporary agricultural jobs.",
+    "source": "https://www.mol.go.th/en/news/labour-minister-sends-off-206-thai-agricultural-workers-to-work-in-israel",
+    "updates": [
+      {
+        "year": 2020,
+        "text": "By February 2020 Thailand’s labour ministry had recorded 40,082 workers travelling to Israel under the programme since it began. The figure spans multiple years."
+      }
+    ]
+  },
+  {
+    "scope": "route",
+    "origin": "AUS",
+    "destination": "GBR",
+    "start": 2016,
+    "end": 2017,
+    "title": "Young Australians use London as a base for work and travel",
+    "text": "Researchers interviewed Australians living in London on youth mobility visas. Some took jobs so they could travel around Europe. Others wanted professional experience they could use when they returned to Australia. The study recruited participants through a London group for young Australians.",
+    "source": "https://eprints.lancs.ac.uk/137127/1/NIESR.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "CAN",
+    "destination": "USA",
+    "start": 2005,
+    "end": 2007,
+    "title": "Doctoral graduates move for research and specialist jobs",
+    "text": "Some people who completed doctorates at Canadian universities in 2005 moved to the United States for postdoctoral training. Others told Statistics Canada that US employers offered jobs in their speciality or better opportunities to advance their careers.",
+    "source": "https://www150.statcan.gc.ca/n1/pub/81-595-m/81-595-m2011089-eng.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "USA",
+    "destination": "MEX",
+    "start": 2009,
+    "end": 2014,
+    "title": "Families return to Mexico",
+    "text": "Mexican emigrants returned from the United States to rejoin relatives or start families in Mexico. Others returned after deportation.",
+    "updates": [
+      {
+        "year": 2014,
+        "text": "Among Mexicans living in the US in 2009 and back in Mexico by 2014, 61% cited family reunification or starting a family. Pew Research Center calculated this share from Mexico’s demographic survey."
+      }
+    ],
+    "source": "https://www.pewresearch.org/race-and-ethnicity/2015/11/19/chapter-1-migration-flows-between-the-u-s-and-mexico-have-slowed-and-turned-toward-mexico/"
+  },
+  {
+    "scope": "route",
+    "origin": "JPN",
+    "destination": "MYS",
+    "start": 2011,
+    "end": 2011,
+    "title": "Japanese retirees choose Penang as a second home",
+    "text": "Japanese retirees interviewed in Penang under the Malaysia My Second Home programme described a warmer climate, lower everyday costs and a sense of safety as reasons for moving. Some could maintain a comfortable standard of living on a Japanese pension.",
+    "source": "https://eprints.usm.my/41380/1/IJAPS-1412018_Art.-479-106.pdf"
+  },
+  {
+    "scope": "route",
+    "origin": "KOR",
+    "destination": "USA",
+    "start": 2021,
+    "end": 2022,
+    "title": "South Koreans move to pursue university degrees",
+    "text": "The US International Trade Administration describes how competition for places at leading South Korean universities encouraged some students to study abroad. Engineering and business were among the most common subjects for Korean students in the United States.",
+    "updates": [
+      {
+        "year": 2022,
+        "text": "The Open Doors survey counted 40,755 Korean students in US higher education in academic year 2021–22. Enrolment includes students who arrived in earlier years."
+      }
+    ],
+    "source": "https://www.trade.gov/country-commercial-guides/south-korea-education-services"
+  },
+  {
+    "scope": "route",
+    "origin": "MYS",
+    "destination": "SGP",
+    "start": 2022,
+    "end": 2022,
+    "title": "Malaysians take jobs in Singapore for pay and prospects",
+    "text": "Malaysia’s statistics department studied Malaysians working in Singapore in 2022. Workers cited job opportunities, pay, working conditions and the purchasing power of Singapore-dollar earnings. These reasons describe the surveyed workers.",
+    "source": "https://www.statistics.gov.my/portal-main/downloads-log?id=8047"
+  }
+]
