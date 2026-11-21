@@ -13,6 +13,12 @@ DATA = ROOT / "dist/data"
 NATIONAL = DATA / "national"
 REFERENCE = ROOT / "reference/official"
 GROSS = ("immigration", "emigration")
+# These published numbers cover a narrower population or geography.
+LIMITED_TOTALS = {
+    ("AZE", 2005, "immigration"): 2013, ("AZE", 2007, "immigration"): 1954,
+    ("AZE", 2005, "emigration"): 2906, ("AZE", 2007, "emigration"): 3083,
+    ("UKR", 2020, "emigration"): 19121, ("UKR", 2021, "emigration"): 22587,
+}
 
 
 def read(file):
@@ -52,6 +58,11 @@ def verify_eurostat(series):
     for sid, field in (("eurostat_imm5prv", "immigration"), ("eurostat_emi3nxt", "emigration")):
         for key, old in older[sid]["reportedAllCountryTotals"].items():
             code, year = key.split(":")
+            tag = code, int(year), field
+            if tag in LIMITED_TOTALS:
+                assert old["value"] == LIMITED_TOTALS[tag], tag
+                assert field not in series["countries"].get(code, {}).get(year, {}), tag
+                continue
             if 2008 <= int(year) <= 2024:
                 new = series["countries"][code][year][field]["value"]
                 if new != old["value"]:
@@ -153,6 +164,8 @@ def main():
             for field in (*GROSS, "net"):
                 metric = row[field]
                 tag = code, year, field
+                if tag in LIMITED_TOTALS:
+                    assert metric is None, f"Limited-scope statistic shown as nationwide: {tag}"
                 if metric is None:
                     assert tag not in published_fields, tag
                     if field == "net":

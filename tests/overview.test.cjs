@@ -90,6 +90,16 @@ async function test() {
     assert.match(get("national-emigration").textContent, /265,362/);
     assert.match(get("national-sources").textContent, /Australian Bureau of Statistics/);
 
+    await api.applyCountryScenario({focus:"AZE", direction:"in", peers:null, start:2005, end:2007});
+    await until(() => !get("national-figures").hidden && /Azerbaijan/.test(get("national-heading").textContent));
+    assert.match(get("national-immigration").textContent, /Unavailable/i);
+    assert.match(get("national-emigration").textContent, /Unavailable/i);
+    assert.match(get("national-net-basis").textContent, /estimate/i);
+    await api.applyCountryScenario({focus:"UKR", direction:"out", peers:null, start:2020, end:2021});
+    await until(() => !get("national-figures").hidden && /Ukraine/.test(get("national-heading").textContent));
+    assert.match(get("national-emigration").textContent, /Unavailable/i);
+    assert.match(get("national-net-basis").textContent, /estimate/i);
+
     const range = {direction:"in",start:1960,end:2024};
     await api.applyCountryScenario({focus:"FRA",...range});
     await until(() => get("overview-rankings").textContent.includes("would begin before 1960"));

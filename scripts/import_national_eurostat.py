@@ -16,6 +16,14 @@ SERIES = {
     'immigration': ('migr_imm5prv', 'migr_imm8', 'migr_imm1ctz'),
     'emigration': ('migr_emi3nxt', 'migr_emi2', 'migr_emi1ctz'),
 }
+# Corroborating national definitions or missing coverage are documented and archived
+# in reference/official/eurostat-national/README.md. Apply exclusions across tables.
+WITHHELD = {
+    ('USA', 2004, 'immigration'),
+    ('AZE', 2005, 'immigration'), ('AZE', 2005, 'emigration'),
+    ('AZE', 2007, 'immigration'), ('AZE', 2007, 'emigration'),
+    ('UKR', 2020, 'emigration'), ('UKR', 2021, 'emigration'),
+}
 
 
 def observations(raw, source_id, reporters):
@@ -37,10 +45,6 @@ def observations(raw, source_id, reporters):
         if not 1950 <= year <= 2024 or type(value) is not int or value < 0:
             raise ValueError(f'Unexpected calendar year or count in {source_id}')
         key = reporters[cell['geo']], year
-        # Eurostat's isolated US entry includes just 76 in the US citizenship cell.
-        # Whole-resident coverage, including returning citizens, could not be verified.
-        if source_id == 'migr_imm1ctz' and key == ('USA', 2004):
-            continue
         existing = chosen.get(key)
         if existing and existing['value'] != value:
             raise ValueError(f'Conflicting age definitions for {source_id}, {key}')
@@ -78,6 +82,8 @@ def build():
                 'flagLabels': data.get('extension', {}).get('status', {}).get('label', {}),
             }
             for (code, year), observation in observations(data, table, reporters).items():
+                if (code, year, direction) in WITHHELD:
+                    continue
                 row = countries.setdefault(code, {}).setdefault(str(year), {})
                 row.setdefault(direction, observation)
     return dict(sources=sources, countries=countries)
